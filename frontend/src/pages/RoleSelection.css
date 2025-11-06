@@ -1,0 +1,188 @@
+/* === Struktur Dasar Halaman === */
+.role-container,
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+.role-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f4f4f4;
+  font-family: "Poppins", sans-serif;
+}
+
+/* === Header === */
+.role-header {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.lifelinker-logo {
+  font-size: 32px;
+  font-weight: 700;
+  color: #222;
+}
+
+.red {
+  color: #b91c1c;
+}
+
+.heart {
+  color: #b91c1c;
+  font-size: 20px;
+  margin-right: 5px;
+}
+
+.welcome-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+.subtitle {
+  color: #555;
+  margin-bottom: 30px;
+}
+
+/* === Cards === */
+.role-card-container {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+  margin-bottom: 50px;
+  padding: 0 20px;
+}
+
+.role-card {
+  background-color: white;
+  border-radius: 12px;
+  padding: 25px;
+  width: 270px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.role-card h3 {
+  font-size: 20px;
+  margin-top: 10px;
+  color: #000;
+}
+
+.role-card p {
+  color: #444;
+  font-size: 14px;
+  margin: 10px 0 20px;
+}
+
+.btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-red {
+  background-color: #b91c1c;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.btn-red:hover {
+  background-color: #dc2626;
+}
+
+.btn-gray {
+  background-color: #e5e5e5;
+  color: #333;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.btn-gray:hover {
+  background-color: #d4d4d4;
+}
+
+/* === Footer === */
+/* === Footer === */
+.role-footer {
+  margin-top: auto; /* biar nempel di bawah */
+  width: 100%;
+  background-color: #ddd;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 25px 0;
+  font-size: 14px;
+  flex-wrap: wrap;
+  text-align: center;
+}
+
+.footer-left,
+.footer-middle,
+.footer-right {
+  flex: 1;
+  min-width: 220px;
+  margin: 10px 0;
+}
+
+.footer-logo {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+/* navigasi footer */
+.footer-middle h4 {
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.footer-middle p {
+  margin: 0;
+  color: #000;
+  line-height: 1.6;
+}
+
+/* kasih pemisah antar link navigasi */
+.footer-middle p span {
+  color: #000;
+}
+
+.footer-middle p span::after {
+  content: " | ";
+}
+
+.footer-middle p span:last-child::after {
+  content: "";
+}
+
+/* social icon */
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 8px;
+}
+
+.social-icons i {
+  font-size: 18px;
+  color: #333;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.social-icons i:hover {
+  color: #b91c1c;
+}
