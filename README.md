@@ -21,7 +21,7 @@ Aplikasi ini dirancang untuk memiliki tiga peran pengguna utama: **User**, **Dok
 * **Beranda (Homepage):** Menampilkan visi misi, ringkasan statistik (jumlah pendonor, kantong darah, event), dan akses cepat ke fitur utama. 
 * **Event:** Menampilkan daftar kegiatan donor darah lengkap dengan detail jadwal, lokasi, dan opsi pendaftaran.  
 * **Lokasi:** Daftar PMI/RS dengan informasi alamat, kontak, jam operasional, dan integrasi peta.  
-* **Stok Darah:** Informasi ketersediaan darah di PMI/RS secara berkala berdasarkan golongan darah, lengkap dengan status ketersediaan (aman, kurang, kritis) dan waktu pembaruan terakhir.  47, 
+* **Stok Darah:** Informasi ketersediaan darah di PMI/RS secara berkala berdasarkan golongan darah, lengkap dengan status ketersediaan (aman, kurang, kritis) dan waktu pembaruan terakhir. 
 * **Riwayat:** Menampilkan riwayat donor darah pengguna, total donasi, dan siklus donor.  
 * **Konsultasi:** Fasilitas komunikasi dengan pihak medis atau admin seputar kelayakan donor.  
 
@@ -46,8 +46,8 @@ Aplikasi ini dirancang untuk memiliki tiga peran pengguna utama: **User**, **Dok
 ## 🛠️ Tumpukan Teknologi (Tech Stack)
 
 Berdasarkan dokumen perencanaan, proyek ini akan dikembangkan menggunakan:
-* **Backend:** Golang  26, 
-* **Frontend:** React JS  28, 
+* **Backend:** Golang
+* **Frontend:** React JS
 * **Database:** PostgreSQL  
 * **Desain UI/UX:** Figma  
 * **Editor Kode:** Visual Studio Code  
