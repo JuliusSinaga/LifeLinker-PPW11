@@ -139,10 +139,10 @@ export default function StokDarahPage() {
 
       {/* Main Content */}
       <main className="stok-main">
-        <div className="stok-container">
-          {/* Filter Section */}
-          <div className="filter-section">
-            <div className="filter-group">
+        {/* Filter Section */}
+        <div className="filter-section">
+          <div className="filter-container">
+            <div className="filter-card">
               <div className="filter-item">
                 <span className="filter-label">
                   <FaFilter className="filter-icon" />
@@ -180,7 +180,9 @@ export default function StokDarahPage() {
               </div>
             </div>
           </div>
+        </div>
 
+        <div className="stok-container">
           {/* Results Info */}
           {filteredHospitals.length > 0 && (
             <div

@@ -1,19 +1,19 @@
 import React, { useState } from "react";
-import "./DaftarPengguna.css";
+import "./DaftarDokter.css";
 
-export default function DaftarPengguna() {
+export default function DaftarDokter() {
   const [notif, setNotif] = useState({ show: false, type: "", message: "" });
   const [formData, setFormData] = useState({
-    name: "",
     email: "",
     password: "",
-    birth_date: "",
+    fullName: "",
+    strNumber: "",
+    specialization: "",
+    hospitalName: "",
+    birthDate: "",
     gender: "",
     phone: "",
     city: "",
-    blood_type: "",
-    rhesus: "",
-    weight: "",
   });
 
   const handleChange = (e) => {
@@ -28,7 +28,7 @@ export default function DaftarPengguna() {
 
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL || "http://localhost:8080"}/users`,
+        `${process.env.REACT_APP_API_URL || "http://localhost:8080"}/doctors`,
         {
           method: "POST",
           headers: {
@@ -42,19 +42,20 @@ export default function DaftarPengguna() {
         setNotif({
           show: true,
           type: "success",
-          message: "Pendaftaran akun berhasil ✔",
+          message:
+            "Pendaftaran akun dokter berhasil! Menunggu verifikasi admin ✔",
         });
         setFormData({
-          name: "",
           email: "",
           password: "",
-          birth_date: "",
+          fullName: "",
+          strNumber: "",
+          specialization: "",
+          hospitalName: "",
+          birthDate: "",
           gender: "",
           phone: "",
           city: "",
-          blood_type: "",
-          rhesus: "",
-          weight: "",
         });
       } else {
         const err = await res.json();
@@ -74,42 +75,45 @@ export default function DaftarPengguna() {
 
     setTimeout(() => {
       setNotif({ show: false, type: "", message: "" });
-    }, 3000);
+    }, 4000);
   };
 
   return (
-    <div className="daftar-wrapper">
-      <div className="daftar-container">
+    <div className="daftar-dokter-wrapper">
+      <div className="daftar-dokter-container">
         {notif.show && (
           <div
-            className={`notif ${
-              notif.type === "success" ? "notif-sukses" : "notif-error"
+            className={`notif-dokter ${
+              notif.type === "success"
+                ? "notif-dokter-sukses"
+                : "notif-dokter-error"
             }`}
           >
             {notif.message}
           </div>
         )}
 
-        <header className="daftar-header">
-          <h1 className="logo">
+        <header className="daftar-dokter-header">
+          <h1 className="dokter-logo">
             <img
               src="/images/lifelinker-logo.png"
               alt="LifeLinker Logo"
-              className="logo-image"
+              className="dokter-logo-image"
             />
             <span className="red">Life</span>Linker
           </h1>
-          <h2 className="judul">Buat Akun Pendonor</h2>
-          <p className="subtitle">
-            Lengkapi informasi untuk menjadi bagian dari pahlawan kemanusiaan.
+          <h2 className="dokter-judul">Pendaftaran Akun Dokter</h2>
+          <p className="dokter-subtitle">
+            Akun Anda akan aktif setelah data dan Nomor STR berhasil
+            diverifikasi oleh Admin.
           </p>
         </header>
 
         <form onSubmit={handleSubmit}>
-          <section className="form-section">
+          <section className="dokter-form-section">
             <h3>Informasi Akun</h3>
-            <div className="form-grid">
-              <div className="form-group">
+            <div className="dokter-form-grid">
+              <div className="dokter-form-group">
                 <label>Email</label>
                 <input
                   type="email"
@@ -120,7 +124,7 @@ export default function DaftarPengguna() {
                   required
                 />
               </div>
-              <div className="form-group">
+              <div className="dokter-form-group">
                 <label>Password</label>
                 <input
                   type="password"
@@ -134,31 +138,64 @@ export default function DaftarPengguna() {
             </div>
           </section>
 
-          <section className="form-section">
-            <h3>Informasi Pribadi & Medis</h3>
-            <div className="form-grid">
-              <div className="form-group">
-                <label>Nama Lengkap</label>
+          <section className="dokter-form-section">
+            <h3>Informasi Profesional & Pribadi</h3>
+            <div className="dokter-form-grid">
+              <div className="dokter-form-group full-width">
+                <label>Nama Lengkap (dengan gelar)</label>
                 <input
                   type="text"
-                  name="name"
-                  value={formData.name}
+                  name="fullName"
+                  value={formData.fullName}
                   onChange={handleChange}
-                  placeholder="Nama Lengkap"
+                  placeholder="Contoh: Dr. Julius Sinaga, Sp.PD"
                   required
                 />
               </div>
-              <div className="form-group">
+              <div className="dokter-form-group">
+                <label>Nomor STR (Wajib)</label>
+                <input
+                  type="text"
+                  name="strNumber"
+                  value={formData.strNumber}
+                  onChange={handleChange}
+                  placeholder="Masukkan Nomor Valid Anda"
+                  required
+                />
+              </div>
+              <div className="dokter-form-group">
+                <label>Spesialisasi</label>
+                <input
+                  type="text"
+                  name="specialization"
+                  value={formData.specialization}
+                  onChange={handleChange}
+                  placeholder="Contoh: Penyakit Dalam"
+                  required
+                />
+              </div>
+              <div className="dokter-form-group full-width">
+                <label>Nama Rumah Sakit / Instansi</label>
+                <input
+                  type="text"
+                  name="hospitalName"
+                  value={formData.hospitalName}
+                  onChange={handleChange}
+                  placeholder="Contoh: RSUP Porsea"
+                  required
+                />
+              </div>
+              <div className="dokter-form-group">
                 <label>Tanggal Lahir</label>
                 <input
                   type="date"
-                  name="birth_date"
-                  value={formData.birth_date}
+                  name="birthDate"
+                  value={formData.birthDate}
                   onChange={handleChange}
                   required
                 />
               </div>
-              <div className="form-group">
+              <div className="dokter-form-group">
                 <label>Jenis Kelamin</label>
                 <select
                   name="gender"
@@ -171,8 +208,8 @@ export default function DaftarPengguna() {
                   <option value="Perempuan">Perempuan</option>
                 </select>
               </div>
-              <div className="form-group">
-                <label>Nomor Telepon</label>
+              <div className="dokter-form-group">
+                <label>Nomor Telepon (WhatsApp)</label>
                 <input
                   type="text"
                   name="phone"
@@ -182,65 +219,26 @@ export default function DaftarPengguna() {
                   required
                 />
               </div>
-              <div className="form-group">
+              <div className="dokter-form-group">
                 <label>Kota Domisili</label>
                 <input
                   type="text"
                   name="city"
                   value={formData.city}
                   onChange={handleChange}
-                  placeholder="Contoh: Medan"
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Golongan Darah</label>
-                <select
-                  name="blood_type"
-                  value={formData.blood_type}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="">Pilih Golongan Darah</option>
-                  <option value="A">A</option>
-                  <option value="B">B</option>
-                  <option value="AB">AB</option>
-                  <option value="O">O</option>
-                </select>
-              </div>
-              <div className="form-group">
-                <label>Rhesus</label>
-                <select
-                  name="rhesus"
-                  value={formData.rhesus}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="">Pilih</option>
-                  <option value="+">Positif (+)</option>
-                  <option value="-">Negatif (-)</option>
-                </select>
-              </div>
-              <div className="form-group">
-                <label>Berat Badan (kg)</label>
-                <input
-                  type="number"
-                  name="weight"
-                  value={formData.weight}
-                  onChange={handleChange}
-                  placeholder="Contoh: 55"
+                  placeholder="Contoh: Laguboti"
                   required
                 />
               </div>
             </div>
           </section>
 
-          <button type="submit" className="btn-submit">
-            Buat Akun
+          <button type="submit" className="dokter-btn-submit">
+            Daftar & Kirim Verifikasi
           </button>
 
-          <p className="login-link">
-            Sudah punya akun? <a href="/login-pengguna">Masuk di sini</a>
+          <p className="dokter-login-link">
+            Sudah punya akun? <a href="/login-dokter">Masuk di sini</a>
           </p>
         </form>
       </div>

@@ -1,118 +1,229 @@
 /* === Struktur Dasar Halaman === */
-.role-container,
-html,
-body,
-#root {
-  height: 100%;
-  margin: 0;
+.role-selection-root {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #fef2f2 0%, #fff 50%, #fef2f2 100%);
+  font-family: "Poppins", sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.role-main-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
 }
 
 .role-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background-color: #f4f4f4;
-  font-family: "Poppins", sans-serif;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 /* === Header === */
 .role-header {
   text-align: center;
-  margin-top: 40px;
+  margin-bottom: 50px;
+  animation: fadeInDown 0.8s ease-out;
+}
+
+.role-logo-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.role-logo-image {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  animation: pulse 2s ease-in-out infinite;
 }
 
 .lifelinker-logo {
-  font-size: 32px;
-  font-weight: 700;
+  font-size: 36px;
+  font-weight: 800;
   color: #222;
+  margin: 0;
 }
 
 .red {
   color: #b91c1c;
 }
 
-.heart {
-  color: #b91c1c;
-  font-size: 20px;
-  margin-right: 5px;
-}
-
 .welcome-title {
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 700;
-  margin-top: 10px;
+  margin: 20px 0 10px;
+  color: #1f2937;
+  animation: fadeInUp 0.8s ease-out 0.2s both;
 }
 
 .subtitle {
-  color: #555;
+  color: #6b7280;
+  font-size: 16px;
   margin-bottom: 30px;
+  animation: fadeInUp 0.8s ease-out 0.4s both;
+}
+
+/* === Animations === */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* === Cards === */
 .role-card-container {
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 30px;
-  flex-wrap: wrap;
-  margin-bottom: 50px;
+  max-width: 1000px;
+  margin: 0 auto;
   padding: 0 20px;
 }
 
 .role-card {
-  background-color: white;
-  border-radius: 12px;
-  padding: 25px;
-  width: 270px;
+  background: white;
+  border-radius: 20px;
+  padding: 35px 25px;
   text-align: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  transition: all 0.4s ease;
+  border: 2px solid transparent;
+  animation: scaleIn 0.6s ease-out both;
+}
+
+.role-card:nth-child(1) {
+  animation-delay: 0.3s;
+}
+
+.role-card:nth-child(2) {
+  animation-delay: 0.4s;
+}
+
+.role-card:nth-child(3) {
+  animation-delay: 0.5s;
+}
+
+.role-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 40px rgba(185, 28, 28, 0.15);
+  border-color: #b91c1c;
+}
+
+.role-card svg {
+  transition: transform 0.3s ease;
+}
+
+.role-card:hover svg {
+  transform: scale(1.1);
 }
 
 .role-card h3 {
-  font-size: 20px;
-  margin-top: 10px;
-  color: #000;
+  font-size: 22px;
+  font-weight: 700;
+  margin-top: 15px;
+  color: #1f2937;
 }
 
 .role-card p {
-  color: #444;
+  color: #6b7280;
   font-size: 14px;
-  margin: 10px 0 20px;
+  line-height: 1.6;
+  margin: 15px 0 25px;
+  min-height: 60px;
 }
 
 .btn-group {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .btn-red {
-  background-color: #b91c1c;
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
   color: white;
   border: none;
-  padding: 10px;
-  border-radius: 6px;
+  padding: 14px 20px;
+  border-radius: 25px;
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 14px;
   text-align: center;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(185, 28, 28, 0.3);
 }
 
 .btn-red:hover {
-  background-color: #dc2626;
+  background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(185, 28, 28, 0.4);
+}
+
+.btn-red:active {
+  transform: translateY(0);
 }
 
 .btn-gray {
-  background-color: #e5e5e5;
-  color: #333;
-  border: none;
-  padding: 10px;
-  border-radius: 6px;
-  font-weight: 500;
-  transition: background-color 0.3s ease;
+  background-color: #f3f4f6;
+  color: #374151;
+  border: 2px solid #e5e7eb;
+  padding: 12px 20px;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .btn-gray:hover {
-  background-color: #d4d4d4;
+  background-color: white;
+  border-color: #b91c1c;
+  color: #b91c1c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* === Footer === */
@@ -185,4 +296,33 @@ body,
 
 .social-icons i:hover {
   color: #b91c1c;
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+  .role-logo-image {
+    width: 40px;
+    height: 40px;
+  }
+
+  .lifelinker-logo {
+    font-size: 28px;
+  }
+
+  .welcome-title {
+    font-size: 26px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+  }
+
+  .role-card-container {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+  }
+
+  .role-card p {
+    min-height: auto;
+  }
 }

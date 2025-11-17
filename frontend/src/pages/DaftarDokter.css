@@ -5,10 +5,12 @@
   --text-dark: #1f2937;
   --text-light: #6b7280;
   --border-light: #e5e7eb;
+  --info-blue: #0ea5e9;
+  --info-blue-bg: #e0f2fe;
 }
 
 /* Wrapper */
-.daftar-wrapper {
+.daftar-dokter-wrapper {
   min-height: 100vh;
   background: linear-gradient(135deg, #fef2f2 0%, #fff5f5 50%, #fef7f0 100%);
   padding: 30px 20px;
@@ -25,7 +27,7 @@
 }
 
 /* Container */
-.daftar-container {
+.daftar-dokter-container {
   max-width: 780px;
   margin: 0 auto;
   background: white;
@@ -48,14 +50,14 @@
 }
 
 /* Header */
-.daftar-header {
+.daftar-dokter-header {
   text-align: center;
   margin-bottom: 25px;
   padding-bottom: 20px;
   border-bottom: 2px solid rgba(217, 43, 43, 0.1);
 }
 
-.logo {
+.dokter-logo {
   font-size: 1.6rem;
   font-weight: 800;
   margin-bottom: 6px;
@@ -65,7 +67,7 @@
   gap: 8px;
 }
 
-.logo-image {
+.dokter-logo-image {
   width: 38px;
   height: 38px;
   object-fit: contain;
@@ -82,32 +84,50 @@
   }
 }
 
-.logo .red {
+.dokter-logo .red {
   color: var(--primary-red);
 }
 
-.judul {
+.dokter-judul {
   font-size: 1.4rem;
   font-weight: 800;
   color: var(--primary-red);
-  margin: 12px 0 6px 0;
+  margin: 12px 0 10px 0;
   letter-spacing: -0.5px;
 }
 
-.subtitle {
+.dokter-subtitle {
   font-size: 0.875rem;
-  color: var(--text-light);
-  margin-top: 6px;
-  font-weight: 500;
+  color: #0369a1;
+  background: linear-gradient(135deg, #e0f2fe, #bae6fd);
+  padding: 12px 20px;
+  border-radius: 10px;
+  margin: 12px auto 0 auto;
+  max-width: 90%;
+  font-weight: 600;
   line-height: 1.5;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+  border: 2px solid #7dd3fc;
+}
+
+.dokter-subtitle::before {
+  content: "ℹ";
+  font-size: 1.3rem;
+  font-weight: 800;
+  flex-shrink: 0;
 }
 
 /* Form Section */
-.form-section {
+.dokter-form-section {
   margin-bottom: 22px;
 }
 
-.form-section h3 {
+.dokter-form-section h3 {
   font-size: 1rem;
   font-weight: 800;
   margin-bottom: 14px;
@@ -119,7 +139,7 @@
   gap: 8px;
 }
 
-.form-section h3::before {
+.dokter-form-section h3::before {
   content: "";
   width: 3px;
   height: 18px;
@@ -128,27 +148,31 @@
 }
 
 /* Form Grid */
-.form-grid {
+.dokter-form-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 14px;
 }
 
 /* Form Group */
-.form-group {
+.dokter-form-group {
   display: flex;
   flex-direction: column;
 }
 
-.form-group label {
+.dokter-form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.dokter-form-group label {
   font-size: 0.85rem;
   font-weight: 700;
   margin-bottom: 5px;
   color: var(--text-dark);
 }
 
-.form-group input,
-.form-group select {
+.dokter-form-group input,
+.dokter-form-group select {
   border: 2px solid var(--border-light);
   border-radius: 8px;
   padding: 10px 12px;
@@ -160,20 +184,20 @@
   color: var(--text-dark);
 }
 
-.form-group input:focus,
-.form-group select:focus {
+.dokter-form-group input:focus,
+.dokter-form-group select:focus {
   border-color: var(--primary-red);
   background: white;
   box-shadow: 0 0 0 4px rgba(217, 43, 43, 0.1);
 }
 
-.form-group input::placeholder {
+.dokter-form-group input::placeholder {
   color: var(--text-light);
   font-weight: 400;
 }
 
 /* Submit Button */
-.btn-submit {
+.dokter-btn-submit {
   width: 100%;
   background: linear-gradient(135deg, var(--primary-red), var(--primary-dark));
   color: white;
@@ -189,17 +213,17 @@
   letter-spacing: 0.5px;
 }
 
-.btn-submit:hover {
+.dokter-btn-submit:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 25px rgba(217, 43, 43, 0.4);
 }
 
-.btn-submit:active {
+.dokter-btn-submit:active {
   transform: translateY(0);
 }
 
 /* Login Link */
-.login-link {
+.dokter-login-link {
   text-align: center;
   margin-top: 14px;
   font-size: 0.875rem;
@@ -207,20 +231,20 @@
   font-weight: 500;
 }
 
-.login-link a {
+.dokter-login-link a {
   color: var(--primary-red);
   font-weight: 700;
   text-decoration: none;
   transition: all 0.3s ease;
 }
 
-.login-link a:hover {
+.dokter-login-link a:hover {
   text-decoration: underline;
   color: var(--primary-dark);
 }
 
 /* Notifikasi */
-.notif {
+.notif-dokter {
   text-align: center;
   padding: 12px 16px;
   border-radius: 10px;
@@ -242,13 +266,13 @@
   }
 }
 
-.notif-sukses {
+.notif-dokter-sukses {
   background: linear-gradient(135deg, #d4edda, #c3e6cb);
   color: #155724;
   border: 2px solid #28a745;
 }
 
-.notif-error {
+.notif-dokter-error {
   background: linear-gradient(135deg, #f8d7da, #f5c6cb);
   color: #721c24;
   border: 2px solid #dc3545;
@@ -256,51 +280,62 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .daftar-wrapper {
-    padding: 30px 15px;
+  .daftar-dokter-wrapper {
+    padding: 20px 15px;
   }
 
-  .daftar-container {
-    padding: 35px 25px;
+  .daftar-dokter-container {
+    padding: 25px 20px;
   }
 
-  .logo {
-    font-size: 1.6rem;
-  }
-
-  .judul {
+  .dokter-logo {
     font-size: 1.4rem;
   }
 
-  .form-grid {
+  .dokter-judul {
+    font-size: 1.2rem;
+  }
+
+  .dokter-subtitle {
+    font-size: 0.8rem;
+    padding: 10px 15px;
+  }
+
+  .dokter-form-grid {
     grid-template-columns: 1fr;
-    gap: 18px;
+    gap: 12px;
   }
 
-  .form-section h3 {
-    font-size: 1.1rem;
+  .dokter-form-section h3 {
+    font-size: 0.95rem;
   }
 
-  .btn-submit {
-    font-size: 1rem;
-    padding: 14px;
+  .dokter-btn-submit {
+    font-size: 0.9rem;
+    padding: 11px;
   }
 }
 
 @media (max-width: 480px) {
-  .daftar-container {
-    padding: 25px 20px;
+  .daftar-dokter-container {
+    padding: 20px 16px;
   }
 
-  .logo {
-    font-size: 1.4rem;
+  .dokter-logo {
+    font-size: 1.3rem;
   }
 
-  .judul {
-    font-size: 1.2rem;
+  .dokter-logo-image {
+    width: 32px;
+    height: 32px;
   }
 
-  .subtitle {
-    font-size: 0.9rem;
+  .dokter-judul {
+    font-size: 1.1rem;
+  }
+
+  .dokter-subtitle {
+    font-size: 0.75rem;
+    padding: 8px 12px;
   }
 }

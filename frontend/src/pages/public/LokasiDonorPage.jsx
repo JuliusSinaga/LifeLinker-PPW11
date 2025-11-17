@@ -142,7 +142,7 @@ export default function LokasiDonorPage() {
 
                   <div className="meta-right">
                     <Link
-                      to={`/lokasi/${loc.id}`}
+                      to={`/lokasi-donor/${loc.id}`}
                       className="lokasi-detail-link"
                     >
                       Lihat Detail Lokasi →

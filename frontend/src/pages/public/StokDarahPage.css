@@ -106,41 +106,33 @@
   margin: 0 auto;
 }
 
-/* Filter Section - Enhanced */
+/* Filter Section - Compact Center */
 .filter-section {
   margin-bottom: 35px;
-  padding: 25px;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  animation: slideInUp 0.5s ease-out;
-  border: 1px solid rgba(217, 43, 43, 0.1);
 }
 
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.filter-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
-.filter-group {
-  display: flex;
-  gap: 20px;
+.filter-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
   align-items: center;
-  flex-wrap: wrap;
+  background: #ffffff;
+  padding: 18px 22px;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(217, 43, 43, 0.1);
 }
 
 .filter-item {
   display: flex;
   align-items: center;
   gap: 12px;
-  flex: 1;
-  min-width: 280px;
 }
 
 .filter-label {
@@ -158,34 +150,26 @@
   font-size: 16px;
 }
 
-.filter-item span {
-  font-weight: 600;
-  font-size: 14px;
-  color: var(--text-dark);
-  white-space: nowrap;
-}
-
 .filter-dropdown {
   padding: 12px 16px;
-  border: 2px solid var(--border-light);
   border-radius: 10px;
+  border: 2px solid #e6e6e6;
   font-size: 14px;
+  transition: all 0.3s ease;
+  outline: none;
+  flex: 1;
   font-weight: 500;
   background: white;
   cursor: pointer;
-  transition: all 0.3s ease;
-  flex: 1;
-  min-width: 150px;
 }
 
 .filter-dropdown:focus {
-  outline: none;
-  border-color: var(--primary-red);
-  box-shadow: 0 0 0 4px rgba(217, 43, 43, 0.1);
+  border-color: #d92b2b;
+  box-shadow: 0 0 0 3px rgba(217, 43, 43, 0.1);
 }
 
 .filter-dropdown:hover {
-  border-color: var(--primary-red);
+  border-color: #d92b2b;
   transform: translateY(-1px);
 }
 
@@ -395,7 +379,7 @@
 .blood-type {
   font-weight: 800;
   font-size: 14px;
-  color: var(--text-dark);
+  color: black; /* Ini warna hitam keabu-abuan */
   margin-bottom: 3px;
 }
 
@@ -411,12 +395,13 @@
   padding: 3px 8px;
   border-radius: 10px;
   font-weight: 700;
+  color: black;
   letter-spacing: 0.3px;
 }
 
 .blood-type-badge.critical .blood-status {
   background: linear-gradient(135deg, #dc3545, #c82333);
-  color: white;
+  color: black;
   box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
 }
 
@@ -428,8 +413,13 @@
 
 .blood-type-badge.safe .blood-status {
   background: linear-gradient(135deg, #28a745, #218838);
-  color: white;
+  color: black;
   box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+}
+
+/* Pastikan teks golongan darah (A+, B-, dll.) berwarna hitam */
+.blood-type-badge .blood-type {
+  color: #000 !important;
 }
 
 /* Urgent Needs - Enhanced */
@@ -629,5 +619,53 @@
   .blood-types-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
+  }
+}
+
+/* ---------- Buat filter jadi hanya 1 kartu (hilangkan lapisan tambahan) ---------- */
+
+/* Remove background, padding, border-radius, shadow dari wrapper luar */
+.filter-section {
+  background: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* Container tengah juga dibuat transparan dan tanpa padding/box */
+.filter-container {
+  background: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border: none !important;
+  max-width: 1000px; /* tetap center */
+  margin: 0 auto; /* tetap center */
+}
+
+/* Keep single card look on .filter-card */
+.filter-card {
+  background: #ffffff; /* kartu tunggal */
+  padding: 18px 22px;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08); /* atau atur lebih halus */
+  border: 1px solid rgba(217, 43, 43, 0.06);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: center;
+}
+
+/* Jika masih terlihat 'double' karena body/section punya background putih, beri jarak */
+.stok-main .filter-section + .stok-container {
+  margin-top: 24px;
+}
+
+/* Responsive: pastikan tetap rapi di mobile */
+@media (max-width: 768px) {
+  .filter-card {
+    grid-template-columns: 1fr;
+    padding: 14px;
   }
 }

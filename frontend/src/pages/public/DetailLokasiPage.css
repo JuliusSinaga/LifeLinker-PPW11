@@ -220,11 +220,13 @@
   font-size: 1.1rem;
   font-weight: 800;
   margin-bottom: 6px;
+  color: white;
 }
 
 .blood-status {
   font-size: 12px;
   opacity: 0.9;
+  color: white;
 }
 
 /* Tahukah Anda Section */
