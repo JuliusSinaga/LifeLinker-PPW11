@@ -1,0 +1,166 @@
+/* Shared Header Component CSS */
+:root {
+  --primary-red: #d92b2b;
+  --text-dark: #333;
+  --text-light: #555;
+  --border-light: #e0e0e0;
+}
+
+.app-header {
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.app-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 5%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.app-logo {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.app-logo-image {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.app-logo-text {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--primary-red);
+  text-decoration: none;
+}
+
+.app-nav-links {
+  display: flex;
+  list-style: none;
+  gap: 30px;
+  margin: 0;
+  padding: 0;
+}
+
+.app-nav-link {
+  color: var(--text-dark);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 16px;
+  padding: 8px 0;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.app-nav-link:hover {
+  color: var(--primary-red);
+  border-bottom-color: var(--primary-red);
+}
+
+.app-nav-link.active {
+  color: var(--primary-red);
+  border-bottom-color: var(--primary-red);
+  font-weight: 700;
+}
+
+.app-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.app-btn-login,
+.app-btn-register {
+  padding: 10px 24px;
+  border-radius: 25px;
+  font-weight: 700;
+  font-size: 15px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.app-btn-login {
+  background-color: white;
+  color: var(--text-dark);
+  border: 2px solid var(--border-light);
+}
+
+.app-btn-login:hover {
+  border-color: var(--primary-red);
+  color: var(--primary-red);
+}
+
+.app-btn-register {
+  background-color: var(--primary-red);
+  color: white;
+  border: 2px solid var(--primary-red);
+}
+
+.app-btn-register:hover {
+  background-color: #c02525;
+  border-color: #c02525;
+  transform: translateY(-2px);
+}
+
+.app-user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.app-user-avatar img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .app-nav-links {
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    padding: 15px;
+  }
+
+  .app-nav .app-logo {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .app-nav-links {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px 15px;
+    margin: 0;
+    font-size: 14px;
+  }
+
+  .app-nav-actions {
+    width: 100%;
+    justify-content: center;
+    margin-top: 10px;
+    margin-left: 0;
+  }
+}

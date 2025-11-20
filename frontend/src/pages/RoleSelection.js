@@ -8,15 +8,22 @@ export default function RoleSelection() {
   const navigate = useNavigate(); // Hook untuk navigasi antar halaman
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
+    <div className="role-selection-root">
       {/* Konten utama */}
-      <main className="flex-grow">
+      <main className="role-main-content">
         <div className="role-container">
           {/* Header */}
           <header className="role-header">
-            <h1 className="lifelinker-logo">
-              <span className="heart">❤</span> <span className="red">Life</span>Linker
-            </h1>
+            <div className="role-logo-wrapper">
+              <img
+                src={process.env.PUBLIC_URL + "/images/lifelinker-logo.png"}
+                alt="LifeLinker Logo"
+                className="role-logo-image"
+              />
+              <h1 className="lifelinker-logo">
+                <span className="red">Life</span>Linker
+              </h1>
+            </div>
             <h2 className="welcome-title">Selamat Datang</h2>
             <p className="subtitle">Silakan pilih peran untuk melanjutkan</p>
           </header>
@@ -27,7 +34,9 @@ export default function RoleSelection() {
             <div className="role-card">
               <User size={50} color="#b91c1c" />
               <h3>Pengguna</h3>
-              <p>Login sebagai pengguna untuk donor darah atau mencari donor.</p>
+              <p>
+                Login sebagai pengguna untuk donor darah atau mencari donor.
+              </p>
               <div className="btn-group">
                 <button
                   onClick={() => navigate("/login-pengguna")}

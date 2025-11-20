@@ -1,96 +1,172 @@
 import React from "react";
-import "./DaftarDokter.css";
+import "./DashboardDokter.css";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
 
-export default function DaftarDokter() {
+// === React Icons ===
+import {
+  FaTachometerAlt,
+  FaTint,
+  FaCalendarAlt,
+  FaComments,
+  FaUserMd,
+  FaSignOutAlt,
+} from "react-icons/fa";
+
+// Registrasi Chart.js
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
+const DashboardDokter = () => {
+  // === Data Grafik Stok Darah ===
+  const data = {
+    labels: ["A", "B", "AB", "O"],
+    datasets: [
+      {
+        label: "Stok Darah (Unit)",
+        data: [320, 210, 120, 405],
+        backgroundColor: ["#e74c3c", "#3498db", "#f39c12", "#2ecc71"],
+        borderRadius: 6,
+      },
+    ],
+  };
+
+  // === Opsi Tampilan Grafik ===
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      title: {
+        display: true,
+        text: "Distribusi Stok Darah Berdasarkan Golongan",
+        font: { size: 16 },
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: { stepSize: 100 },
+      },
+    },
+  };
+
   return (
-    <div className="doctor-register-container">
-      {/* ===== Header ===== */}
-      <h1 className="lifelinker-logo">
-        Life<span className="red">Linker</span>
-      </h1>
-
-      {/* ===== Card Form ===== */}
-      <div className="register-card">
-        <h2>Pendaftaran Akun Dokter</h2>
-
-        <div className="alert-info">
-          <i className="fas fa-info-circle"></i>
-          Akun Anda akan aktif setelah data dan Nomor STR berhasil diverifikasi oleh Admin.
+    <div className="dashboard-wrapper">
+      {/* ================= SIDEBAR ================= */}
+      <div className="sidebar">
+        <div className="doctor-profile">
+          <img
+            src="/images/doctor-avatar.png"
+            alt="Dokter"
+            className="doctor-photo"
+          />
+          <h4>Dr. Anastasya</h4>
+          <p>Spesialis Hematologi</p>
         </div>
 
-        <form>
-          <h3>Informasi Akun</h3>
-          <div className="form-row">
-            <input type="email" placeholder="Email" required />
-            <input type="password" placeholder="Password" required />
-          </div>
-
-          <h3>Informasi Profesional & Pribadi</h3>
-          <div className="form-row">
-            <input type="text" placeholder="Nama Lengkap (dengan gelar)" required />
-          </div>
-
-          <div className="form-row">
-            <input type="text" placeholder="Nomor STR (Wajib)" required />
-            <input type="text" placeholder="Spesialisasi" required />
-          </div>
-
-          <div className="form-row">
-            <input type="text" placeholder="Nama Rumah Sakit / Instansi" required />
-          </div>
-
-          <div className="form-row">
-            <input type="date" required />
-            <select required>
-              <option value="">Pilih Jenis Kelamin</option>
-              <option value="Pria">Pria</option>
-              <option value="Wanita">Wanita</option>
-            </select>
-          </div>
-
-          <div className="form-row">
-            <input type="text" placeholder="Nomor Telepon (WhatsApp)" required />
-            <input type="text" placeholder="Kota Domisili" required />
-          </div>
-
-          <button type="submit" className="btn-red">
-            Daftar & Kirim Verifikasi
-          </button>
-
-          <p className="login-text">
-            Sudah punya akun? <a href="/login-dokter">Masuk di sini</a>
-          </p>
-          <p className="back-link">
-            <a href="/pilih-peran">← Kembali ke Pilih Peran</a>
-          </p>
-        </form>
+        <div className="sidebar-menu">
+          <a href="#" className="active">
+            <FaTachometerAlt className="menu-icon" /> Dashboard
+          </a>
+          <a href="#">
+            <FaTint className="menu-icon" /> Manajemen Stok
+          </a>
+          <a href="#">
+            <FaCalendarAlt className="menu-icon" /> Manajemen Event
+          </a>
+          <a href="#">
+            <FaComments className="menu-icon" /> Konsultasi & Edukasi
+          </a>
+          <a href="#">
+            <FaUserMd className="menu-icon" /> Profil Saya
+          </a>
+          <a href="#" className="logout">
+            <FaSignOutAlt className="menu-icon" /> Logout
+          </a>
+        </div>
       </div>
 
-      {/* ===== Footer ===== */}
-      <footer className="footer">
-        <div className="footer-section">
-          <h4 className="footer-title">
-            Life<span className="red">Linker</span>
-          </h4>
-          <p>Dibuat Oleh Kelompok 11 PPW @2025</p>
+      {/* ================= KONTEN UTAMA ================= */}
+      <div className="main-container">
+        <div className="dashboard-header">
+          <h2>Dashboard Utama</h2>
+          <button className="refresh-btn">Refresh Data</button>
         </div>
 
-        <div className="footer-section">
-          <h4 className="footer-title red">Navigasi</h4>
-          <p className="footer-links">
-            Beranda | Lokasi Donor | Stok Darah | Event | Riwayat | Konsultasi
-          </p>
-        </div>
+        {/* === CARD STATISTIK === */}
+        <div className="dashboard-cards">
+          <div className="card merah">
+            <h3>1,247</h3>
+            <p>Total Stok Darah (Unit)</p>
+            <span>RS Siloam Kebon Jeruk</span>
+          </div>
 
-        <div className="footer-section">
-          <h4 className="footer-title red">Ikuti Kami</h4>
-          <div className="footer-icons">
-            <i className="fab fa-instagram"></i>
-            <i className="fab fa-facebook"></i>
-            <i className="fab fa-twitter"></i>
+          <div className="card biru">
+            <h3>89</h3>
+            <p>Pendonor Bulan Ini</p>
+            <span>Target: 120 orang</span>
+          </div>
+
+          <div className="card oranye">
+            <h3>15</h3>
+            <p>Total Event RS Kami</p>
+            <span>12 selesai, 3 berlangsung</span>
+          </div>
+
+          <div className="card hijau">
+            <h3>845</h3>
+            <p>Pendonor Aktif</p>
+            <span>Di rumah sakit kami</span>
           </div>
         </div>
-      </footer>
+
+        {/* === GRAFIK & NOTIFIKASI === */}
+        <div className="grafik-notif-container">
+          <div className="grafik-section">
+            <h4>Perbandingan Stok Darah</h4>
+            <div className="grafik-box">
+              <Bar data={data} options={options} />
+            </div>
+          </div>
+
+          <div className="notif-section">
+            <div className="notif-header">
+              <h4>Notifikasi Terbaru</h4>
+              <button className="mark-read-btn">Tandai Sudah Dibaca</button>
+            </div>
+
+            <ul className="notif-list">
+              <li>
+                ✅ Request event "Bakti Sosial" disetujui Admin
+                <span>2 jam yang lalu</span>
+              </li>
+              <li>
+                💬 Konsultasi baru menunggu balasan
+                <span>5 jam yang lalu</span>
+              </li>
+              <li>
+                ⚠️ 5 kantong darah (A+) akan kedaluwarsa dalam 3 hari
+                <span>1 hari yang lalu</span>
+              </li>
+              <li>
+                🧍‍♀️ 12 pendonor baru terdaftar minggu ini
+                <span>2 hari yang lalu</span>
+              </li>
+            </ul>
+
+            <div className="lihat-semua">Lihat semua notifikasi</div>
+          </div>
+        </div>
+      </div>
     </div>
   );
-}
+};
+
+export default DashboardDokter;

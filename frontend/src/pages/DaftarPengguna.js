@@ -27,13 +27,16 @@ export default function DaftarPengguna() {
     e.preventDefault();
 
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL || "http://localhost:8080"}/users`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const res = await fetch(
+        `${process.env.REACT_APP_API_URL || "http://localhost:8080"}/users`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
 
       if (res.ok) {
         setNotif({
@@ -89,8 +92,12 @@ export default function DaftarPengguna() {
 
         <header className="daftar-header">
           <h1 className="logo">
-            <span className="heart">❤</span> <span className="red">Life</span>
-            Linker
+            <img
+              src="/images/lifelinker-logo.png"
+              alt="LifeLinker Logo"
+              className="logo-image"
+            />
+            <span className="red">Life</span>Linker
           </h1>
           <h2 className="judul">Buat Akun Pendonor</h2>
           <p className="subtitle">

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./LoginPengguna.css";
+import "./LoginShared.css";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 
@@ -18,10 +18,17 @@ const LoginPengguna = () => {
       <div className="login-container">
         <div className="login-card">
           {/* Logo */}
-          <h2 className="logo-text">
-            <span className="logo-icon">❤️</span> Life
-            <span className="logo-bold">Linker</span>
-          </h2>
+          <div className="logo-wrapper">
+            <img
+              src={process.env.PUBLIC_URL + "/images/lifelinker-logo.png"}
+              alt="LifeLinker Logo"
+              className="logo-image"
+            />
+            <h2 className="logo-text">
+              <span className="logo-life">Life</span>
+              <span className="logo-bold">Linker</span>
+            </h2>
+          </div>
 
           {/* Judul */}
           <h3 className="welcome-title">Selamat Datang</h3>
