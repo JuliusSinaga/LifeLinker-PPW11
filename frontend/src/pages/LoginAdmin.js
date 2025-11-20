@@ -1,62 +1,46 @@
 import React from "react";
-import "./LoginShared.css";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import "./LoginAdmin.css";
 import Footer from "../components/Footer";
 
-const LoginAdmin = () => {
-  const navigate = useNavigate();
-
-  const handleLogin = (e) => {
-    e.preventDefault();
-    // proses login admin di sini
-    navigate("/dashboard-admin");
-  };
-
+function LoginAdmin() {
   return (
-    <>
-      <div className="login-container">
-        <div className="login-card">
-          {/* Logo */}
-          <div className="logo-wrapper">
-            <img
-              src={process.env.PUBLIC_URL + "/images/lifelinker-logo.png"}
-              alt="LifeLinker Logo"
-              className="logo-image"
-            />
-            <h2 className="logo-text">
-              <span className="logo-life">Life</span>
-              <span className="logo-bold">Linker</span>
-            </h2>
+    <div className="login-page">
+      <div className="login-card landscape">
+        <div className="login-content">
+          <div className="logo-text">
+            <span className="life">Life</span>
+            <span className="linker">Linker</span>
           </div>
 
-          {/* Judul */}
-          <h3 className="welcome-title">Login Admin</h3>
-          <p className="subtitle">Masukkan email dan password untuk masuk</p>
+          <h2>Selamat Datang</h2>
 
-          {/* Form Login */}
-          <form onSubmit={handleLogin} className="login-form">
-            <input
-              type="email"
-              placeholder="Alamat Email"
-              className="form-input"
-              required
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              className="form-input"
-              required
-            />
-            <button type="submit" className="btn-login">
-              Masuk
-            </button>
+          <div className="role-toggle">
+            <Link to="/login-pengguna"><button>Pengguna</button></Link>
+            <Link to="/login-dokter"><button>Dokter</button></Link>
+            <button className="active">Admin</button>
+          </div>
+
+          <form className="login-form">
+            <input type="email" placeholder="Alamat Email" required />
+            <input type="password" placeholder="Password" required />
+            <button type="submit" className="btn-login">Masuk</button>
           </form>
+
+          <div className="divider"><span>ATAU</span></div>
+
+          <button className="google-login">
+            <img src="/google-icon.png" alt="Google" /> Masuk dengan Google
+          </button>
+
+          <p className="register-text">
+            Belum punya akun? <Link to="/daftar-admin">Daftar Sekarang</Link>
+          </p>
         </div>
       </div>
-
       <Footer />
-    </>
+    </div>
   );
-};
+}
 
 export default LoginAdmin;
