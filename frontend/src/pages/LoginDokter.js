@@ -1,46 +1,108 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import "./LoginDokter.css";
+import React, { useState } from "react";
+import "./LoginShared.css";
+import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 
-function LoginDokter() {
-  return (
-    <div className="login-page">
-      <div className="login-card landscape">
-        <div className="login-content">
-          <div className="logo-text">
-            <span className="life">Life</span>
-            <span className="linker">Linker</span>
-          </div>
+const LoginDokter = () => {
+const navigate = useNavigate();
+const [role, setRole] = useState("dokter");
 
-          <h2>Selamat Datang</h2>
+const handleLogin = (e) => {
+e.preventDefault();
+// nanti disambungkan ke backend
+navigate("/home");
+};
 
-          <div className="role-toggle">
-            <Link to="/login-pengguna"><button>Pengguna</button></Link>
-            <button className="active">Dokter</button>
-            <Link to="/login-admin"><button>Admin</button></Link>
-          </div>
-
-          <form className="login-form">
-            <input type="email" placeholder="Alamat Email" required />
-            <input type="password" placeholder="Password" required />
-            <button type="submit" className="btn-login">Masuk</button>
-          </form>
-
-          <div className="divider"><span>ATAU</span></div>
-
-          <button className="google-login">
-            <img src="/google-icon.png" alt="Google" /> Masuk dengan Google
-          </button>
-
-          <p className="register-text">
-            Belum punya akun? <Link to="/daftar-dokter">Daftar Sekarang</Link>
-          </p>
-        </div>
+return (
+<> <div className="login-container"> <div className="login-card">
+  
+      {/* Logo */}
+      <div className="logo-wrapper">
+        <img
+          src={process.env.PUBLIC_URL + "/images/lifelinker-logo.png"}
+          alt="LifeLinker Logo"
+          className="logo-image"
+        />
+        <h2 className="logo-text">
+          <span className="logo-life">Life</span>
+          <span className="logo-bold">Linker</span>
+        </h2>
       </div>
-      <Footer />
+
+      {/* Judul */}
+      <h3 className="welcome-title">Selamat Datang</h3>
+
+      {/* Pilihan Role */}
+      <div className="role-buttons">
+        <button
+          className={role === "pengguna" ? "role-btn active" : "role-btn"}
+          onClick={() => {
+            setRole("pengguna");
+            navigate("/login-pengguna");
+          }}
+        >
+          Pengguna
+        </button>
+
+        <button
+          className={role === "dokter" ? "role-btn active" : "role-btn"}
+          onClick={() => setRole("dokter")}
+        >
+          Dokter
+        </button>
+
+        <button
+          className={role === "admin" ? "role-btn active" : "role-btn"}
+          onClick={() => {
+            setRole("admin");
+            navigate("/login-admin");
+          }}
+        >
+          Admin
+        </button>
+      </div>
+
+      {/* Form Login */}
+      <form onSubmit={handleLogin} className="login-form">
+        <input
+          type="email"
+          placeholder="Alamat Email"
+          className="form-input"
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          className="form-input"
+          required
+        />
+        <button type="submit" className="btn-login">
+          Masuk
+        </button>
+      </form>
+
+      <div className="divider"><span>ATAU</span></div>
+
+      {/* Login dengan Google */}
+      <button className="google-btn">
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png"
+          alt="Google"
+        />
+        Masuk dengan Google
+      </button>
+
+      {/* Link daftar */}
+      <p className="register-text">
+        Belum punya akun? <a href="/daftar-dokter">Daftar Sekarang</a>
+      </p>
     </div>
-  );
-}
+  </div>
+
+  <Footer />
+</>
+
+);
+};
 
 export default LoginDokter;
