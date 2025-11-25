@@ -1,0 +1,619 @@
+/* ManajemenPendonor.css */
+
+/* Layout Container */
+.manajemen-pendonor-container {
+  display: flex;
+  height: 100vh;
+  background: #e5e7eb;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Sidebar Styles */
+.sidebar {
+  width: 200px;
+  background: #2c2c2c;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-logo {
+  padding: 20px 16px;
+  border-bottom: 1px solid #444;
+}
+
+.logo-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-icon {
+  background: #dc2626;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.logo-text {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.logo-subtitle {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+/* Navigation Styles */
+.sidebar-nav {
+  flex: 1;
+  padding: 8px 0;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  color: white;
+  text-decoration: none;
+  margin-bottom: 2px;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link.active {
+  background: #dc2626;
+}
+
+.nav-icon {
+  font-size: 16px;
+}
+
+/* Logout Section */
+.sidebar-logout {
+  padding: 8px 0;
+  border-top: 1px solid #444;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  background: #e5e7eb;
+  padding: 20px;
+  overflow: auto;
+}
+
+/* Header */
+.content-header {
+  margin-bottom: 20px;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+/* Metrics Grid */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+/* Metric Card */
+.metric-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.metric-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 6px;
+}
+
+.metric-content {
+  flex: 1;
+}
+
+.metric-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #dc2626;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+
+.metric-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 1px;
+}
+
+.metric-subtitle {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+.metric-icon {
+  font-size: 20px;
+  opacity: 0.8;
+  align-self: flex-end;
+  margin-top: -20px;
+}
+
+/* Pendonor Management Section */
+.pendonor-management-section {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* Filter Section */
+.filter-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: #f9fafb;
+  border-radius: 6px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.filter-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filter-input:focus {
+  outline: none;
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.filter-select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+/* Table Styles */
+.table-container {
+  overflow-x: auto;
+}
+
+.pendonor-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.table-header {
+  background-color: #f9fafb;
+}
+
+.table-th {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+  font-weight: 600;
+  color: #374151;
+}
+
+.table-th.center {
+  text-align: center;
+}
+
+.table-row {
+  border-bottom: 1px solid #e5e7eb;
+  transition: background-color 0.2s ease;
+}
+
+.table-row:hover {
+  background-color: #f9fafb;
+}
+
+.table-td {
+  padding: 12px;
+  text-align: left;
+}
+
+.table-td.center {
+  text-align: center;
+}
+
+/* Blood Type Badge */
+.blood-type-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  display: inline-block;
+  min-width: 30px;
+}
+
+.blood-type-Oplus {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.blood-type-Aplus {
+  background-color: #dbeafe;
+  color: #2563eb;
+}
+
+.blood-type-Bplus {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
+.blood-type-ABplus {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.blood-type-Ominus {
+  background-color: #fce7f3;
+  color: #ec4899;
+}
+
+.blood-type-Aminus {
+  background-color: #e0e7ff;
+  color: #6366f1;
+}
+
+.blood-type-Bminus {
+  background-color: #f0fdf4;
+  color: #15803d;
+}
+
+.blood-type-ABminus {
+  background-color: #fffbeb;
+  color: #ea580c;
+}
+
+/* Donor Count */
+.donor-count {
+  font-weight: 600;
+  color: #dc2626;
+  font-size: 14px;
+}
+
+/* Status Styles */
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.status-active {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-inactive {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.status-suspended {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  align-items: center;
+}
+
+.action-button {
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  min-width: 50px;
+}
+
+.action-button:hover {
+  transform: scale(1.05);
+}
+
+.action-button:active {
+  transform: scale(0.95);
+}
+
+.detail-button {
+  background-color: #6366f1;
+  color: white;
+}
+
+.detail-button:hover {
+  background-color: #4f46e5;
+}
+
+.edit-button {
+  background-color: #16a34a;
+  color: white;
+}
+
+.edit-button:hover {
+  background-color: #15803d;
+}
+
+/* Empty State */
+.empty-state {
+  padding: 40px;
+  text-align: center;
+  color: #6b7280;
+}
+
+.empty-message {
+  margin: 0;
+  font-size: 16px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .manajemen-pendonor-container {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .sidebar {
+    width: 100%;
+    height: auto;
+  }
+  
+  .main-content {
+    padding: 15px;
+  }
+  
+  .metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .filter-section {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .metric-card {
+    padding: 15px;
+  }
+  
+  .metric-value {
+    font-size: 24px;
+  }
+  
+  .page-title {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: 10px;
+  }
+  
+  .pendonor-management-section {
+    padding: 15px;
+  }
+  
+  .table-th,
+  .table-td {
+    padding: 8px 4px;
+    font-size: 12px;
+  }
+  
+  .metric-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+  
+  .metric-icon {
+    font-size: 20px;
+  }
+  
+  .metric-value {
+    font-size: 20px;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 2px;
+  }
+}
+
+/* Animation for loading states */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.metric-card {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.pendonor-management-section {
+  animation: fadeIn 0.6s ease-out;
+}
+
+/* Scrollbar Styling */
+.main-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.main-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.main-content::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.main-content::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+.table-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Blood Type Badges */
+.blood-type-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  min-width: 32px;
+  text-align: center;
+}
+
+.blood-Opos { background-color: #dc2626; }
+.blood-Oneg { background-color: #b91c1c; }
+.blood-Apos { background-color: #dc2626; }
+.blood-Aneg { background-color: #b91c1c; }
+.blood-Bpos { background-color: #dc2626; }
+.blood-Bneg { background-color: #b91c1c; }
+.blood-ABpos { background-color: #dc2626; }
+.blood-ABneg { background-color: #b91c1c; }
+
+/* Donor Count Styling */
+.donor-count {
+  font-weight: 600;
+  color: #dc2626;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .metrics-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+}
+
+@media (max-width: 900px) {
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
+@media (max-width: 640px) {
+  .metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .main-content {
+    padding: 16px;
+  }
+  
+  .page-title {
+    font-size: 20px;
+  }
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
