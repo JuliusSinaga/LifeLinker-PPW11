@@ -141,3 +141,103 @@ th, td {
 .delete-btn {
   color: #e74c3c;
 }
+
+/* =================== SIDEBAR STYLE PREMIUM =================== */
+
+.dokter-sidebar {
+  width: 250px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background: #111827; /* abu gelap matte */
+  color: #fff;
+  padding: 30px 22px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.25);
+  z-index: 20;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Profile */
+.doctor-profile img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,0.15);
+}
+
+.doctor-profile h4 {
+  margin: 8px 0 0 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.doctor-profile p {
+  margin: 0;
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+/* Menu */
+.dokter-menu {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  gap: 8px;
+}
+
+/* Style link sidebar */
+.dokter-menu a {
+  text-decoration: none !important;   /* HILANGKAN GARIS BAWAH */
+  color: #d1d5db;
+  padding: 12px 14px;
+  font-size: 14px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: 0.25s ease;
+  font-weight: 500;
+}
+
+/* Hover */
+.dokter-menu a:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  transform: translateX(5px);
+}
+
+/* Active */
+.dokter-menu a.active {
+  background: #374151;
+  color: #fff;
+  font-weight: 600;
+  border-left: 4px solid #ef4444;   /* merah elegan */
+  padding-left: 10px;
+}
+
+/* Logout */
+.dokter-logout {
+  margin-top: auto;
+  background: #ef4444;
+  color: white;
+  padding: 12px 14px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.25s;
+}
+
+.dokter-logout:hover {
+  background: #d83434;
+  transform: scale(1.03);
+}
+

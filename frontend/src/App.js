@@ -39,24 +39,27 @@ import KonsultasiEdukasi from "./pages/KonsultasiEdukasi";
 // === Components ===
 import Footer from "./components/Footer";
 
-// === Fallback Pages ===
+// === Fallback ===
 import Home from "./pages/Home";
 
 function AppContent() {
   const location = useLocation();
+
   const hideFooterPaths = [
-    "/pilih-role", "/role-selection", 
-    "/login-admin", "/login-user", "/login-dokter", "/login-pengguna", 
-    "/dashboard-admin", "/manajemen-dokter", "/manajemen-user", 
-    "/manajemen-event", "/manajemen-pendonor", "/laporan", "/profil-admin", 
-    "/logout", "/dashboard", "/manajemen-stok", "/konsultasi-edukasi"
+    "/pilih-role", "/role-selection",
+    "/login-admin", "/login-user", "/login-dokter", "/login-pengguna",
+    "/dashboard-admin", "/manajemen-dokter", "/manajemen-user",
+    "/manajemen-event", "/manajemen-pendonor", "/laporan",
+    "/profil-admin", "/logout",
+    "/dashboard", "/manajemen-stok", "/konsultasi-edukasi"
   ];
 
   return (
     <div className="min-h-screen flex flex-col">
       <div className="flex-grow">
         <Routes>
-          {/* Redirect default ke public beranda */}
+
+          {/* Redirect default */}
           <Route path="/" element={<Navigate to="/beranda" replace />} />
 
           {/* === Public Routes === */}
@@ -98,67 +101,23 @@ function AppContent() {
           <Route path="/manajemen-stok" element={<ManajemenStok />} />
           <Route path="/konsultasi-edukasi" element={<KonsultasiEdukasi />} />
 
-          {/* === Fallback Pages === */}
+          {/* Fallback */}
           <Route path="/home" element={<Home />} />
-          
-          {/* Fallback jika route salah */}
           <Route path="*" element={<h1>404 - Halaman Tidak Ditemukan</h1>} />
+
         </Routes>
       </div>
-      
-      {/* Conditional Footer */}
+
+      {/* Footer otomatis hilang di halaman dashboard dan login */}
       {!hideFooterPaths.includes(location.pathname) && <Footer />}
     </div>
   );
 }
 
-function App() {
+export default function App() {
   return (
     <Router>
-<<<<<<< HEAD
-      <Routes>
-
-        {/* Redirect default ke public beranda */}
-        <Route path="/" element={<Navigate to="/beranda" replace />} />
-
-        {/* === Public Routes === */}
-        <Route path="/beranda" element={<BerandaPage />} />
-        <Route path="/lokasi-donor" element={<LokasiDonorPage />} />
-        <Route path="/stok-darah" element={<StokDarahPage />} />
-        <Route path="/event" element={<EventPage />} />
-        <Route path="/riwayat" element={<RiwayatPage />} />
-        <Route path="/konsultasi" element={<KonsultasiPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-
-        {/* Detail Routes */}
-        <Route path="/event/:id" element={<DetailEventPage />} />
-        <Route path="/lokasi-donor/:id" element={<DetailLokasiPage />} />
-        <Route path="/stok-darah/:id" element={<DetailStokDarahPage />} />
-
-        {/* === Login & Role === */}
-        <Route path="/pilih-role" element={<RoleSelection />} />
-        <Route path="/login-admin" element={<LoginAdmin />} />
-        <Route path="/login-user" element={<LoginUser />} />
-        <Route path="/login-dokter" element={<LoginDokter />} />
-        <Route path="/login-pengguna" element={<LoginPengguna />} />
-        <Route path="/daftar-pengguna" element={<DaftarPengguna />} />
-        <Route path="/daftar-dokter" element={<DaftarDokter />} />
-
-        {/* === Dokter Dashboard === */}
-        <Route path="/dashboard" element={<DashboardDokter />} />
-        <Route path="/manajemen-stok" element={<ManajemenStok />} />
-        <Route path="/manajemen-event" element={<ManajemenEvent />} />
-        <Route path="/konsultasi-edukasi" element={<KonsultasiEdukasi />} />
-        
-
-        {/* Fallback jika route salah */}
-        <Route path="*" element={<h1>404 - Halaman Tidak Ditemukan</h1>} />
-      </Routes>
-=======
       <AppContent />
->>>>>>> a5f2186efca9891a1c834f580c60118c1fada696
     </Router>
   );
 }
-
-export default App;

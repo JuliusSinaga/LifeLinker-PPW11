@@ -1,5 +1,7 @@
 import React from "react";
-import "./DashboardDokter.css";
+import "../styles/DashboardDokter.css";
+import DokterSidebar from "../components/DokterSidebar";
+
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -11,31 +13,10 @@ import {
   Legend,
 } from "chart.js";
 
-// React Router
-import { Link, useLocation, useNavigate } from "react-router-dom";
-
-// Icons
-import {
-  FaTachometerAlt,
-  FaTint,
-  FaCalendarAlt,
-  FaComments,
-  FaUserMd,
-  FaSignOutAlt,
-} from "react-icons/fa";
-
-// Registrasi Chart.js
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const DashboardDokter = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  // Fungsi Logout
-  const handleLogout = () => {
-    navigate("/login");
-  };
-
+export default function DashboardDokter() {
+  // DATA GRAFIK
   const data = {
     labels: ["A", "B", "AB", "O"],
     datasets: [
@@ -53,83 +34,28 @@ const DashboardDokter = () => {
     plugins: {
       legend: { display: false },
       title: {
-        display: true,
-        text: "Distribusi Stok Darah Berdasarkan Golongan",
-        font: { size: 16 },
+        display: false,
       },
     },
     scales: {
       y: {
         beginAtZero: true,
-        ticks: { stepSize: 100 },
+        ticks: { color: "#555" },
+      },
+      x: {
+        ticks: { color: "#555" },
       },
     },
   };
 
   return (
-    <div className="dashboard-wrapper">
-      {/* ================= SIDEBAR ================= */}
-      <div className="sidebar">
-        <div className="doctor-profile">
-          <img
-            src="/images/doctor-avatar.png"
-            alt="Dokter"
-            className="doctor-photo"
-          />
-          <h4>Dr. Anastasya</h4>
-          <p>Spesialis Hematologi</p>
-        </div>
+    <div className="dokter-layout">
+      <DokterSidebar />
 
-        <div className="sidebar-menu">
-          <Link
-            to="/dashboard"
-            className={location.pathname === "/dashboard" ? "active" : ""}
-          >
-            <FaTachometerAlt className="menu-icon" /> Dashboard
-          </Link>
+      <main className="dokter-main">
+        <h2 className="page-title">Dashboard Utama</h2>
 
-          <Link
-            to="/manajemen-stok"
-            className={location.pathname === "/manajemen-stok" ? "active" : ""}
-          >
-            <FaTint className="menu-icon" /> Manajemen Stok
-          </Link>
-
-          <Link
-            to="/manajemen-event"
-            className={location.pathname === "/manajemen-event" ? "active" : ""}
-          >
-            <FaCalendarAlt className="menu-icon" /> Manajemen Event
-          </Link>
-
-          <Link
-            to="/konsultasi"
-            className={location.pathname === "/konsultasi" ? "active" : ""}
-          >
-            <FaComments className="menu-icon" /> Konsultasi & Edukasi
-          </Link>
-
-          <Link
-            to="/profile"
-            className={location.pathname === "/profile" ? "active" : ""}
-          >
-            <FaUserMd className="menu-icon" /> Profil Saya
-          </Link>
-
-          <button className="logout" onClick={handleLogout}>
-            <FaSignOutAlt className="menu-icon" /> Logout
-          </button>
-        </div>
-      </div>
-
-      {/* ================= KONTEN UTAMA ================= */}
-      <div className="main-container">
-        <div className="dashboard-header">
-          <h2>Dashboard Utama</h2>
-          <button className="refresh-btn">Refresh Data</button>
-        </div>
-
-        {/* CARD STATISTIK */}
+        {/* CARD STAT */}
         <div className="dashboard-cards">
           <div className="card merah">
             <h3>1,247</h3>
@@ -152,50 +78,18 @@ const DashboardDokter = () => {
           <div className="card hijau">
             <h3>845</h3>
             <p>Pendonor Aktif</p>
-            <span>Di rumah sakit kami</span>
+            <span>Dalam sistem RS</span>
           </div>
         </div>
 
-        {/* GRAFIK & NOTIF */}
-        <div className="grafik-notif-container">
-          <div className="grafik-section">
-            <h4>Perbandingan Stok Darah</h4>
-            <div className="grafik-box">
-              <Bar data={data} options={options} />
-            </div>
-          </div>
-
-          <div className="notif-section">
-            <div className="notif-header">
-              <h4>Notifikasi Terbaru</h4>
-              <button className="mark-read-btn">Tandai Sudah Dibaca</button>
-            </div>
-
-            <ul className="notif-list">
-              <li>
-                ✅ Request event "Bakti Sosial" disetujui Admin
-                <span>2 jam yang lalu</span>
-              </li>
-              <li>
-                💬 Konsultasi baru menunggu balasan
-                <span>5 jam yang lalu</span>
-              </li>
-              <li>
-                ⚠️ 5 kantong darah (A+) akan kedaluwarsa dalam 3 hari
-                <span>1 hari yang lalu</span>
-              </li>
-              <li>
-                🧍‍♀️ 12 pendonor baru terdaftar minggu ini
-                <span>2 hari yang lalu</span>
-              </li>
-            </ul>
-
-            <div className="lihat-semua">Lihat semua notifikasi</div>
+        {/* CHART */}
+        <div className="chart-section">
+          <h3 style={{ marginBottom: "10px" }}>Perbandingan Stok Darah</h3>
+          <div className="chart-wrapper">
+            <Bar data={data} options={options} />
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
-};
-
-export default DashboardDokter;
+}

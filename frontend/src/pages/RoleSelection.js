@@ -1,6 +1,6 @@
 import React from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { User, Stethoscope, Shield } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { User, Stethoscope } from "lucide-react";
 import Footer from "../components/Footer";
 import "./RoleSelection.css";
 
@@ -30,7 +30,8 @@ export default function RoleSelection() {
 
           {/* Role Cards */}
           <div className="role-card-container">
-            {/* Pengguna */}
+
+            {/* === Pengguna === */}
             <div className="role-card">
               <User size={50} color="#b91c1c" />
               <h3>Pengguna</h3>
@@ -53,7 +54,7 @@ export default function RoleSelection() {
               </div>
             </div>
 
-            {/* Dokter */}
+            {/* === Dokter === */}
             <div className="role-card">
               <Stethoscope size={50} color="#b91c1c" />
               <h3>Dokter</h3>
@@ -77,20 +78,6 @@ export default function RoleSelection() {
               </div>
             </div>
 
-            {/* Admin */}
-            <div className="role-card">
-              <Shield size={50} color="#b91c1c" />
-              <h3>Admin</h3>
-              <p>Login sebagai admin untuk mengelola sistem.</p>
-              <div className="btn-group">
-                <button
-                  onClick={() => navigate("/login-admin")}
-                  className="btn-red"
-                >
-                  Masuk sebagai Admin
-                </button>
-              </div>
-            </div>
           </div>
         </div>
       </main>

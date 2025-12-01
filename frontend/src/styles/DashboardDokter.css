@@ -1,0 +1,94 @@
+/* ===================== Layout Utama ===================== */
+.dokter-layout {
+  display: flex;
+  width: 100%;
+  background: #f5f6fa;
+  min-height: 100vh;
+  font-family: "Poppins", sans-serif;
+}
+
+/* ===================== Main Content ===================== */
+.dokter-main {
+  margin-left: 250px; /* ruang sidebar */
+  padding: 30px;
+  width: calc(100% - 250px);
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 25px;
+}
+
+/* ===================== Cards ===================== */
+
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 35px;
+}
+
+.card {
+  background: #ffffff;
+  padding: 18px 20px;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  border-left: 6px solid transparent;
+}
+
+.card h3 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.card p {
+  margin: 6px 0 2px 0;
+  font-weight: 500;
+}
+
+.card span {
+  font-size: 12px;
+  color: #888;
+}
+
+/* Warna kartu */
+.card.merah { border-color: #e74c3c; }
+.card.biru { border-color: #3498db; }
+.card.oranye { border-color: #f39c12; }
+.card.hijau { border-color: #2ecc71; }
+
+/* ===================== Chart Placeholder ===================== */
+
+.chart-section {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+.chart-placeholder {
+  height: 320px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #777;
+  font-size: 15px;
+  border: 2px dashed #dcdcdc;
+  border-radius: 10px;
+  margin-top: 15px;
+}
+
+.chart-section {
+  background: #ffffff;
+  padding: 22px;
+  border-radius: 12px;
+  box-shadow: 0px 2px 6px rgba(0,0,0,0.06);
+  margin-top: 25px;
+}
+
+.chart-wrapper {
+  width: 100%;
+  height: 320px;
+}
