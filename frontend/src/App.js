@@ -62,7 +62,6 @@ function App() {
         <Route path="/dashboard" element={<DashboardDokter />} />
         <Route path="/manajemen-stok" element={<ManajemenStok />} />
         <Route path="/manajemen-event" element={<ManajemenEvent />} />
-        <Route path="/daftar-dokter" element={<DaftarDokter />} />
         <Route path="/konsultasi-edukasi" element={<KonsultasiEdukasi />} />
         
 

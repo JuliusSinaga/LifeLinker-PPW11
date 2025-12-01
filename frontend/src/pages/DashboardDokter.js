@@ -110,8 +110,8 @@ const DashboardDokter = () => {
           </Link>
 
           <Link
-            to="/profil"
-            className={location.pathname === "/profil" ? "active" : ""}
+            to="/profile"
+            className={location.pathname === "/profile" ? "active" : ""}
           >
             <FaUserMd className="menu-icon" /> Profil Saya
           </Link>

@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import "./ManajemenStok.css";
 import {
   FaTachometerAlt,
@@ -38,21 +39,21 @@ const ManajemenStok = () => {
         </div>
 
         <div className="menu-links">
-          <a href="/dashboard">
+          <Link to="/dashboard">
             <FaTachometerAlt /> Dashboard
-          </a>
-          <a href="/stok" className="active">
+          </Link>
+          <Link to="/manajemen-stok" className="active">
             <FaTint /> Manajemen Stok
-          </a>
-          <a href="/event">
+          </Link>
+          <Link to="/manajemen-event">
             <FaCalendarAlt /> Manajemen Event
-          </a>
-          <a href="/konsultasi">
+          </Link>
+          <Link to="/konsultasi-edukasi">
             <FaComments /> Konsultasi & Edukasi
-          </a>
-          <a href="/profil">
+          </Link>
+          <Link to="/profile">
             <FaUserMd /> Profil Saya
-          </a>
+          </Link>
           <a href="#" className="logout">
             <FaSignOutAlt /> Logout
           </a>
