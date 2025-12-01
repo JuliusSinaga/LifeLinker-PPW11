@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from 'react-router-dom';
 import "./LoginUser.css";
 
 function LoginUser() {
@@ -41,9 +42,9 @@ function LoginUser() {
 
         <p className="register-text">
           Belum punya akun?{" "}
-          <a href="#" className="register-link">
+          <Link to="/daftar-pengguna" className="register-link">
             Daftar Sekarang
-          </a>
+          </Link>
         </p>
       </div>
 
@@ -59,12 +60,12 @@ function LoginUser() {
         <div className="footer-section">
           <h4 className="footer-title">Navigasi</h4>
           <nav className="footer-nav">
-            <a href="#">Beranda</a> | 
-            <a href="#"> Lokasi Donor</a> | 
-            <a href="#"> Stok Darah</a> | 
-            <a href="#"> Event</a> | 
-            <a href="#"> Riwayat</a> | 
-            <a href="#"> Konsultasi</a>
+            <Link to="/home">Beranda</Link> | 
+            <Link to="/lokasi-donor"> Lokasi Donor</Link> | 
+            <Link to="/stok-darah"> Stok Darah</Link> | 
+            <Link to="/event"> Event</Link> | 
+            <Link to="/riwayat"> Riwayat</Link> | 
+            <Link to="/konsultasi"> Konsultasi</Link>
           </nav>
         </div>
 
