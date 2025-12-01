@@ -1,0 +1,143 @@
+/* WRAPPER */
+.stok-wrapper {
+  display: flex;
+  background: #f4f6f9;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 250px;
+  background: #1a1d2e;
+  color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.doctor-profile {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.doctor-profile img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+}
+
+.menu-links a {
+  color: #e0e0e0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  margin: 8px 0;
+  text-decoration: none;
+  font-size: 14px;
+  border-radius: 6px;
+  transition: 0.2s;
+}
+
+.menu-links a:hover,
+.menu-links a.active {
+  background: #27304b;
+  color: #fff;
+}
+
+.logout {
+  margin-top: auto;
+  background: #b92a2a;
+  color: white !important;
+  border-radius: 6px;
+}
+
+/* MAIN */
+.stok-container {
+  flex: 1;
+  padding: 30px;
+}
+
+.stok-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn-tambah {
+  background: #e63946;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-tambah:hover {
+  background: #c62828;
+}
+
+/* TABLE */
+.table-container {
+  margin-top: 20px;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: #27304b;
+  color: white;
+}
+
+th, td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #ccc;
+}
+
+.status-badge {
+  padding: 6px 10px;
+  color: white;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.status-aman {
+  background: #2ecc71;
+}
+
+.status-standar {
+  background: #f1c40f;
+}
+
+.status-kritikal {
+  background: #e74c3c;
+}
+
+.aksi button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.edit-btn {
+  color: #3498db;
+  margin-right: 10px;
+}
+
+.delete-btn {
+  color: #e74c3c;
+}
