@@ -1,168 +1,159 @@
-/* Layout utama */
-.login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 90vh;
-  background-color: #f5f5f5;
-}
-
-/* Kartu utama */
-.login-card {
-  background: #fff;
-  width: 360px;
-  padding: 30px 25px;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
-
-/* Logo */
-.logo-text {
-  font-size: 20px;
-  font-weight: 600;
-  color: #222;
-  margin-bottom: 10px;
-}
-
-.logo-icon {
-  color: red;
-  margin-right: 5px;
-}
-
-.logo-bold {
-  color: #d32f2f;
-}
-
-/* Judul */
-.welcome-title {
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 20px;
-}
-
-/* Tombol Role */
-.role-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.role-btn {
-  padding: 8px 16px;
-  border: 1px solid #ccc;
-  background: #f7f7f7;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: all 0.2s ease;
-  font-weight: 500;
-}
-
-.role-btn.active {
-  background: #d32f2f;
-  color: white;
-  border-color: #d32f2f;
-}
-
-/* Form */
-.login-form {
+.login-page {
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  justify-content: center;
+  align-items: center;
+}
+
+/* card utama landscape */
+.login-card.landscape {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  width: 850px;
+  max-width: 95%;
+  min-height: 450px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+}
+
+/* isi form login */
+.login-content {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo-text {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.logo-text .life {
+  color: #c92a2a;
+}
+
+.logo-text .linker {
+  color: #000;
+}
+
+h2 {
+  margin-bottom: 1.2rem;
+  color: #222;
+  font-size: 1.6rem;
+}
+
+.role-toggle {
+  display: flex;
+  justify-content: center;
   gap: 10px;
+  margin-bottom: 1.5rem;
 }
 
-.form-input {
-  padding: 10px;
-  border-radius: 6px;
+.role-toggle button {
+  padding: 8px 16px;
   border: 1px solid #ccc;
-  outline: none;
-  font-size: 14px;
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
-.form-input:focus {
-  border-color: #d32f2f;
+.role-toggle .active {
+  background-color: #c92a2a;
+  color: white;
+  border: none;
+}
+
+.login-form input {
+  width: 100%;
+  margin-bottom: 0.4rem;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
 }
 
 .btn-login {
-  padding: 10px;
-  background-color: #d32f2f;
+  width: 100%;
+  background: #c92a2a;
   color: white;
+  padding: 10px;
   border: none;
   border-radius: 6px;
+  margin-top: 10px;
   cursor: pointer;
   font-weight: 600;
-  transition: background 0.2s;
 }
 
-.btn-login:hover {
-  background-color: #b71c1c;
-}
-
-/* Garis pemisah */
 .divider {
-  margin: 15px 0;
-  text-align: center;
-  position: relative;
-  color: #777;
-  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: 0.8rem 0;
 }
+
 
 .divider::before,
 .divider::after {
   content: "";
-  position: absolute;
-  top: 50%;
-  width: 40%;
-  height: 1px;
-  background: #ccc;
+  flex: 1;
+  border-bottom: 1px solid #ccc;
 }
 
-.divider::before {
-  left: 0;
+.divider span {
+  display: block !important;
+  padding: 0 10px;
+  background: transparent;
 }
 
-.divider::after {
-  right: 0;
-}
 
-/* Tombol Google */
-.google-btn {
-  background: white;
-  border: 1px solid #ccc;
+
+.google-login {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 10px;
+  gap: 8px;
   width: 100%;
+  border: 1px solid #ccc;
+  background: white;
+  padding: 10px;
   border-radius: 6px;
   cursor: pointer;
-  transition: all 0.2s;
+  font-weight: 500;
 }
 
-.google-btn:hover {
-  background: #f0f0f0;
-}
-
-.google-btn img {
+.google-login img {
   width: 20px;
-  height: 20px;
 }
 
-/* Link daftar */
 .register-text {
-  margin-top: 15px;
-  font-size: 13px;
-  color: #555;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #333;
 }
 
 .register-text a {
-  color: #d32f2f;
+  color: #c92a2a;
   font-weight: 600;
   text-decoration: none;
 }
 
-.register-text a:hover {
-  text-decoration: underline;
+/* Responsif */
+@media (max-width: 768px) {
+  .login-card.landscape {
+    width: 95%;
+    min-height: auto;
+    padding: 2rem 1.5rem;
+  }
+
+  .login-content {
+    width: 100%;
+  }
 }

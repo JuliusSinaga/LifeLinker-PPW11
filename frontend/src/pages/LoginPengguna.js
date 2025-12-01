@@ -80,10 +80,7 @@ const LoginPengguna = () => {
             </button>
           </form>
 
-          {/* Garis pemisah */}
-          <div className="divider">
-            <span>ATAU</span>
-          </div>
+          <div className="divider"><span>ATAU</span></div>
 
           {/* Login dengan Google */}
           <button className="google-btn">
