@@ -11,7 +11,10 @@ import {
   Legend,
 } from "chart.js";
 
-// === React Icons ===
+// React Router
+import { Link, useLocation, useNavigate } from "react-router-dom";
+
+// Icons
 import {
   FaTachometerAlt,
   FaTint,
@@ -25,7 +28,14 @@ import {
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const DashboardDokter = () => {
-  // === Data Grafik Stok Darah ===
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Fungsi Logout
+  const handleLogout = () => {
+    navigate("/login");
+  };
+
   const data = {
     labels: ["A", "B", "AB", "O"],
     datasets: [
@@ -38,7 +48,6 @@ const DashboardDokter = () => {
     ],
   };
 
-  // === Opsi Tampilan Grafik ===
   const options = {
     responsive: true,
     plugins: {
@@ -72,24 +81,44 @@ const DashboardDokter = () => {
         </div>
 
         <div className="sidebar-menu">
-          <a href="#" className="active">
+          <Link
+            to="/dashboard"
+            className={location.pathname === "/dashboard" ? "active" : ""}
+          >
             <FaTachometerAlt className="menu-icon" /> Dashboard
-          </a>
-          <a href="#">
+          </Link>
+
+          <Link
+            to="/manajemen-stok"
+            className={location.pathname === "/manajemen-stok" ? "active" : ""}
+          >
             <FaTint className="menu-icon" /> Manajemen Stok
-          </a>
-          <a href="#">
+          </Link>
+
+          <Link
+            to="/manajemen-event"
+            className={location.pathname === "/manajemen-event" ? "active" : ""}
+          >
             <FaCalendarAlt className="menu-icon" /> Manajemen Event
-          </a>
-          <a href="#">
+          </Link>
+
+          <Link
+            to="/konsultasi"
+            className={location.pathname === "/konsultasi" ? "active" : ""}
+          >
             <FaComments className="menu-icon" /> Konsultasi & Edukasi
-          </a>
-          <a href="#">
+          </Link>
+
+          <Link
+            to="/profil"
+            className={location.pathname === "/profil" ? "active" : ""}
+          >
             <FaUserMd className="menu-icon" /> Profil Saya
-          </a>
-          <a href="#" className="logout">
+          </Link>
+
+          <button className="logout" onClick={handleLogout}>
             <FaSignOutAlt className="menu-icon" /> Logout
-          </a>
+          </button>
         </div>
       </div>
 
@@ -100,7 +129,7 @@ const DashboardDokter = () => {
           <button className="refresh-btn">Refresh Data</button>
         </div>
 
-        {/* === CARD STATISTIK === */}
+        {/* CARD STATISTIK */}
         <div className="dashboard-cards">
           <div className="card merah">
             <h3>1,247</h3>
@@ -127,7 +156,7 @@ const DashboardDokter = () => {
           </div>
         </div>
 
-        {/* === GRAFIK & NOTIFIKASI === */}
+        {/* GRAFIK & NOTIF */}
         <div className="grafik-notif-container">
           <div className="grafik-section">
             <h4>Perbandingan Stok Darah</h4>
