@@ -1,4 +1,10 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
 
 // === Public Pages ===
 import BerandaPage from "./pages/public/BerandaPage";
@@ -35,6 +41,8 @@ import Logout from "./pages/Logout";
 import DashboardDokter from "./pages/DashboardDokter";
 import ManajemenStok from "./pages/ManajemenStok";
 import KonsultasiEdukasi from "./pages/KonsultasiEdukasi";
+import ProfilDokter from "./pages/ProfilDokter";
+
 
 // === Components ===
 import Footer from "./components/Footer";
@@ -45,20 +53,34 @@ import Home from "./pages/Home";
 function AppContent() {
   const location = useLocation();
 
+  // Hilangkan footer pada halaman tertentu
   const hideFooterPaths = [
-    "/pilih-role", "/role-selection",
-    "/login-admin", "/login-user", "/login-dokter", "/login-pengguna",
-    "/dashboard-admin", "/manajemen-dokter", "/manajemen-user",
-    "/manajemen-event", "/manajemen-pendonor", "/laporan",
-    "/profil-admin", "/logout",
-    "/dashboard", "/manajemen-stok", "/konsultasi-edukasi"
+    "/pilih-role",
+    "/role-selection",
+    "/login-admin",
+    "/login-user",
+    "/login-dokter",
+    "/login-pengguna",
+    "/dashboard-admin",
+    "/manajemen-dokter",
+    "/manajemen-user",
+    "/manajemen-event",
+    "/manajemen-pendonor",
+    "/laporan",
+    "/profil-admin",
+    "/logout",
+
+    // Dokter dashboard
+    "/dashboard",
+    "/manajemen-stok",
+    "/konsultasi-edukasi",
+    "/profil-saya",
   ];
 
   return (
     <div className="min-h-screen flex flex-col">
       <div className="flex-grow">
         <Routes>
-
           {/* Redirect default */}
           <Route path="/" element={<Navigate to="/beranda" replace />} />
 
@@ -71,12 +93,12 @@ function AppContent() {
           <Route path="/konsultasi" element={<KonsultasiPage />} />
           <Route path="/profile" element={<ProfilePage />} />
 
-          {/* Detail Routes */}
+          {/* Detail Pages */}
           <Route path="/event/:id" element={<DetailEventPage />} />
           <Route path="/lokasi-donor/:id" element={<DetailLokasiPage />} />
           <Route path="/stok-darah/:id" element={<DetailStokDarahPage />} />
 
-          {/* === Login & Role === */}
+          {/* === Login & Roles === */}
           <Route path="/pilih-role" element={<RoleSelection />} />
           <Route path="/role-selection" element={<RoleSelection />} />
           <Route path="/login-admin" element={<LoginAdmin />} />
@@ -100,15 +122,15 @@ function AppContent() {
           <Route path="/dashboard" element={<DashboardDokter />} />
           <Route path="/manajemen-stok" element={<ManajemenStok />} />
           <Route path="/konsultasi-edukasi" element={<KonsultasiEdukasi />} />
+          <Route path="/profil-saya" element={<ProfilDokter />} />
 
           {/* Fallback */}
           <Route path="/home" element={<Home />} />
           <Route path="*" element={<h1>404 - Halaman Tidak Ditemukan</h1>} />
-
         </Routes>
       </div>
 
-      {/* Footer otomatis hilang di halaman dashboard dan login */}
+      {/* Footer otomatis hilang */}
       {!hideFooterPaths.includes(location.pathname) && <Footer />}
     </div>
   );

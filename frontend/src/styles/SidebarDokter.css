@@ -1,92 +1,85 @@
 .dokter-sidebar {
-  width: 250px;
+  width: 240px;
   height: 100vh;
-  background: #111827;
+  background: #0f1a30;
   color: white;
-  position: fixed;
-  left: 0;
-  top: 0;
-  padding: 30px 22px;
+  padding: 25px 20px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  box-shadow: 2px 0 12px rgba(0,0,0,0.3);
-  z-index: 100;
+  position: fixed;
+  top: 0;
+  left: 0;
+  box-shadow: 3px 0 8px rgba(0, 0, 0, 0.25);
 }
 
 .doctor-profile {
   text-align: center;
-}
-.doctor-profile img {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  border: 3px solid rgba(255,255,255,0.2);
-}
-.doctor-profile h4 {
-  margin-top: 10px;
-  font-size: 16px;
-  font-weight: 600;
-}
-.doctor-profile p {
-  font-size: 13px;
-  opacity: 0.75;
+  margin-bottom: 35px;
 }
 
-/* Menu */
-.dokter-menu {
+.doctor-profile img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 3px solid white;
+  margin-bottom: 10px;
+}
+
+.doctor-profile h4 {
+  margin: 5px 0 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.doctor-profile p {
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+.sidebar-menu {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
-.dokter-menu a {
+
+.sidebar-menu a {
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 12px 15px;
+  text-decoration: none;
   color: #d1d5db;
-  text-decoration: none !important;
   border-radius: 10px;
-  font-size: 14px;
-  transition: 0.3s;
-}
-.dokter-menu a:hover {
-  background: rgba(255,255,255,0.1);
-  color: #fff;
-  transform: translateX(6px);
-}
-.dokter-menu a.active {
-  background: #374151;
-  color: #fff;
-  font-weight: 600;
-  border-left: 4px solid #ef4444;
+  transition: 0.25s;
 }
 
-/* Logout */
-.dokter-logout {
-  margin-top: auto;
-  background: #dc2626;
+.sidebar-menu a:hover {
+  background: #1c2943;
   color: white;
-  padding: 12px;
-  border: none;
+  transform: translateX(4px);
+}
+
+.sidebar-menu a.active {
+  background: #233558;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: inset 0 0 0 1px #3c527a;
+}
+
+.logout {
+  margin-top: auto;
+  padding: 12px 15px;
+  background: #c0392b;
   border-radius: 10px;
-  font-size: 14px;
-  cursor: pointer;
+  color: white;
+  border: none;
   display: flex;
   align-items: center;
   gap: 10px;
-  transition: 0.25s;
-}
-.dokter-logout:hover {
-  background: #b91c1c;
-  transform: scale(1.05);
+  cursor: pointer;
+  transition: 0.2s;
 }
 
-/* Main */
-.dokter-main {
-  margin-left: 250px;
-  padding: 30px;
-  background: #f5f6fa;
-  min-height: 100vh;
-  font-family: "Poppins";
+.logout:hover {
+  background: #a33226;
 }

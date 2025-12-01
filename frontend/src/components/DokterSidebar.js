@@ -34,7 +34,7 @@ export default function DokterSidebar() {
           Konsultasi & Edukasi
         </Link>
 
-        <Link to="/profile" className={location.pathname === "/profile" ? "active" : ""}>
+        <Link to="/profil-saya" className={location.pathname === "/profil-saya" ? "active" : ""}>
           Profil Saya
         </Link>
 
