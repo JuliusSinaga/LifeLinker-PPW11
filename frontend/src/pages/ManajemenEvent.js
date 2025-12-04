@@ -16,15 +16,19 @@ export default function ManajemenEvent() {
   });
 
   const [requests, setRequests] = useState([
-    { id: 1, nama: "Donor Darah Kemanusiaan", tanggal: "17 Apr 2025", lokasi: "IT DEL", status: "Disetujui" },
-    { id: 2, nama: "Bakti Sosial 2025", tanggal: "11 Feb 2025", lokasi: "Lapangan Legi", status: "Menunggu" },
-    { id: 3, nama: "Donor Darah Ramadhan", tanggal: "17 Mar 2025", lokasi: "Depan Pasar", status: "Ditolak" },
+    { id: 1, nama: "Donor Darah Kemanusiaan", tanggal: "17 Apr 2025", lokasi: "IT DEL", status: "Disetujui", deskripsi: "Event kemanusiaan besar", partner: "IT Del", donor: 50 },
+    { id: 2, nama: "Bakti Sosial 2025", tanggal: "11 Feb 2025", lokasi: "Lapangan Legi", status: "Menunggu", deskripsi: "Acara bakti sosial", partner: "PMI", donor: 70 },
+    { id: 3, nama: "Donor Darah Ramadhan", tanggal: "17 Mar 2025", lokasi: "Depan Pasar", status: "Ditolak", deskripsi: "Event Ramadhan", partner: "Diknas", donor: 30 }
   ]);
 
   const completed = [
     { id: 1, title: "World Blood Donor Day 2024", date: "14 Jun 2024", donors: 127 },
     { id: 2, title: "Donor Darah Hari Kartini", date: "21 Apr 2024", donors: 89 },
   ];
+
+  // STATE UNTUK MODAL VIEW + EDIT
+  const [selected, setSelected] = useState(null);
+  const [editing, setEditing] = useState(null);
 
   function handleChange(e) {
     const { name, value, files } = e.target;
@@ -42,6 +46,9 @@ export default function ManajemenEvent() {
       nama: form.namaEvent || "(Belum diisi)",
       tanggal: form.tanggalMulai || "-",
       lokasi: form.lokasi || "-",
+      deskripsi: form.deskripsi,
+      partner: form.partner,
+      donor: form.targetDonor,
       status: "Menunggu",
     };
     setRequests((r) => [newReq, ...r]);
@@ -57,6 +64,16 @@ export default function ManajemenEvent() {
       targetDonor: "",
       unggahPoster: null,
     });
+  }
+
+  function handleEditSubmit(e) {
+    e.preventDefault();
+    setRequests((prev) =>
+      prev.map((req) =>
+        req.id === editing.id ? { ...editing } : req
+      )
+    );
+    setEditing(null);
   }
 
   return (
@@ -185,9 +202,9 @@ export default function ManajemenEvent() {
                         {r.status}
                       </span>
                     </td>
-                    <td>
-                      <button className="table-btn view">👁 View</button>
-                      <button className="table-btn edit">✏ Edit</button>
+                    <td className="aksi-btns">
+                      <button className="view-btn" onClick={() => setSelected(r)}>👁 View</button>
+                      <button className="edit-btn" onClick={() => setEditing({...r})}>✏ Edit</button>
                     </td>
                   </tr>
                 ))}
@@ -218,6 +235,64 @@ export default function ManajemenEvent() {
 
         </div>
       </main>
+
+      {/* MODAL VIEW */}
+      {selected && (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <h3>Detail Event</h3>
+            <p><b>Nama:</b> {selected.nama}</p>
+            <p><b>Tanggal:</b> {selected.tanggal}</p>
+            <p><b>Lokasi:</b> {selected.lokasi}</p>
+            <p><b>Status:</b> {selected.status}</p>
+            <p><b>Deskripsi:</b> {selected.deskripsi}</p>
+            <p><b>Partner:</b> {selected.partner}</p>
+
+            <button className="close-btn" onClick={() => setSelected(null)}>Tutup</button>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL EDIT */}
+      {editing && (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <h3>Edit Event</h3>
+
+            <form onSubmit={handleEditSubmit}>
+              <label>Nama Event</label>
+              <input 
+                value={editing.nama}
+                onChange={(e) => setEditing({ ...editing, nama: e.target.value })}
+              />
+
+              <label>Tanggal</label>
+              <input 
+                value={editing.tanggal}
+                onChange={(e) => setEditing({ ...editing, tanggal: e.target.value })}
+              />
+
+              <label>Lokasi</label>
+              <input 
+                value={editing.lokasi}
+                onChange={(e) => setEditing({ ...editing, lokasi: e.target.value })}
+              />
+
+              <label>Deskripsi</label>
+              <textarea
+                value={editing.deskripsi}
+                onChange={(e) => setEditing({ ...editing, deskripsi: e.target.value })}
+              />
+
+              <div className="edit-actions">
+                <button type="button" className="cancel-btn" onClick={() => setEditing(null)}>Batal</button>
+                <button type="submit" className="save-btn">Simpan</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
