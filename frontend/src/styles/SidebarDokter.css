@@ -1,3 +1,5 @@
+/* ========================== SIDEBAR WRAPPER ========================== */
+
 .dokter-sidebar {
   width: 240px;
   height: 100vh;
@@ -10,19 +12,24 @@
   top: 0;
   left: 0;
   box-shadow: 3px 0 8px rgba(0, 0, 0, 0.25);
+  z-index: 100;
 }
+
+/* ========================== PROFILE SECTION ========================== */
 
 .doctor-profile {
   text-align: center;
   margin-bottom: 35px;
 }
 
-.doctor-profile img {
-  width: 80px;
-  height: 80px;
+.doctor-photo {
+  width: 95px;
+  height: 95px;
   border-radius: 50%;
+  object-fit: cover;      /* BIAR FOTO RAPIH */
   border: 3px solid white;
   margin-bottom: 10px;
+  box-shadow: 0 3px 10px rgba(255, 255, 255, 0.25);
 }
 
 .doctor-profile h4 {
@@ -36,13 +43,15 @@
   opacity: 0.7;
 }
 
+/* ========================== MENU NAVIGATION ========================== */
+
 .sidebar-menu {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.sidebar-menu a {
+.menu-item {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -51,20 +60,24 @@
   color: #d1d5db;
   border-radius: 10px;
   transition: 0.25s;
+  font-size: 14px;
 }
 
-.sidebar-menu a:hover {
+.menu-item:hover {
   background: #1c2943;
   color: white;
   transform: translateX(4px);
 }
 
-.sidebar-menu a.active {
+/* Active Link */
+.menu-item.active {
   background: #233558;
-  color: #fff;
+  color: #fff !important;
   font-weight: 600;
   box-shadow: inset 0 0 0 1px #3c527a;
 }
+
+/* ========================== LOGOUT BUTTON ========================== */
 
 .logout {
   margin-top: auto;

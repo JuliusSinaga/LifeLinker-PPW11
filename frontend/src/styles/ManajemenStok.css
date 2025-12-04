@@ -1,0 +1,240 @@
+/* ================== MAIN LAYOUT ================== */
+
+.dokter-main {
+  margin-left: 240px;
+  padding: 24px;
+  background: #f5f6f8;
+  min-height: 100vh;
+  width: calc(100% - 240px);
+  box-sizing: border-box;
+}
+
+.stok-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.stok-sub {
+  color: #777;
+  margin-bottom: 18px;
+}
+
+/* ================== CARD WRAPPER ================== */
+
+.stok-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 22px 26px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  margin-bottom: 28px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ================== CARD HEADER ================== */
+
+.stok-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.stok-card-header h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.stok-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* tombol export/add */
+.btn-export {
+  background: #f3f4f6;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  color: #333;
+}
+
+.btn-add {
+  background: #ef5350;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* ================== FILTER BOX (kanan header pendonor) ================== */
+
+.stok-card-header.between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.filter-box {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* date input */
+.filter-input {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+  background: white;
+  font-size: 14px;
+  color: #333;
+}
+
+/* select rumah sakit */
+.filter-select {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+  background: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* focus */
+.filter-input:focus,
+.filter-select:focus {
+  outline: none;
+  border-color: #308dff;
+  box-shadow: 0 0 0 3px rgba(48,141,255,0.08);
+}
+
+/* ================== TABLE ================== */
+
+.stok-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+
+.stok-table thead tr th {
+  text-align: left;
+  padding: 12px 6px;
+  font-size: 14px;
+  color: #555;
+  border-bottom: 1px solid #eee;
+}
+
+.stok-table tbody tr td {
+  padding: 14px 6px;
+  border-bottom: 1px solid #f3f3f3;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+/* ================== PROGRESS BAR ================== */
+
+.progress-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.progress-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.progress-number {
+  font-weight: 700;
+  color: #333;
+  margin-right: 8px;
+}
+
+.progress-bar {
+  width: 200px;
+  height: 10px;
+  border-radius: 8px;
+  background: #e9ecef;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 8px;
+  transition: width 0.5s ease;
+}
+
+/* warna progress */
+.status-aman.progress-fill { background: #4caf50; }
+.status-standar.progress-fill { background: #ff9800; }
+.status-kritikal.progress-fill { background: #e53935; }
+
+/* ================== BADGE STATUS TABLE ================== */
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* status warna */
+.status-aman { background: #e4f7e5; color: #2e7d32; }
+.status-standar { background: #fff2d7; color: #b77800; }
+.status-kritikal { background: #ffe1e1; color: #d32f2f; }
+
+/* pendonor small badges */
+.b-ter { background: #e3f7ff; color: #0277bd; }
+.b-dig { background: #fde4e4; color: #c62828; }
+
+/* ================== ACTION BUTTONS ================== */
+
+.edit-btn,
+.delete-btn {
+  border: none;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.edit-btn { background: #fff6e6; color: #b36b00; margin-right: 8px; }
+.delete-btn { background: #ffd6d6; color: #c62828; }
+
+.delete-btn.small {
+  padding: 6px 10px;
+  font-size: 13px;
+}
+
+/* ================== EMPTY ROW MESSAGE ================== */
+
+.stok-table tbody tr td[colspan="7"] {
+  color: #666;
+  font-style: italic;
+}
+
+/* ================== RESPONSIVE ================== */
+
+@media (max-width: 900px) {
+  .progress-bar { width: 140px; }
+  .filter-box { flex-direction: column; gap: 8px; align-items: stretch; }
+  .filter-input, .filter-select { width: 100%; }
+}
+
+@media (max-width: 600px) {
+  .stok-title { font-size: 22px; }
+  .stok-card { padding: 16px; }
+  .progress-bar { width: 120px; }
+}

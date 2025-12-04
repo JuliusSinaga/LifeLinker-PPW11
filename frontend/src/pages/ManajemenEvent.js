@@ -1,10 +1,8 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import "./ManajemenEvent.css";
+import DokterSidebar from "../components/DokterSidebar";
+import "../styles/ManajemenEvent.css";
 
 export default function ManajemenEvent() {
-  const location = useLocation(); // <-- untuk mendeteksi halaman aktif
-
   const [form, setForm] = useState({
     namaEvent: "",
     tanggalMulai: "",
@@ -59,233 +57,164 @@ export default function ManajemenEvent() {
       targetDonor: "",
       unggahPoster: null,
     });
-
-    console.log("New request created:", newReq);
-    alert("Request event terkirim (simulasi). Implementasikan backend.");
   }
 
   return (
     <div className="dokter-layout">
-      
-      {/* ================= SIDEBAR ================= */}
-      <aside className="dokter-sidebar">
+      <DokterSidebar />
 
-        <div className="doctor-profile">
-          <img src="/images/doctor-avatar.png" alt="dokter" />
-          <h4>Dr. Anastasya</h4>
-          <p>Spesialis Hematologi</p>
-        </div>
-
-        <nav className="dokter-menu">
-
-          <Link
-            to="/dashboard"
-            className={`menu-item ${location.pathname === "/dashboard" ? "active" : ""}`}
-          >
-            Dashboard
-          </Link>
-
-          <Link
-            to="/manajemen-stok"
-            className={`menu-item ${location.pathname === "/manajemen-stok" ? "active" : ""}`}
-          >
-            Manajemen Stok
-          </Link>
-
-          <Link
-            to="/manajemen-event"
-            className={`menu-item ${location.pathname === "/manajemen-event" ? "active" : ""}`}
-          >
-            Manajemen Event
-          </Link>
-
-          <Link
-            to="/konsultasi-edukasi"
-            className={`menu-item ${location.pathname === "/konsultasi-edukasi" ? "active" : ""}`}
-          >
-            Konsultasi & Edukasi
-          </Link>
-
-          <Link
-            to="/profile"
-            className={`menu-item ${location.pathname === "/profile" ? "active" : ""}`}
-          >
-            Profil Saya
-          </Link>
-
-        </nav>
-
-        <button className="dokter-logout">Logout</button>
-      </aside>
-
-      {/* ================= MAIN CONTENT ================= */}
       <main className="dokter-main">
         <h1 className="page-title">Request Event Donor Darah</h1>
 
-        <div className="me-grid">
+        <div className="event-container">
 
-          {/* ================== KOLOM KIRI ================== */}
-          <section className="me-left-col">
-            
-            {/* ==== FORM PEMBUATAN EVENT ==== */}
-            <div className="panel form-panel">
-              <div className="panel-header">
-                <h3>Formulir Pengajuan Event</h3>
+          {/* FORM */}
+          <div className="card event-form-card">
+            <h3 className="card-title">📄 Formulir Pengajuan Event</h3>
+
+            <form onSubmit={handleSubmit} className="event-form">
+
+              <div className="form-group">
+                <label>Nama Event</label>
+                <input 
+                  name="namaEvent"
+                  placeholder="Contoh: Donor Darah Sehat Bersama"
+                  value={form.namaEvent}
+                  onChange={handleChange}
+                />
               </div>
 
-              <form onSubmit={handleSubmit} className="form-body" encType="multipart/form-data">
-
-                <div className="row two">
-                  <div className="field">
-                    <label>Nama Event</label>
-                    <input name="namaEvent" value={form.namaEvent} onChange={handleChange} />
-                  </div>
-
-                  <div className="field">
-                    <label>Lokasi Event</label>
-                    <input name="lokasi" value={form.lokasi} onChange={handleChange} />
-                  </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Tanggal Mulai</label>
+                  <input type="date" name="tanggalMulai" value={form.tanggalMulai} onChange={handleChange} />
                 </div>
 
-                <div className="row two">
-                  <div className="field">
-                    <label>Tanggal Mulai</label>
-                    <input type="date" name="tanggalMulai" value={form.tanggalMulai} onChange={handleChange} />
-                  </div>
-
-                  <div className="field">
-                    <label>Tanggal Selesai</label>
-                    <input type="date" name="tanggalSelesai" value={form.tanggalSelesai} onChange={handleChange} />
-                  </div>
+                <div className="form-group">
+                  <label>Tanggal Selesai</label>
+                  <input type="date" name="tanggalSelesai" value={form.tanggalSelesai} onChange={handleChange} />
                 </div>
-
-                <div className="row two">
-                  <div className="field">
-                    <label>Target Kantong Darah</label>
-                    <input name="targetKantong" value={form.targetKantong} onChange={handleChange} />
-                  </div>
-
-                  <div className="field">
-                    <label>Unggah Poster (Opsional)</label>
-                    <input type="file" name="unggahPoster" onChange={handleChange} />
-                  </div>
-                </div>
-
-                <div className="field">
-                  <label>Deskripsi</label>
-                  <textarea name="deskripsi" value={form.deskripsi} onChange={handleChange} />
-                </div>
-
-                <div className="row two">
-                  <div className="field">
-                    <label>Partner / Sponsor</label>
-                    <input name="partner" value={form.partner} onChange={handleChange} />
-                  </div>
-
-                  <div className="field">
-                    <label>Target Donor</label>
-                    <input name="targetDonor" value={form.targetDonor} onChange={handleChange} />
-                  </div>
-                </div>
-
-                <div className="form-actions">
-                  <button type="submit" className="btn primary">Request Event</button>
-                </div>
-
-              </form>
-            </div>
-
-            {/* ==== TABLE STATUS EVENT ==== */}
-            <div className="panel table-panel">
-              <h4 className="panel-title">Status Pengajuan Event</h4>
-
-              <div className="table-wrap">
-                <table className="styled-table">
-                  <thead>
-                    <tr>
-                      <th>Nama Event</th>
-                      <th>Tanggal</th>
-                      <th>Lokasi</th>
-                      <th>Status</th>
-                      <th>Aksi</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {requests.map((r) => (
-                      <tr key={r.id}>
-                        <td>{r.nama}</td>
-                        <td>{r.tanggal}</td>
-                        <td>{r.lokasi}</td>
-                        <td>
-                          <span className={`status ${
-                            r.status === "Disetujui"
-                              ? "ok"
-                              : r.status === "Menunggu"
-                              ? "pending"
-                              : "fail"
-                          }`}>
-                            {r.status}
-                          </span>
-                        </td>
-                        <td>
-                          <button className="btn sm ghost">View</button>
-                          <button className="btn sm outline">Edit</button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-
-                </table>
               </div>
-            </div>
 
-          </section>
+              <div className="form-group">
+                <label>Lokasi Event</label>
+                <input 
+                  name="lokasi"
+                  placeholder="Contoh: Aula Utama RSUP H. Adam Malik"
+                  value={form.lokasi}
+                  onChange={handleChange}
+                />
+              </div>
 
-          {/* ================= KOLOM KANAN ================= */}
-          <aside className="me-right-col">
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Target Kantong Darah</label>
+                  <input 
+                    name="targetKantong"
+                    placeholder="Contoh: 50"
+                    value={form.targetKantong}
+                    onChange={handleChange}
+                  />
+                </div>
 
-            <div className="panel small right-card">
-              <h4>Event Yang Telah Selesai</h4>
-              <div className="completed-list">
-                {completed.map((e) => (
-                  <div className="completed-item" key={e.id}>
-                    <div>
-                      <div className="completed-title">{e.title}</div>
-                      <div className="completed-date">{e.date}</div>
-                    </div>
-                    <div className="completed-count">
-                      <div className="count">{e.donors}</div>
-                      <div className="label">Donor</div>
-                    </div>
-                  </div>
+                <div className="form-group">
+                  <label>Unggah Poster (Opsional)</label>
+                  <input type="file" name="unggahPoster" onChange={handleChange} />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Deskripsi</label>
+                <textarea 
+                  name="deskripsi"
+                  placeholder="Jelaskan detail mengenai acara ini"
+                  value={form.deskripsi}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Partner / Sponsor</label>
+                  <input 
+                    name="partner"
+                    placeholder="Contoh: IT Del, PMI, Diknas, dll"
+                    value={form.partner}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Target Donor</label>
+                  <input 
+                    name="targetDonor"
+                    placeholder="Contoh: 50"
+                    value={form.targetDonor}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <button className="btn-submit">Request Event</button>
+            </form>
+          </div>
+
+          {/* TABLE */}
+          <div className="card event-table-card">
+            <h3 className="card-title">📊 Status Pengajuan Event</h3>
+
+            <table className="event-table">
+              <thead>
+                <tr>
+                  <th>Nama Event</th>
+                  <th>Tanggal</th>
+                  <th>Lokasi</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {requests.map((r) => (
+                  <tr key={r.id}>
+                    <td>{r.nama}</td>
+                    <td>{r.tanggal}</td>
+                    <td>{r.lokasi}</td>
+                    <td>
+                      <span className={`status-badge ${r.status.toLowerCase()}`}>
+                        {r.status}
+                      </span>
+                    </td>
+                    <td>
+                      <button className="table-btn view">👁 View</button>
+                      <button className="table-btn edit">✏ Edit</button>
+                    </td>
+                  </tr>
                 ))}
-              </div>
+              </tbody>
+            </table>
+          </div>
+
+          {/* EVENT SELESAI */}
+          <div className="card event-completed-card">
+            <h3 className="card-title">🎉 Event Yang Telah Selesai</h3>
+
+            <div className="completed-grid">
+              {completed.map((e) => (
+                <div className="completed-card" key={e.id}>
+                  <div className="completed-top">
+                    <h4>{e.title}</h4>
+                    <p>{e.date}</p>
+                  </div>
+                  <div className="completed-bottom">
+                    <div className="big-number">{e.donors}</div>
+                    <div className="label">Donor Terkumpul</div>
+                  </div>
+                </div>
+              ))}
             </div>
 
-            <div className="panel small right-card">
-              <h4>Ringkasan Cepat</h4>
-              <div className="summary-grid">
-                <div className="summary-card sc-red">
-                  <div className="n">127</div>
-                  <div className="t">Donor Terkumpul</div>
-                </div>
-                <div className="summary-card sc-blue">
-                  <div className="n">152</div>
-                  <div className="t">Unit Darah</div>
-                </div>
-                <div className="summary-card sc-green">
-                  <div className="n">89</div>
-                  <div className="t">Pendonor Hari Ini</div>
-                </div>
-                <div className="summary-card sc-yellow">
-                  <div className="n">15</div>
-                  <div className="t">Event Aktif</div>
-                </div>
-              </div>
-            </div>
-
-          </aside>
+          </div>
 
         </div>
       </main>

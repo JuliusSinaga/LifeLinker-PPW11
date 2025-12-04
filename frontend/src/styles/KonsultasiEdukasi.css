@@ -1,239 +1,356 @@
-/* MAIN LAYOUT */
+/* ========== BASE LAYOUT ========== */
 .dokter-main {
-  margin-left: 250px;
-  padding: 25px;
+  margin-left: 240px;
+  padding: 24px;
+  background: #f6f7f9;
+  min-height: 100vh;
 }
 
 .page-title {
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 700;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 
-/* ========== CHAT SECTION ========== */
-.chat-container {
-  display: flex;
+/* =====================================================================================
+   ███ 1. CHAT SECTION (LEFT CHAT LIST + RIGHT CHAT WINDOW)
+===================================================================================== */
+
+.chat-section {
+  display: grid;
+  grid-template-columns: 280px 1fr;
   gap: 20px;
-  margin-bottom: 25px;
+  background: white;
+  padding: 22px;
+  border-radius: 16px;
+  margin-bottom: 28px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  border: 1px solid #f1dada;
 }
 
-.chat-list {
-  width: 30%;
-  background: #fff;
-  padding: 18px;
-  border-radius: 12px;
+/* CHAT LEFT LIST */
+.chat-left {
+  border-right: 1px solid #eee;
+  padding-right: 18px;
 }
 
-.search-chat {
+.chat-search {
   width: 100%;
-  padding: 10px;
-  border-radius: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
   border: 1px solid #ddd;
-  margin-bottom: 16px;
+  margin-bottom: 15px;
 }
 
-.chat-user {
-  display: flex;
-  gap: 12px;
-  padding: 10px;
-  border-radius: 12px;
+.chat-item {
+  padding: 12px;
+  background: #f7f7f7;
+  border-radius: 10px;
   cursor: pointer;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+  transition: 0.2s;
 }
 
-.chat-user.active {
-  background: #dfeeff;
+.chat-item:hover {
+  background: #e3eefc;
 }
 
-.chat-user img {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
+.chat-item.active {
+  background: #d5e8ff;
+  border-left: 4px solid #4a90e2;
 }
 
-.chat-view {
-  flex: 1;
-  background: #fff;
-  padding: 18px;
-  border-radius: 12px;
+.chat-item h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.chat-item p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+/* CHAT RIGHT WINDOW */
+.chat-right {
   display: flex;
   flex-direction: column;
+  /* jangan fix height agar input tidak nempel memenuhi ruang */
+  /* height: 360px;  <-- removed */
 }
 
+/* header */
 .chat-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  font-weight: 700;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 10px;
 }
 
-.chat-header img {
-  width: 48px;
-  border-radius: 50%;
-}
-
-.chat-messages {
-  margin-top: 20px;
-  height: 260px;
+/* chat messages area: beri max-height + scroll */
+.chat-window {
+  flex: 1;
+  max-height: 340px; /* batasi tinggi area pesan */
   overflow-y: auto;
   padding-right: 10px;
 }
 
-.bubble {
-  padding: 12px 15px;
-  border-radius: 16px;
-  max-width: 70%;
-  margin-bottom: 12px;
+/* bubble */
+.chat-bubble {
+  padding: 12px 16px;
+  margin: 8px 0;
+  border-radius: 12px;
+  max-width: 75%;
   font-size: 14px;
 }
 
-.bubble.patient {
-  background: #f1f1f1;
+.chat-bubble.patient {
+  background: #eef2ff;
   align-self: flex-start;
 }
 
-.bubble.doctor {
-  background: #d7f4ff;
+.chat-bubble.doctor {
+  background: #c7edff;
   align-self: flex-end;
 }
 
-.chat-input-area {
+/* ================= CHAT INPUT (PERBAIKAN) ================= */
+
+/* gunakan flex agar textarea & tombol sejajar dan tidak membesar */
+.chat-input {
   display: flex;
-  gap: 10px;
-  margin-top: auto;
+  gap: 12px;
+  align-items: center;
+  margin-top: 12px;
 }
 
-.chat-input-area input {
+/* textarea yang pendek, tidak auto-expand secara berlebihan */
+.reply-textarea {
   flex: 1;
-  padding: 12px;
+  min-height: 44px;     /* tinggi awal */
+  max-height: 120px;    /* maksimal jika user resize (kita matikan resize vertikal) */
+  padding: 10px 14px;
   border-radius: 12px;
-  border: 1px solid #ddd;
-}
-
-.send-btn {
-  background: #4a8bff;
-  color: white;
-  border: none;
-  padding: 12px 18px;
-  border-radius: 12px;
-  cursor: pointer;
-}
-
-/* ========== SCHEDULE SECTION ========== */
-.schedule-container {
+  border: 1px solid #ccc;
+  font-size: 14px;
+  resize: none;         /* non-aktifkan resize vertical — ubah ke "vertical" kalau mau */
+  overflow: auto;
+  line-height: 1.3;
   background: #fff;
-  padding: 20px;
-  border-radius: 12px;
-  margin-bottom: 25px;
 }
 
-.schedule-header {
+/* tombol kirim bulat kanan */
+.send-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: #2b95f7;
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  box-shadow: 0 4px 8px rgba(43,149,247,0.18);
+}
+
+/* hover effects */
+.send-btn:hover { transform: translateY(-1px); }
+
+/* =====================================================================================
+   ███ 2. VIDEO CONSULTATION SESSIONS  (tidak diubah)
+===================================================================================== */
+
+/* session-section, header, tabs, session-card ... (salin dari file lama) */
+.session-section {
+  background: white;
+  padding: 22px;
+  border-radius: 16px;
+  margin-bottom: 28px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  border: 1px solid #f1dada;
+}
+
+.session-header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+}
+
+.session-header h2 {
+  font-size: 22px;
+  font-weight: 700;
 }
 
 .tabs {
   display: flex;
   gap: 18px;
-}
-
-.tab {
-  cursor: pointer;
   font-weight: 600;
-  color: #666;
 }
 
-.tab.active {
-  color: #e74c3c;
+.tabs span {
+  cursor: pointer;
+  opacity: 0.6;
 }
 
-.schedule-card {
-  margin-top: 20px;
-  padding: 18px;
+.tabs .active {
+  color: red;
+  opacity: 1;
+}
+
+.session-card {
+  background: white;
   border: 1px solid #eee;
-  border-radius: 12px;
+  padding: 18px;
+  margin-top: 18px;
+  border-radius: 14px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.06);
 }
 
-.schedule-actions {
+.session-title {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.session-doctor {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.session-topic {
+  margin: 8px 0;
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+.session-details {
+  display: flex;
+  gap: 22px;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.session-details a {
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+.session-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-top: 12px;
+  gap: 12px;
+  margin-top: 18px;
 }
 
-.btn {
+.btn-start {
+  background: #ef4444;
+  border: none;
+  padding: 8px 14px;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-edit {
+  background: #ddd;
   border: none;
   padding: 8px 12px;
   border-radius: 8px;
   cursor: pointer;
 }
 
-.start {
-  background: #e74c3c;
-  color: white;
+.btn-cancel {
+  background: #fee2e2;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  color: #b91c1c;
+  cursor: pointer;
 }
 
-.edit {
-  background: #dcdcdc;
-}
-
-.cancel {
-  background: #ffdddd;
-}
-
-.link {
-  text-decoration: none;
-  color: #0077ff;
-}
-
-.status {
+.session-status {
   margin-left: auto;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
   font-weight: 600;
 }
 
-.status.sukses {
-  background: #eaf7ea;
-  color: #3aa85b;
+.session-status.green {
+  background: #d1fae5;
+  color: #047857;
 }
 
-.status.ongoing {
-  background: #fff6d9;
-  color: #c79a1b;
+.session-status.yellow {
+  background: #fef3c7;
+  color: #b45309;
 }
 
-/* ========== FAQ SECTION ========== */
-.faq-container {
-  background: #fff;
-  padding: 20px;
-  border-radius: 12px;
+/* =====================================================================================
+   ███ 3. FAQ MANAGEMENT (tidak diubah)
+===================================================================================== */
+
+.faq-section {
+  background: white;
+  padding: 22px;
+  border-radius: 16px;
+  margin-bottom: 28px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  border: 1px solid #f1dada;
 }
 
-.faq-controls {
+.faq-filter {
   display: flex;
-  gap: 10px;
+  gap: 14px;
   margin-bottom: 20px;
 }
 
-.faq-controls input,
-.faq-controls select {
+.faq-filter select,
+.faq-filter input {
   padding: 10px;
-  border: 1px solid #ccc;
   border-radius: 8px;
+  border: 1px solid #ccc;
 }
 
-.faq-item {
-  border-bottom: 1px solid #eee;
-  padding: 12px 0;
+.faq-card {
+  background: white;
+  border: 1px solid #eee;
+  padding: 18px;
+  border-radius: 14px;
+  margin-bottom: 14px;
 }
 
-.faq-btn-group {
+.faq-q {
   display: flex;
-  gap: 10px;
-  margin-top: 8px;
+  justify-content: space-between;
 }
 
-.delete {
-  background: #ffdddd;
+.faq-actions button {
+  background: #ddd;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.faq-actions .delete {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.faq-a {
+  margin-top: 8px;
+  opacity: 0.8;
+  font-size: 14px;
+}
+
+/* responsive tweak */
+@media (max-width: 900px) {
+  .chat-section { grid-template-columns: 1fr; }
+  .chat-left { border-right: none; padding-right: 0; border-bottom: 1px solid #eee; margin-bottom: 12px; }
+  .reply-textarea { min-height: 48px; }
+  .chat-window { max-height: 300px; }
 }

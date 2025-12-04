@@ -1,0 +1,162 @@
+.dokter-main {
+  margin-left: 240px;
+  padding: 30px 40px;
+  background: #f7f7f7;
+  min-height: 100vh;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 25px;
+}
+
+.event-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* ===================== CARD ===================== */
+.card {
+  background: #fff;
+  padding: 25px 30px;
+  border-radius: 16px;
+  border: 1px solid #eee;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+/* ===================== FORM ===================== */
+.event-form .form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.event-form label {
+  font-weight: 600;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.event-form input,
+.event-form textarea {
+  border: 1.5px solid #dcdcdc;
+  padding: 10px 12px;
+  font-size: 14px;
+  border-radius: 10px;
+  outline: none;
+}
+
+.event-form textarea {
+  min-height: 110px;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+}
+
+/* Submit Button */
+.btn-submit {
+  background: #308dff;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 10px;
+  border: none;
+  margin-top: 10px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.btn-submit:hover {
+  background: #2374d9;
+}
+
+/* ===================== TABLE ===================== */
+.event-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.event-table th {
+  background: #fafafa;
+  padding: 12px;
+  font-size: 14px;
+  text-align: left;
+}
+
+.event-table td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 40px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-badge.disetujui { background: #d1f7d6; color: #1c7c2b; }
+.status-badge.menunggu { background: #fff4d1; color: #ba8b00; }
+.status-badge.ditolak  { background: #ffd6d6; color: #c72f2f; }
+
+.table-btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 4px 6px;
+  font-size: 14px;
+}
+
+.table-btn.view { color: #308dff; }
+.table-btn.edit { color: #f39c12; }
+
+/* ===================== COMPLETED EVENTS ===================== */
+.completed-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 20px;
+}
+
+.completed-card {
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  background: #fff;
+}
+
+.completed-top h4 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.completed-top p {
+  font-size: 13px;
+  color: #777;
+}
+
+.completed-bottom {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.big-number {
+  font-size: 32px;
+  font-weight: 700;
+  color: #d9534f;
+}
+
+.label {
+  font-size: 13px;
+  color: #777;
+  margin-top: -5px;
+}
