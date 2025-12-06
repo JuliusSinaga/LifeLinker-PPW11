@@ -1,243 +1,136 @@
-/* =======================
-   ROOT & GLOBAL
-========================== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Inter", sans-serif;
-}
+/* ======================== */
+/*   LAYOUT UTAMA DASHBOARD */
+/* ======================== */
 
-body {
-  background: #f5f5f5;
-}
-
-/* =======================
-   MAIN WRAPPER
-========================== */
 .dashboard-admin {
   display: flex;
-  height: 100vh;
-  overflow: hidden;
+  background: #f5f7fa;
+  min-height: 100vh;
 }
 
-/* =======================
-    SIDEBAR
-========================== */
-.sidebar {
-  width: 250px;
-  background: #1f1f1f;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  padding-top: 20px;
-}
-
-.sidebar-header {
-  padding: 0 20px 20px 20px;
-  border-bottom: 1px solid #333;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.logo-icon {
-  background: #dc2626;
-  padding: 10px;
-  border-radius: 10px;
-  font-size: 20px;
-}
-
-.logo-text .logo-main {
-  font-weight: 700;
-  font-size: 18px;
-}
-
-.logo-text .logo-sub {
-  font-size: 12px;
-  color: #bdbdbd;
-}
-
-/* Sidebar Navigation */
-.sidebar-nav {
-  margin-top: 15px;
-  display: flex;
-  flex-direction: column;
-}
-
-.nav-item {
-  padding: 12px 20px;
-  color: #e5e5e5;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  transition: 0.2s ease;
-}
-
-.nav-item:hover {
-  background: #333333;
-}
-
-.nav-item.active {
-  background: #dc2626;
-  color: white;
-  font-weight: 600;
-}
-
-.sidebar-footer {
-  margin-top: auto;
-  border-top: 1px solid #333;
-}
-
-.logout {
-  color: #ff6b6b !important;
-}
-
-/* =======================
-    MAIN CONTENT AREA
-========================== */
+/* MAIN CONTENT MENYESUAIKAN SIDEBAR */
 .main-content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 25px 35px;
-  background: #f7f8fa;
+  margin-left: 240px; /* Lebar SidebarAdmin */
+  padding: 25px;
+  width: calc(100% - 240px);
+  transition: 0.3s ease;
+}
+
+.content-header {
+  margin-bottom: 20px;
 }
 
 .content-header h1 {
   font-size: 26px;
-  margin-bottom: 20px;
-  font-weight: 700;
-  color: #222;
+  font-weight: 800;
+  color: #1f2937;
 }
 
-/* =======================
-   METRIC CARDS SECTION
-========================== */
+/* ======================== */
+/*       METRIC CARDS       */
+/* ======================== */
+
 .metrics-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
-  margin-bottom: 25px;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 15px;
+  margin-bottom: 30px;
 }
 
 .metric-card {
   background: white;
-  padding: 18px 20px;
-  border-radius: 12px;
+  padding: 18px;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border: 1px solid #efefef;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
 
 .metric-value {
-  font-size: 26px;
-  font-weight: 700;
+  font-size: 22px;
+  font-weight: 800;
   color: #dc2626;
 }
 
 .metric-title {
   font-size: 14px;
   font-weight: 600;
-  color: #333;
 }
 
 .metric-subtitle {
   font-size: 12px;
-  color: #777;
+  color: #6b7280;
 }
 
 .metric-icon {
   font-size: 26px;
-  opacity: 0.8;
 }
 
-/* =======================
-   STOK DARAH CARD
-========================== */
+/* ======================== */
+/*     STOK DARAH SECTION   */
+/* ======================== */
+
 .blood-stock-card {
   background: white;
   padding: 25px;
-  border-radius: 12px;
-  margin-bottom: 25px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-}
-
-.blood-stock-card h3 {
-  margin-bottom: 18px;
-  font-size: 18px;
-  color: #222;
+  border-radius: 16px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
 }
 
 .blood-types-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 18px;
+  gap: 15px;
+  margin-top: 15px;
 }
 
 .blood-type-card {
-  padding: 20px 10px;
-  text-align: center;
+  padding: 18px;
+  border-radius: 14px;
   background: #fafafa;
-  border-radius: 10px;
-  border-left: 6px solid;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  text-align: center;
+  font-weight: 700;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
 }
-
-.blood-type-card.red { border-left-color: #dc2626; }
-.blood-type-card.green { border-left-color: #16a34a; }
-.blood-type-card.orange { border-left-color: #ea580c; }
-.blood-type-card.blue { border-left-color: #2563eb; }
 
 .blood-count {
-  font-size: 28px;
-  font-weight: 700;
-  color: #333;
+  font-size: 26px;
+  font-weight: 800;
 }
 
-.blood-type {
-  font-size: 14px;
-  color: #777;
-}
+/* WARNA */
+.red { border-left: 4px solid #dc2626; }
+.green { border-left: 4px solid #16a34a; }
+.orange { border-left: 4px solid #f97316; }
+.blue { border-left: 4px solid #2563eb; }
 
-/* =======================
-   GRID BAWAH (CHART + EVENT + NOTIF)
-========================== */
+/* ======================== */
+/*     GRID BAWAH (CHART)   */
+/* ======================== */
+
 .bottom-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: 22px;
-  margin-bottom: 25px;
+  gap: 20px;
 }
 
-.left-column {
-  display: flex;
-  flex-direction: column;
-  gap: 22px;
-}
+/* LEFT COLUMN */
+.left-column {}
 
-/* =======================
-   CHART CARD (FIXED)
-========================== */
+/* CHART CARD */
 .chart-card {
   background: white;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  padding: 22px;
+  border-radius: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
 }
 
 .chart-container {
   width: 100%;
-  height: 260px;
-  background: #fafafa;
-  border-radius: 10px;
-  padding: 15px;
-  overflow: visible; /* FIX AGAR GRAFIK TIDAK TERPOTONG */
+  height: 300px;
 }
 
 .chart-svg {
@@ -245,145 +138,98 @@ body {
   height: 100%;
 }
 
-.chart-line {
-  stroke: #dc2626;
-  stroke-width: 3;
-  fill: none;
-}
+/* ======================== */
+/*      NOTIFICATION LIST   */
+/* ======================== */
 
-.chart-dot {
-  fill: #dc2626;
-}
-
-/* =======================
-   EVENT CARD
-========================== */
-.events-card {
-  background: white;
-  padding: 22px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-}
-
-.event-item {
-  background: #f5f5f5;
-  padding: 15px;
-  border-radius: 10px;
-  border: 1px solid #e5e5e5;
-  margin-bottom: 12px;
-}
-
-.event-title {
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.event-details {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 6px;
-  font-size: 13px;
-  color: #666;
-}
-
-/* =======================
-   NOTIFICATION CARD
-========================== */
 .notifications-card {
   background: white;
   padding: 22px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+}
+
+.notifications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .notification-card {
-  padding: 15px;
-  border-radius: 10px;
-  margin-bottom: 12px;
-  border-left: 4px solid;
+  padding: 14px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
 }
 
+/* WARNA NOTIF */
 .notification-card.blue {
   background: #dbeafe;
-  border-left-color: #3b82f6;
+  border-left: 4px solid #2563eb;
 }
 
 .notification-card.yellow {
-  background: #fef3c7;
-  border-left-color: #f59e0b;
+  background: #fef9c3;
+  border-left: 4px solid #facc15;
 }
 
 .notification-card.red {
   background: #fee2e2;
-  border-left-color: #ef4444;
+  border-left: 4px solid #dc2626;
 }
 
 .notification-card.pink {
-  background: #fce7f3;
-  border-left-color: #ec4899;
+  background: #ffe4e6;
+  border-left: 4px solid #f43f5e;
 }
 
-.notification-title {
-  font-size: 14px;
-  font-weight: 600;
+/* ======================== */
+/*     EVENTS SECTION       */
+/* ======================== */
+
+.events-card {
+  background: white;
+  padding: 22px;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
 }
 
-.notification-time {
-  font-size: 12px;
-  margin-top: 5px;
-  color: #666;
+.events-list {
+  margin-top: 15px;
 }
 
-/* =======================
-   RESPONSIVE
-========================== */
-@media (max-width: 1200px) {
+.event-item {
+  padding: 12px 14px;
+  background: #f9fafb;
+  margin-bottom: 10px;
+  border-radius: 10px;
+}
+
+.event-title {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.event-details {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* ======================== */
+/*  RESPONSIVE FIX MOBILE   */
+/* ======================== */
+
+@media (max-width: 992px) {
   .metrics-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  .blood-types-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+
   .bottom-grid {
     grid-template-columns: 1fr;
   }
-}
 
-@media (max-width: 768px) {
-  .dashboard-admin {
-    flex-direction: column;
-  }
-  .sidebar {
+  .main-content {
+    margin-left: 0;
     width: 100%;
-    height: auto;
   }
-}
-
-.chart-container {
-  width: 100%;
-  height: 320px;
-  background: #fafafa;
-  border-radius: 12px;
-  padding: 20px;
-  overflow: hidden;
-  position: relative;
-}
-
-/* Grid dibuat dari background CSS */
-.chart-container::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(#e5e7eb 1px, transparent 1px),
-    linear-gradient(90deg, #e5e7eb 1px, transparent 1px);
-  background-size: 50px 50px;
-  z-index: 0;
-}
-
-.chart-svg {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  z-index: 2;
 }

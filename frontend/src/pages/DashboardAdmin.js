@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import SidebarAdmin from "../components/SidebarAdmin";   // ⬅️ PENTING: Import SidebarAdmin
 import "./DashboardAdmin.css";
 
 function MetricCard({ value, title, subtitle, icon }) {
@@ -79,32 +79,8 @@ export default function DashboardAdmin() {
   return (
     <div className="dashboard-admin">
 
-      {/* SIDEBAR */}
-      <aside className="sidebar">
-        <div className="sidebar-header">
-          <div className="logo">
-            <div className="logo-icon">❤️</div>
-            <div className="logo-text">
-              <div className="logo-main">LifeLinker</div>
-              <div className="logo-sub">Admin</div>
-            </div>
-          </div>
-        </div>
-
-        <nav className="sidebar-nav">
-          <Link to="/dashboard-admin" className="nav-item active">📊 Dashboard</Link>
-          <Link to="/manajemen-dokter" className="nav-item">👨‍⚕️ Manajemen Dokter</Link>
-          <Link to="/manajemen-user" className="nav-item">👤 Manajemen User</Link>
-          <Link to="/manajemen-event" className="nav-item">📋 Manajemen Event</Link>
-          <Link to="/manajemen-pendonor" className="nav-item">🩸 Manajemen Pendonor</Link>
-          <Link to="/laporan" className="nav-item">📈 Laporan</Link>
-          <Link to="/profile-admin" className="nav-item">👤 Profile</Link>
-        </nav>
-
-        <div className="sidebar-footer">
-          <Link to="/logout" className="nav-item logout">🚪 Logout</Link>
-        </div>
-      </aside>
+      {/* 🔥 Sidebar Bawaan Dokter Diganti SidebarAdmin */}
+      <SidebarAdmin />
 
       {/* MAIN CONTENT */}
       <main className="main-content">
@@ -112,10 +88,12 @@ export default function DashboardAdmin() {
           <h1>Dashboard Administrasi</h1>
         </header>
 
+        {/* METRIC CARDS */}
         <div className="metrics-grid">
           {metrics.map((m, i) => <MetricCard key={i} {...m} />)}
         </div>
 
+        {/* BLOOD STOCK */}
         <div className="blood-stock-card">
           <h3>Stok Darah Terkini</h3>
           <div className="blood-types-grid">
@@ -123,55 +101,55 @@ export default function DashboardAdmin() {
           </div>
         </div>
 
+        {/* BOTTOM GRID */}
         <div className="bottom-grid">
 
           {/* LEFT COLUMN */}
           <div className="left-column">
 
-            {/* GRAPH */}
+            {/* CHART */}
             <div className="chart-card">
-  <h4>Perkembangan Stok Darah</h4>
-  <div className="chart-container">
-  <svg
-    className="chart-svg"
-    viewBox="0 0 800 300"
-    preserveAspectRatio="xMidYMid meet"
-  >
-    {/* Garis Chart */}
-    <polyline
-      fill="none"
-      stroke="#dc2626"
-      strokeWidth="6"
-      points="
-        80,230 
-        160,180 
-        240,150 
-        320,130 
-        400,160 
-        480,140 
-        560,170 
-        640,150
-      "
-    />
+              <h4>Perkembangan Stok Darah</h4>
 
-    {/* Titik Chart */}
-    <circle cx="80" cy="230" r="10" fill="#dc2626" />
-    <circle cx="160" cy="180" r="10" fill="#dc2626" />
-    <circle cx="240" cy="150" r="10" fill="#dc2626" />
-    <circle cx="320" cy="130" r="10" fill="#dc2626" />
-    <circle cx="400" cy="160" r="10" fill="#dc2626" />
-    <circle cx="480" cy="140" r="10" fill="#dc2626" />
-    <circle cx="560" cy="170" r="10" fill="#dc2626" />
-    <circle cx="640" cy="150" r="10" fill="#dc2626" />
-  </svg>
-</div>
-            </div>    
+              <div className="chart-container">
+                <svg
+                  className="chart-svg"
+                  viewBox="0 0 800 300"
+                  preserveAspectRatio="xMidYMid meet"
+                >
+                  <polyline
+                    fill="none"
+                    stroke="#dc2626"
+                    strokeWidth="6"
+                    points="
+                      80,230 
+                      160,180 
+                      240,150 
+                      320,130 
+                      400,160 
+                      480,140 
+                      560,170 
+                      640,150
+                    "
+                  />
 
-
+                  {/* DOTS */}
+                  <circle cx="80" cy="230" r="10" fill="#dc2626" />
+                  <circle cx="160" cy="180" r="10" fill="#dc2626" />
+                  <circle cx="240" cy="150" r="10" fill="#dc2626" />
+                  <circle cx="320" cy="130" r="10" fill="#dc2626" />
+                  <circle cx="400" cy="160" r="10" fill="#dc2626" />
+                  <circle cx="480" cy="140" r="10" fill="#dc2626" />
+                  <circle cx="560" cy="170" r="10" fill="#dc2626" />
+                  <circle cx="640" cy="150" r="10" fill="#dc2626" />
+                </svg>
+              </div>
+            </div>
 
             {/* EVENTS */}
             <div className="events-card">
               <h4>Event per Bulan</h4>
+
               <div className="events-list">
                 {events.map((e, i) => <EventItem key={i} {...e} />)}
               </div>
@@ -179,9 +157,10 @@ export default function DashboardAdmin() {
 
           </div>
 
-          {/* RIGHT COLUMN */}
+          {/* RIGHT COLUMN - NOTIFICATIONS */}
           <div className="notifications-card">
             <h4>Notifikasi Terbaru</h4>
+
             <div className="notifications-list">
               {notifications.map((n, i) => <NotificationCard key={i} {...n} />)}
             </div>
