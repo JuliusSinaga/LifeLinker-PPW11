@@ -36,6 +36,7 @@ import ManajemenPendonor from "./pages/ManajemenPendonor";
 import Laporan from "./pages/Laporan";
 import ProfilAdmin from "./pages/ProfilAdmin";
 import Logout from "./pages/Logout";
+import Admin from "./pages/Admin";
 
 // === Dokter Dashboard Pages ===
 import DashboardDokter from "./pages/DashboardDokter";
@@ -117,6 +118,7 @@ function AppContent() {
           <Route path="/laporan" element={<Laporan />} />
           <Route path="/profil-admin" element={<ProfilAdmin />} />
           <Route path="/logout" element={<Logout />} />
+          <Route path="/admin" element={<Admin />} />
 
           {/* === Dokter Dashboard === */}
           <Route path="/dashboard" element={<DashboardDokter />} />

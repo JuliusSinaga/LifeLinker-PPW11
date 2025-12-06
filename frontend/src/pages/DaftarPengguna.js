@@ -235,6 +235,7 @@ export default function DaftarPengguna() {
             </div>
           </section>
 
+          {/* ❗ TOMBOL YANG DIUBAH */}
           <button type="submit" className="btn-submit">
             Buat Akun
           </button>
