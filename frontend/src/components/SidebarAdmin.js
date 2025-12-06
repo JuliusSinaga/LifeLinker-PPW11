@@ -52,11 +52,18 @@ export default function SidebarAdmin() {
             Manajemen User
           </Link>
 
-          <Link to="/manajemen-event" className={active("/manajemen-event")}>
+          {/* 🔥 ROUTE DIBENARKAN SESUAI PERMINTAAN */}
+          <Link
+            to="/manajement-event-admin"
+            className={active("/manajement-event-admin")}
+          >
             Manajemen Event
           </Link>
 
-          <Link to="/manajemen-pendonor" className={active("/manajemen-pendonor")}>
+          <Link
+            to="/manajemen-pendonor"
+            className={active("/manajemen-pendonor")}
+          >
             Manajemen Pendonor
           </Link>
 

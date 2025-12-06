@@ -37,6 +37,8 @@ import Laporan from "./pages/Laporan";
 import ProfilAdmin from "./pages/ProfilAdmin";
 import Logout from "./pages/Logout";
 import Admin from "./pages/Admin";
+import ManajementEventAdmin from "./pages/ManajementEventAdmin";
+import ProfileAdmin from "./pages/ProfileAdmin";
 
 // === Dokter Dashboard Pages ===
 import DashboardDokter from "./pages/DashboardDokter";
@@ -119,6 +121,8 @@ function AppContent() {
           <Route path="/profil-admin" element={<ProfilAdmin />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/manajement-event-admin" element={<ManajementEventAdmin />} />
+          <Route path="/profile-admin" element={<ProfileAdmin />} />
 
           {/* === Dokter Dashboard === */}
           <Route path="/dashboard" element={<DashboardDokter />} />

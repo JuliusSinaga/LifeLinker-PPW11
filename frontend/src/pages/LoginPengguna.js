@@ -9,7 +9,6 @@ const LoginPengguna = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    // nanti dihubungkan ke backend
     navigate("/home");
   };
 
@@ -17,6 +16,7 @@ const LoginPengguna = () => {
     <>
       <div className="login-container">
         <div className="login-card">
+
           {/* Logo */}
           <div className="logo-wrapper">
             <img
@@ -41,6 +41,7 @@ const LoginPengguna = () => {
             >
               Pengguna
             </button>
+
             <button
               className={role === "dokter" ? "role-btn active" : "role-btn"}
               onClick={() => {
@@ -49,15 +50,6 @@ const LoginPengguna = () => {
               }}
             >
               Dokter
-            </button>
-            <button
-              className={role === "admin" ? "role-btn active" : "role-btn"}
-              onClick={() => {
-                setRole("admin");
-                navigate("/login-admin");
-              }}
-            >
-              Admin
             </button>
           </div>
 
@@ -82,7 +74,7 @@ const LoginPengguna = () => {
 
           <div className="divider"><span>ATAU</span></div>
 
-          {/* Login dengan Google */}
+          {/* Login Google */}
           <button className="google-btn">
             <img
               src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png"

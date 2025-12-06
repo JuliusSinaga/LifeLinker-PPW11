@@ -186,3 +186,10 @@
 .confirm-logout:hover {
   background: #c0392b;
 }
+
+/* ===== REMOVE RED LINE BEFORE LOGO ===== */
+.admin-logo-title::before,
+.admin-logo-text-group::before,
+.admin-header-logo-box::before {
+  content: none !important;
+}

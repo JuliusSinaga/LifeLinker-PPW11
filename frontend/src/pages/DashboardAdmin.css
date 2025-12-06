@@ -8,9 +8,9 @@
   min-height: 100vh;
 }
 
-/* MAIN CONTENT MENYESUAIKAN SIDEBAR */
+/* MAIN CONTENT */
 .main-content {
-  margin-left: 240px; /* Lebar SidebarAdmin */
+  margin-left: 240px;
   padding: 25px;
   width: calc(100% - 240px);
   transition: 0.3s ease;
@@ -93,18 +93,26 @@
   text-align: center;
   font-weight: 700;
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
+  color: #1f2937 !important;   /* FIX ANGKA HILANG */
 }
 
 .blood-count {
   font-size: 26px;
   font-weight: 800;
+  color: #1f2937 !important;   /* FIX ANGKA */
 }
 
-/* WARNA */
-.red { border-left: 4px solid #dc2626; }
-.green { border-left: 4px solid #16a34a; }
-.orange { border-left: 4px solid #f97316; }
-.blue { border-left: 4px solid #2563eb; }
+.blood-type {
+  font-size: 14px;
+  margin-top: 4px;
+  color: #4b5563 !important;
+}
+
+/* WARNA BORDER KHUSUS */
+.blood-red { border-left: 4px solid #dc2626; }
+.blood-green { border-left: 4px solid #16a34a; }
+.blood-orange { border-left: 4px solid #f97316; }
+.blood-blue { border-left: 4px solid #2563eb; }
 
 /* ======================== */
 /*     GRID BAWAH (CHART)   */
@@ -116,10 +124,6 @@
   gap: 20px;
 }
 
-/* LEFT COLUMN */
-.left-column {}
-
-/* CHART CARD */
 .chart-card {
   background: white;
   padding: 22px;
@@ -136,6 +140,16 @@
 .chart-svg {
   width: 100%;
   height: 100%;
+}
+
+.chart-line {
+  stroke: #dc2626;
+  stroke-width: 6;
+  fill: none;
+}
+
+.chart-dot {
+  fill: #dc2626;
 }
 
 /* ======================== */
@@ -162,7 +176,6 @@
   font-weight: 600;
 }
 
-/* WARNA NOTIF */
 .notification-card.blue {
   background: #dbeafe;
   border-left: 4px solid #2563eb;
