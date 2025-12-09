@@ -6,19 +6,13 @@ import (
 	"net/http"
 	"os"
 
-<<<<<<< HEAD
-	"github.com/gorilla/mux"
-	"github.com/rs/cors"
-	"github.com/username/life-linker/controllers"
-=======
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 
-	// Import routes dan database
+	// Import routes dan database dari module Anda
 	"github.com/JuliusSinaga/LifeLinker-PPW11/backend/database"
 	"github.com/JuliusSinaga/LifeLinker-PPW11/backend/routes"
->>>>>>> c880066065f9c4509d58d8c79be0c7c87cd6a011
 )
 
 func main() {
@@ -27,17 +21,6 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-<<<<<<< HEAD
-	router.HandleFunc("/users", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "Berhasil menerima request dari React 📨")
-	}).Methods("POST")
-
-	handler := cors.AllowAll().Handler(router)
-
-	fmt.Println("Server Berjalan 🚀 di http://localhost:8080")
-	log.Fatal(http.ListenAndServe(":8080", handler))
-}
-=======
 	// 2. Connect Database
 	database.ConnectDB()
 
@@ -54,7 +37,6 @@ func main() {
 	}))
 
 	// 5. Setup Routes (PANGGIL FUNGSI DARI FOLDER ROUTES)
-	// Ini menggantikan puluhan baris kode yang tadi ada di sini
 	routes.SetupRoutes(router)
 
 	// 6. Test Route Sederhana
@@ -70,4 +52,3 @@ func main() {
 	fmt.Println("✅ Server berjalan di http://localhost:" + port)
 	router.Run(":" + port)
 }
->>>>>>> c880066065f9c4509d58d8c79be0c7c87cd6a011

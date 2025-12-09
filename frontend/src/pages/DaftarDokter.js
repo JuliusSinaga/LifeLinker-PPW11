@@ -1,20 +1,23 @@
-// src/pages/DaftarDokter.jsx
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "./DaftarDokter.css";
-import { Link } from "react-router-dom";
+import axiosClient from "../service/axiosClient"; // Aktifkan jika backend siap
 
 export default function DaftarDokter() {
+  const navigate = useNavigate();
+  const [notif, setNotif] = useState({ show: false, type: "", message: "" });
+
   const [form, setForm] = useState({
     email: "",
     password: "",
-    fullName: "",
-    strNumber: "",
+    name: "",          
+    str_number: "",    
     specialization: "",
-    hospital: "",
-    birthDate: "",
-    gender: "",
-    phone: "",
-    city: "",
+    hospital: "",      
+    birth_date: "",    
+    gender: "",        
+    phone: "",         
+    city: "",          
   });
 
   const handleChange = (e) => {
@@ -22,28 +25,86 @@ export default function DaftarDokter() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // simple required validation: enable button only if required fields filled
   const isValid =
     form.email.trim() !== "" &&
     form.password.trim() !== "" &&
-    form.fullName.trim() !== "" &&
-    form.strNumber.trim() !== "";
+    form.name.trim() !== "" &&
+    form.str_number.trim() !== "";
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!isValid) {
-      alert("Lengkapi field wajib: Email, Password, Nama Lengkap, Nomor STR.");
+      setNotif({
+        show: true,
+        type: "error",
+        message: "Lengkapi field wajib: Email, Password, Nama Lengkap, Nomor STR.",
+      });
+      setTimeout(() => setNotif({ show: false, type: "", message: "" }), 3000);
       return;
     }
 
-    // TODO: kirim form ke backend (fetch/axios)
-    console.log("submit doctor registration", form);
-    alert("Form submitted — cek console. Implementasikan pengiriman ke backend.");
+    // Payload data yang akan dikirim ke Backend
+    const payload = {
+      ...form,
+      role: "dokter", // Backend akan menyimpan ini sebagai dokter
+    };
+
+    try {
+      // 1. AKTIFKAN BARIS INI (Kirim data ke Backend)
+      const res = await axiosClient.post("/users", payload); 
+      
+      // 2. Jika sukses (status 200/201), jalankan notifikasi
+      console.log("Response Backend:", res.data);
+
+      setNotif({
+        show: true,
+        type: "success",
+        message: "Pendaftaran berhasil! Akun Anda sedang menunggu verifikasi STR oleh Admin. Anda akan diarahkan ke Beranda.",
+      });
+
+      // 3. Redirect ke Halaman Beranda (Tanpa Login) setelah 3 detik
+      setTimeout(() => {
+        navigate("/home"); 
+      }, 3000);
+
+    } catch (error) {
+      console.error("Error Register:", error);
+      // Tampilkan pesan error dari backend jika ada
+      const errorMsg = error.response?.data?.error || "Gagal mendaftar. Silakan coba lagi.";
+      
+      setNotif({
+        show: true,
+        type: "error",
+        message: errorMsg,
+      });
+      setTimeout(() => setNotif({ show: false, type: "", message: "" }), 3000);
+    }
   };
 
   return (
     <div className="dd-page">
       <div className="dd-card">
+        
+        {/* Notifikasi */}
+        {notif.show && (
+          <div
+            style={{
+              padding: "12px",
+              marginBottom: "20px",
+              borderRadius: "8px",
+              textAlign: "center",
+              fontWeight: "600",
+              fontSize: "14px",
+              backgroundColor: notif.type === "success" ? "#d4edda" : "#f8d7da",
+              color: notif.type === "success" ? "#155724" : "#721c24",
+              border: `1px solid ${notif.type === "success" ? "#c3e6cb" : "#f5c6cb"}`
+            }}
+          >
+            {notif.message}
+          </div>
+        )}
+
         <h1 className="dd-title">Pendaftaran Akun Dokter</h1>
 
         <div className="dd-info" role="status" aria-live="polite">
@@ -87,12 +148,13 @@ export default function DaftarDokter() {
           <h3 className="dd-section-title">Informasi Profesional & Pribadi</h3>
 
           <div className="dd-field full">
-            <label htmlFor="fullName">Nama Lengkap (dengan gelar)</label>
+            {/* Ganti fullName -> name */}
+            <label htmlFor="name">Nama Lengkap (dengan gelar)</label>
             <input
-              id="fullName"
-              name="fullName"
+              id="name"
+              name="name"
               type="text"
-              value={form.fullName}
+              value={form.name}
               onChange={handleChange}
               placeholder="Contoh : Dr. Julius Sinaga, Sp.PD"
               required
@@ -101,12 +163,13 @@ export default function DaftarDokter() {
 
           <div className="dd-row">
             <div className="dd-field">
-              <label htmlFor="strNumber">Nomor STR (Wajib)</label>
+              {/* Ganti strNumber -> str_number */}
+              <label htmlFor="str_number">Nomor STR (Wajib)</label>
               <input
-                id="strNumber"
-                name="strNumber"
+                id="str_number"
+                name="str_number"
                 type="text"
-                value={form.strNumber}
+                value={form.str_number}
                 onChange={handleChange}
                 placeholder="Masukkan Nomor Valid Anda"
                 required
@@ -140,12 +203,13 @@ export default function DaftarDokter() {
 
           <div className="dd-row">
             <div className="dd-field">
-              <label htmlFor="birthDate">Tanggal Lahir</label>
+              {/* Ganti birthDate -> birth_date */}
+              <label htmlFor="birth_date">Tanggal Lahir</label>
               <input
-                id="birthDate"
-                name="birthDate"
+                id="birth_date"
+                name="birth_date"
                 type="date"
-                value={form.birthDate}
+                value={form.birth_date}
                 onChange={handleChange}
               />
             </div>
@@ -192,6 +256,39 @@ export default function DaftarDokter() {
               Daftar &amp; Kirim Verifikasi
             </button>
           </div>
+
+          {/* Fitur Google (Opsional - Backend harus handle register dokter via Google) */}
+          <div style={{ display: "flex", alignItems: "center", margin: "25px 0 15px" }}>
+            <div style={{ flex: 1, borderBottom: "1px solid #e5e7eb" }}></div>
+            <span style={{ padding: "0 10px", color: "#9ca3af", fontSize: "13px", fontWeight: "600" }}>
+              ATAU
+            </span>
+            <div style={{ flex: 1, borderBottom: "1px solid #e5e7eb" }}></div>
+          </div>
+
+          <button
+            type="button"
+            className="dd-submit"
+            style={{
+              backgroundColor: "white",
+              color: "#374151",
+              border: "2px solid #e5e7eb",
+              boxShadow: "none",
+              marginTop: "0",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "10px",
+            }}
+            onClick={() => alert("Fitur daftar dengan Google")}
+          >
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png"
+              alt="Google"
+              style={{ width: "20px", height: "20px" }}
+            />
+            Daftar dengan Google
+          </button>
 
           <div className="dd-footer">
             Sudah punya akun?{" "}

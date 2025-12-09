@@ -20,8 +20,6 @@ import ProfilePage from "./pages/public/ProfilePage";
 
 // === Login & Auth ===
 import RoleSelection from "./pages/RoleSelection";
-import LoginAdmin from "./pages/LoginAdmin";
-import LoginUser from "./pages/LoginUser";
 import LoginDokter from "./pages/LoginDokter";
 import LoginPengguna from "./pages/LoginPengguna";
 import DaftarPengguna from "./pages/DaftarPengguna";
@@ -60,7 +58,6 @@ function AppContent() {
   const hideFooterPaths = [
     "/pilih-role",
     "/role-selection",
-    "/login-admin",
     "/login-user",
     "/login-dokter",
     "/login-pengguna",
@@ -104,8 +101,6 @@ function AppContent() {
           {/* === Login & Roles === */}
           <Route path="/pilih-role" element={<RoleSelection />} />
           <Route path="/role-selection" element={<RoleSelection />} />
-          <Route path="/login-admin" element={<LoginAdmin />} />
-          <Route path="/login-user" element={<LoginUser />} />
           <Route path="/login-dokter" element={<LoginDokter />} />
           <Route path="/login-pengguna" element={<LoginPengguna />} />
           <Route path="/daftar-pengguna" element={<DaftarPengguna />} />

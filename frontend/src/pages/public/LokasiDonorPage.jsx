@@ -2,16 +2,15 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "./LokasiDonorPage.css";
 import {
-  FaInstagram,
-  FaFacebookF,
-  FaTwitter,
   FaStar,
   FaMapMarkerAlt,
   FaUsers,
 } from "react-icons/fa";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import GoogleMapComponent from "../../components/GoogleMapComponent"; // 1. Import Komponen Peta
 
+// 2. Update Data dengan Koordinat (Lat, Lng)
 const sampleLocations = [
   {
     id: 1,
@@ -23,6 +22,8 @@ const sampleLocations = [
     donors: 124,
     urgent: true,
     blood: "A+ O+",
+    lat: 3.5186, // Koordinat
+    lng: 98.6053,
   },
   {
     id: 2,
@@ -34,17 +35,21 @@ const sampleLocations = [
     donors: 156,
     urgent: true,
     blood: "B+",
+    lat: 2.3339, // Koordinat
+    lng: 99.0664,
   },
   {
     id: 3,
     city: "Medan",
     name: "RSU Pirgandi",
-    address: "Medan",
+    address: "Jl. Prof. HM. Yamin",
     rating: 4.7,
     distance: "22.5 km",
     donors: 16,
     urgent: false,
     blood: "O+",
+    lat: 3.5901, // Koordinat
+    lng: 98.6874,
   },
 ];
 
@@ -54,7 +59,7 @@ export default function LokasiDonorPage() {
       {/* Shared Header Component */}
       <Header />
 
-      {/* Hero Section with background image */}
+      {/* Hero Section */}
       <section
         className="lokasi-hero"
         style={{
@@ -77,7 +82,7 @@ export default function LokasiDonorPage() {
         </div>
       </section>
 
-      {/* Search Section - Moved below hero */}
+      {/* Search Section */}
       <section className="lokasi-search-section">
         <div className="lokasi-search-container">
           <div className="lokasi-search-card">
@@ -101,6 +106,17 @@ export default function LokasiDonorPage() {
       </section>
 
       <main className="lokasi-main">
+        
+        {/* 3. SECTION PETA GOOGLE MAPS */}
+        <div className="lokasi-list" style={{ marginBottom: "40px" }}>
+            <h2 style={{fontSize: "1.5rem", fontWeight: "700", marginBottom: "15px", color: "#333"}}>
+                Peta Sebaran Lokasi
+            </h2>
+            {/* Panggil komponen peta dan kirim data locations */}
+            <GoogleMapComponent locations={sampleLocations} />
+        </div>
+
+        {/* List Card Lokasi */}
         <div className="lokasi-list">
           {sampleLocations.map((loc) => (
             <article className="lokasi-card" key={loc.id}>
@@ -117,7 +133,7 @@ export default function LokasiDonorPage() {
                   <div className="lokasi-address">{loc.address}</div>
                 </div>
 
-                {/* Kebutuhan Mendesak - Dipindahkan ke atas */}
+                {/* Kebutuhan Mendesak */}
                 {loc.urgent && (
                   <div className="urgent-container">
                     <div className="urgent-box-top">

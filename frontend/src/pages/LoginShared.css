@@ -69,14 +69,16 @@
 
 /* Role Buttons */
 .role-buttons {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  display: flex;           /* Menggunakan Flexbox agar rata */
+  width: 100%;             /* Memenuhi lebar container */
+  justify-content: center; /* Posisi di tengah */
+  gap: 15px;               /* Jarak antar tombol */
   margin-bottom: 30px;
 }
 
 .role-btn {
-  padding: 12px;
+  flex: 1;                 /* Tombol akan membagi lebar sama rata (50:50) */
+  padding: 12px 0;         /* Padding atas bawah */
   border: 2px solid #e5e7eb;
   background: #f9fafb;
   color: #6b7280;
@@ -85,6 +87,11 @@
   font-size: 14px;
   cursor: pointer;
   transition: all 0.3s ease;
+  
+  /* Memastikan teks di tengah */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .role-btn:hover {
@@ -108,12 +115,15 @@
 }
 
 .form-input {
-  padding: 13px 18px;
+  width: 100%;
+  box-sizing: border-box; /* Agar padding tidak merusak lebar */
+  padding: 14px 18px;
   border: 2px solid #e5e7eb;
   border-radius: 12px;
   font-size: 14px;
   transition: all 0.3s ease;
   font-family: "Poppins", sans-serif;
+  background-color: #f9fafb;
 }
 
 .form-input:focus {
@@ -198,10 +208,10 @@
 }
 
 .google-btn:hover {
-  border-color: #4285f4;
-  background: #f8fbff;
+  border-color: #b91c1c; /* Aksen merah sedikit saat hover */
+  background: #fff5f5;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(66, 133, 244, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .google-btn:active {

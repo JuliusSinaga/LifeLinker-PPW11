@@ -1,8 +1,11 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "./DaftarPengguna.css";
+import axiosClient from "../service/axiosClient";
 
 export default function DaftarPengguna() {
   const [notif, setNotif] = useState({ show: false, type: "", message: "" });
+  const navigate = useNavigate(); 
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -27,51 +30,45 @@ export default function DaftarPengguna() {
     e.preventDefault();
 
     try {
-      const res = await fetch(
-        `${process.env.REACT_APP_API_URL || "http://localhost:8080"}/users`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+      // Menggunakan axiosClient untuk post data
+      const res = await axiosClient.post("/users", formData);
 
-      if (res.ok) {
-        setNotif({
-          show: true,
-          type: "success",
-          message: "Pendaftaran akun berhasil ✔",
-        });
-        setFormData({
-          name: "",
-          email: "",
-          password: "",
-          birth_date: "",
-          gender: "",
-          phone: "",
-          city: "",
-          blood_type: "",
-          rhesus: "",
-          weight: "",
-        });
-      } else {
-        const err = await res.json();
-        setNotif({
-          show: true,
-          type: "error",
-          message: err.error || "Gagal mendaftarkan akun. Coba lagi.",
-        });
-      }
+      // Jika berhasil (axios akan melempar error jika status bukan 2xx)
+      setNotif({
+        show: true,
+        type: "success",
+        message: "Pendaftaran berhasil! Mengalihkan ke halaman login...",
+      });
+
+      // Reset form
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+        birth_date: "",
+        gender: "",
+        phone: "",
+        city: "",
+        blood_type: "",
+        rhesus: "",
+        weight: "",
+      });
+
+      // Redirect ke halaman Login Pengguna setelah 2 detik
+      setTimeout(() => {
+        navigate("/login-pengguna");
+      }, 2000);
+
     } catch (error) {
+      const errorMessage = error.response?.data?.error || "Gagal mendaftarkan akun. Coba lagi.";
       setNotif({
         show: true,
         type: "error",
-        message: "Terjadi kesalahan jaringan. Pastikan server aktif.",
+        message: errorMessage,
       });
     }
 
+    // Hilangkan notifikasi setelah 3 detik
     setTimeout(() => {
       setNotif({ show: false, type: "", message: "" });
     }, 3000);
@@ -235,13 +232,12 @@ export default function DaftarPengguna() {
             </div>
           </section>
 
-          {/* ❗ TOMBOL YANG DIUBAH */}
           <button type="submit" className="btn-submit">
             Buat Akun
           </button>
 
           <p className="login-link">
-            Sudah punya akun? <a href="/login-pengguna">Masuk di sini</a>
+            Sudah punya akun? <Link to="/login-pengguna">Masuk di sini</Link>
           </p>
         </form>
       </div>

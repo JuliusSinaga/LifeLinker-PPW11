@@ -7,6 +7,7 @@
   --bg-dark: #2c3e50;
   --bg-darker: #1a252f;
 }
+
 .app-footer {
   width: 100%;
   margin: 0;
@@ -14,6 +15,11 @@
   background-color: var(--bg-dark);
   color: var(--text-white);
   position: relative;
+  
+  /* --- PERBAIKAN UTAMA --- */
+  /* Memaksa footer untuk selalu menempel di bawah container flex */
+  margin-top: auto; 
+  z-index: 10; /* Memastikan footer tidak tertutup elemen lain */
 }
 
 .app-footer-content {
@@ -126,6 +132,7 @@
   border-top: 1px solid #34495e;
   background-color: var(--bg-darker);
   padding: 20px 0;
+  width: 100%;
 }
 
 .app-footer-bottom-content {
@@ -168,6 +175,18 @@
     gap: 30px;
     text-align: center;
   }
+  
+  .app-footer-logo {
+    justify-content: center;
+  }
+
+  .app-footer-social {
+    justify-content: center;
+  }
+
+  .app-contact-item {
+    justify-content: center;
+  }
 
   .app-footer-bottom-content {
     flex-direction: column;
@@ -187,9 +206,5 @@
 
   .app-footer-content {
     gap: 25px;
-  }
-
-  .app-footer-social {
-    justify-content: center;
   }
 }
