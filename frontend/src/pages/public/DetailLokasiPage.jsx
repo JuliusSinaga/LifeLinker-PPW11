@@ -433,7 +433,7 @@ export default function DetailLokasiPage() {
         </div>
       </main>
 
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }

@@ -607,7 +607,7 @@ export default function DetailStokDarahPage() {
         </div>
       </main>
 
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }

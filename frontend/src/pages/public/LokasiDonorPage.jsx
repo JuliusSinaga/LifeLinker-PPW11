@@ -171,8 +171,8 @@ export default function LokasiDonorPage() {
         </div>
       </main>
 
-      {/* Shared Footer Component */}
-      <Footer />
+      {/* Shared Footer Component
+      <Footer /> */}
     </div>
   );
 }

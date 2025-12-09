@@ -306,8 +306,8 @@ export default function BerandaPage() {
         </div>
       </section>
 
-      {/* Shared Footer Component */}
-      <Footer />
+      {/* Shared Footer Component
+      <Footer /> */}
     </div>
   );
 }

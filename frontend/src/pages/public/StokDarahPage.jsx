@@ -296,7 +296,7 @@ export default function StokDarahPage() {
         </div>
       </main>
 
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }

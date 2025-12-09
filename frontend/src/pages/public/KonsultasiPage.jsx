@@ -37,7 +37,7 @@ const KonsultasiPage = () => {
       sender: "user",
       message:
         "Halo, apakah Dr. Ada yang bisa saya tanyakan tentang donor darah?",
-      avatar: "/images/user-avatar.jpg",
+      avatar: "/images/user.png",
     },
     {
       id: 2,
@@ -79,7 +79,7 @@ const KonsultasiPage = () => {
       topic:
         "Persiapan Sebelum & Sesudah Donor Selasa, 30 Sep 2025 (14:00 - 15:00 WIB)",
       status: "full",
-      avatar: "/images/doctor-anastasya.jpg",
+      avatar: "/images/profile-dokter1.jpg",
     },
   ];
 
@@ -88,13 +88,13 @@ const KonsultasiPage = () => {
       id: 1,
       name: "Aisha Feransiaka",
       question: "Saya punya tekanan darah rendah, apakah masih bisa donor?",
-      avatar: "/images/user1.jpg",
+      avatar: "/images/user.png",
     },
     {
       id: 2,
       name: "Aisha Triswana",
       question: "Saya punya tekanan darah rendah, apakah masih bisa donor?",
-      avatar: "/images/user2.jpg",
+      avatar: "/images/user.png",
     },
   ];
 
@@ -304,7 +304,7 @@ const KonsultasiPage = () => {
         </div>
       </div>
 
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 };

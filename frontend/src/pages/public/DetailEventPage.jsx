@@ -406,7 +406,7 @@ export default function DetailEventPage() {
         </div>
       </main>
 
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }

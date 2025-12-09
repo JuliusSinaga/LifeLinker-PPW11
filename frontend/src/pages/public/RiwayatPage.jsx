@@ -206,7 +206,7 @@ export default function RiwayatPage() {
         </div>
       </main>
 
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }
