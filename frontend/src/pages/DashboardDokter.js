@@ -1,5 +1,10 @@
-import React from "react";
-import "./DashboardDokter.css";
+import React, { useState } from "react";
+import DokterSidebar from "../components/DokterSidebar";
+import "../styles/DashboardDokter.css";
+
+import { FaSyncAlt } from "react-icons/fa";
+
+// CHART JS
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -8,194 +13,134 @@ import {
   BarElement,
   Title,
   Tooltip,
-  Legend,
 } from "chart.js";
 
-// React Router
-import { Link, useLocation, useNavigate } from "react-router-dom";
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip);
 
-// Icons
-import {
-  FaTachometerAlt,
-  FaTint,
-  FaCalendarAlt,
-  FaComments,
-  FaUserMd,
-  FaSignOutAlt,
-} from "react-icons/fa";
+export default function DashboardDokter() {
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
-// Registrasi Chart.js
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+  const handleRefresh = () => {
+    if (isRefreshing) return;
 
-const DashboardDokter = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
+    setIsRefreshing(true);
 
-  // Fungsi Logout
-  const handleLogout = () => {
-    navigate("/login");
+    setTimeout(() => {
+      setIsRefreshing(false);
+    }, 1500);
   };
 
-  const data = {
+  const chartData = {
     labels: ["A", "B", "AB", "O"],
     datasets: [
       {
-        label: "Stok Darah (Unit)",
-        data: [320, 210, 120, 405],
+        label: "Jumlah Stok",
+        data: [300, 200, 120, 400],
         backgroundColor: ["#e74c3c", "#3498db", "#f39c12", "#2ecc71"],
-        borderRadius: 6,
+        borderRadius: 8,
       },
     ],
   };
 
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: { display: false },
-      title: {
-        display: true,
-        text: "Distribusi Stok Darah Berdasarkan Golongan",
-        font: { size: 16 },
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        ticks: { stepSize: 100 },
-      },
-    },
-  };
-
   return (
-    <div className="dashboard-wrapper">
-      {/* ================= SIDEBAR ================= */}
-      <div className="sidebar">
-        <div className="doctor-profile">
-          <img
-            src="/images/doctor-avatar.png"
-            alt="Dokter"
-            className="doctor-photo"
-          />
-          <h4>Dr. Anastasya</h4>
-          <p>Spesialis Hematologi</p>
-        </div>
+    <div className="dokter-layout">
+      <DokterSidebar />
 
-        <div className="sidebar-menu">
-          <Link
-            to="/dashboard"
-            className={location.pathname === "/dashboard" ? "active" : ""}
+      <main className="dokter-main">
+
+        {/* HEADER */}
+        <div className="dashboard-top">
+          <h1 className="dashboard-title">Dashboard Utama</h1>
+
+          <button
+            className={`btn-refresh ${isRefreshing ? "loading" : ""}`}
+            onClick={handleRefresh}
+            disabled={isRefreshing}
           >
-            <FaTachometerAlt className="menu-icon" /> Dashboard
-          </Link>
-
-          <Link
-            to="/manajemen-stok"
-            className={location.pathname === "/manajemen-stok" ? "active" : ""}
-          >
-            <FaTint className="menu-icon" /> Manajemen Stok
-          </Link>
-
-          <Link
-            to="/manajemen-event"
-            className={location.pathname === "/manajemen-event" ? "active" : ""}
-          >
-            <FaCalendarAlt className="menu-icon" /> Manajemen Event
-          </Link>
-
-          <Link
-            to="/konsultasi"
-            className={location.pathname === "/konsultasi" ? "active" : ""}
-          >
-            <FaComments className="menu-icon" /> Konsultasi & Edukasi
-          </Link>
-
-          <Link
-            to="/profil"
-            className={location.pathname === "/profil" ? "active" : ""}
-          >
-            <FaUserMd className="menu-icon" /> Profil Saya
-          </Link>
-
-          <button className="logout" onClick={handleLogout}>
-            <FaSignOutAlt className="menu-icon" /> Logout
+            {isRefreshing ? (
+              <>
+                <FaSyncAlt className="spin" /> Refreshing...
+              </>
+            ) : (
+              "Refresh Data"
+            )}
           </button>
         </div>
-      </div>
 
-      {/* ================= KONTEN UTAMA ================= */}
-      <div className="main-container">
-        <div className="dashboard-header">
-          <h2>Dashboard Utama</h2>
-          <button className="refresh-btn">Refresh Data</button>
-        </div>
+        {/* STATISTIK */}
+        <div className="stats-row">
 
-        {/* CARD STATISTIK */}
-        <div className="dashboard-cards">
-          <div className="card merah">
-            <h3>1,247</h3>
+          <div className="stats-card red">
+            <h2>1,247</h2>
             <p>Total Stok Darah (Unit)</p>
             <span>RS Siloam Kebon Jeruk</span>
           </div>
 
-          <div className="card biru">
-            <h3>89</h3>
+          <div className="stats-card blue">
+            <h2>89</h2>
             <p>Pendonor Bulan Ini</p>
             <span>Target: 120 orang</span>
           </div>
 
-          <div className="card oranye">
-            <h3>15</h3>
+          <div className="stats-card orange">
+            <h2>15</h2>
             <p>Total Event RS Kami</p>
             <span>12 selesai, 3 berlangsung</span>
           </div>
 
-          <div className="card hijau">
-            <h3>845</h3>
+          <div className="stats-card green">
+            <h2>845</h2>
             <p>Pendonor Aktif</p>
             <span>Di rumah sakit kami</span>
           </div>
+
         </div>
 
-        {/* GRAFIK & NOTIF */}
-        <div className="grafik-notif-container">
-          <div className="grafik-section">
-            <h4>Perbandingan Stok Darah</h4>
-            <div className="grafik-box">
-              <Bar data={data} options={options} />
+        {/* GRAFIK FULL WIDTH */}
+        <div className="graph-full">
+          <div className="graph-card">
+            <h3>Perbandingan Stok Darah</h3>
+
+            <div className="graph-wrapper">
+              <Bar
+                data={chartData}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,   // WAJIB supaya full height
+                  plugins: {
+                    legend: { display: false },
+                  },
+                  scales: {
+                    y: { beginAtZero: true },
+                  },
+                }}
+              />
             </div>
-          </div>
 
-          <div className="notif-section">
-            <div className="notif-header">
-              <h4>Notifikasi Terbaru</h4>
-              <button className="mark-read-btn">Tandai Sudah Dibaca</button>
-            </div>
-
-            <ul className="notif-list">
-              <li>
-                ✅ Request event "Bakti Sosial" disetujui Admin
-                <span>2 jam yang lalu</span>
-              </li>
-              <li>
-                💬 Konsultasi baru menunggu balasan
-                <span>5 jam yang lalu</span>
-              </li>
-              <li>
-                ⚠️ 5 kantong darah (A+) akan kedaluwarsa dalam 3 hari
-                <span>1 hari yang lalu</span>
-              </li>
-              <li>
-                🧍‍♀️ 12 pendonor baru terdaftar minggu ini
-                <span>2 hari yang lalu</span>
-              </li>
-            </ul>
-
-            <div className="lihat-semua">Lihat semua notifikasi</div>
           </div>
         </div>
-      </div>
+
+        {/* NOTIFIKASI */}
+        <div className="notif-card notif-bottom">
+          <div className="notif-header">
+            <h3>Notifikasi Terbaru</h3>
+            <button className="notif-read">Tandai Sudah Dibaca</button>
+          </div>
+
+          <ul className="notif-list">
+            <li><span className="dot green"></span> Request event "Bakti Sosial" disetujui Admin — <small>2 jam lalu</small></li>
+            <li><span className="dot blue"></span> Konsultasi baru menunggu balasan — <small>5 jam lalu</small></li>
+            <li><span className="dot orange"></span> 5 kantong darah (A+) kedaluwarsa dalam 3 hari — <small>1 hari lalu</small></li>
+            <li><span className="dot red"></span> 12 pendonor baru terdaftar minggu ini — <small>2 hari lalu</small></li>
+          </ul>
+
+          <div className="notif-footer">
+            <a href="#">Lihat semua notifikasi</a>
+          </div>
+
+        </div>
+
+      </main>
     </div>
   );
-};
-
-export default DashboardDokter;
+}

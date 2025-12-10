@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import './ManajemenUser.css';
+import SidebarAdmin from "../components/SidebarAdmin";
+import axiosClient from "../service/axiosClient"; // Import axios yang baru dibuat
 
-// MetricCard component untuk statistik
+// MetricCard component
 function MetricCard({ value, title, subtitle, icon, iconColor }) {
   return (
     <div className="metric-card">
@@ -18,224 +19,124 @@ function MetricCard({ value, title, subtitle, icon, iconColor }) {
   );
 }
 
-// UserRow component untuk setiap baris user
-function UserRow({ user }) {
-  const getStatusBadge = (status) => {
-    if (status === 'Aktif') {
-      return <span className="status-badge status-active">Aktif</span>;
-    } else {
-      return <span className="status-badge status-inactive">Tidak Aktif</span>;
-    }
-  };
-
-  return (
-    <tr>
-      <td>{user.name}</td>
-      <td>{user.email}</td>
-      <td>{user.donorCount}</td>
-      <td>{user.bloodType}</td>
-      <td>{getStatusBadge(user.status)}</td>
-      <td>
-        <div className="action-buttons">
-          <button className="action-button view-button">
-            Lihat Info
-          </button>
-          <button className="action-button hapus-button">
-            Hapus
-          </button>
-        </div>
-      </td>
-    </tr>
-  );
-}
-
-const ManajemenUser = () => {
+export default function ManajemenUser() {
+  // STATE DATA DARI BACKEND
+  const [users, setUsers] = useState([]); 
+  const [loading, setLoading] = useState(true);
+  
+  // State Filter
   const [nameFilter, setNameFilter] = useState('');
   const [bloodTypeFilter, setBloodTypeFilter] = useState('Semua Golongan');
   const [statusFilter, setStatusFilter] = useState('Semua Status');
 
-  // Data statistik sesuai UI
-  const metrics = [
-    { value: '20,847', title: 'User Terdaftar', subtitle: 'Seluruh Sumatera Utara', icon: '👥', iconColor: '#dc2626' },
-    { value: '342', title: 'Dokter Terverifikasi', subtitle: '30 Rumah Sakit', icon: '👨‍⚕️', iconColor: '#dc2626' },
-    { value: '10,275', title: 'Pendonor Aktif', subtitle: 'Seluruh Provinsi', icon: '🩸', iconColor: '#dc2626' },
-    { value: '47', title: 'Event', subtitle: 'Di berbagai RS', icon: '📅', iconColor: '#dc2626' },
-    { value: '20,234', title: 'Stok Darah (kantong)', subtitle: '30 Rumah Sakit', icon: '🧪', iconColor: '#dc2626' },
-    { value: '587', title: 'Event Terlaksana', subtitle: 'Seluruh Provinsi', icon: '✅', iconColor: '#dc2626' }
-  ];
+  // Modal State
+  const [selectedUser, setSelectedUser] = useState(null);
 
-  // Sample user data sesuai UI
-  const users = [
-    {
-      id: 1,
-      name: 'Rina Wijaya',
-      email: 'rina.wijaya@email.com',
-      donorCount: '5x',
-      bloodType: 'A+',
-      status: 'Aktif'
-    },
-    {
-      id: 2,
-      name: 'Budi Santoso',
-      email: 'budi.santoso@email.com',
-      donorCount: '3x',
-      bloodType: 'O+',
-      status: 'Tidak Aktif'
-    },
-    {
-      id: 3,
-      name: 'Dewi Sartika',
-      email: 'dewi.sartika@email.com',
-      donorCount: '2x',
-      bloodType: 'B+',
-      status: 'Aktif'
-    }
-  ];
+  // FETCH DATA SAAT HALAMAN DIBUKA
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axiosClient.get("/users");
+        // Response backend: { "users": [...] }
+        setUsers(response.data.users); 
+        setLoading(false);
+      } catch (err) {
+        console.error("Gagal mengambil data user:", err);
+        setLoading(false);
+      }
+    };
 
-  // Filter users
+    fetchUsers();
+  }, []);
+
+  // LOGIKA FILTERING (Sesuaikan dengan field Backend: nama, gol_darah)
   const filteredUsers = users.filter(user => {
-    const nameMatch = nameFilter === '' || user.name.toLowerCase().includes(nameFilter.toLowerCase());
-    const bloodMatch = bloodTypeFilter === 'Semua Golongan' || user.bloodType === bloodTypeFilter;
-    const statusMatch = statusFilter === 'Semua Status' || user.status === statusFilter;
+    // Backend field: user.nama
+    const nameMatch = nameFilter === '' || user.nama.toLowerCase().includes(nameFilter.toLowerCase());
+    
+    // Backend field: user.gol_darah
+    const bloodMatch = bloodTypeFilter === 'Semua Golongan' || user.gol_darah === bloodTypeFilter;
+    
+    // Backend belum ada 'status', kita anggap semua 'Aktif' dulu atau gunakan Role
+    // Misal kita filter berdasarkan Role jika mau
+    const statusMatch = statusFilter === 'Semua Status' || 'Aktif' === statusFilter; 
+    
     return nameMatch && bloodMatch && statusMatch;
   });
 
+  // Status Badge Component
+  const StatusBadge = ({ status }) => {
+    // Karena backend belum kirim status, kita default ke "Aktif"
+    const displayStatus = status || "Aktif"; 
+    return (
+      <span className={`status-badge ${displayStatus === 'Aktif' ? 'status-active' : 'status-inactive'}`}>
+        {displayStatus}
+      </span>
+    );
+  };
+
   return (
     <div className="manajemen-user-container">
-      {/* Sidebar */}
-      <aside className="sidebar">
-        {/* Logo */}
-        <div className="sidebar-logo">
-          <div className="logo-content">
-            <div className="logo-icon">
-              ❤️
-            </div>
-            <div>
-              <div className="logo-text">LifeLinker</div>
-              <div className="logo-subtitle">Admin</div>
-            </div>
-          </div>
-        </div>
-        
-        {/* Navigation */}
-        <nav className="sidebar-nav">
-          <Link to="/dashboard-admin" className="nav-link">
-            <span className="nav-icon">📊</span>
-            <span>Dashboard</span>
-          </Link>
-          
-          <Link to="/manajemen-dokter" className="nav-link">
-            <span className="nav-icon">👨‍⚕️</span>
-            <span>Manajemen Dokter</span>
-          </Link>
-          
-          <Link to="/manajemen-user" className="nav-link active">
-            <span className="nav-icon">👤</span>
-            <span>Manajemen User</span>
-          </Link>
-          
-          <Link to="/manajemen-event" className="nav-link">
-            <span className="nav-icon">📋</span>
-            <span>Manajemen Event</span>
-          </Link>
-          
-          <Link to="/manajemen-pendonor" className="nav-link">
-            <span className="nav-icon">🩸</span>
-            <span>Manajemen Pendonor</span>
-          </Link>
-          
-          <Link to="/laporan" className="nav-link">
-            <span className="nav-icon">📈</span>
-            <span>Laporan</span>
-          </Link>
-          
-          <Link to="/profil-admin" className="nav-link">
-            <span className="nav-icon">👤</span>
-            <span>Profile</span>
-          </Link>
-        </nav>
+      {/* SIDEBAR */}
+      <SidebarAdmin />
 
-        {/* Logout */}
-        <div className="sidebar-logout">
-          <Link to="/logout" className="nav-link">
-            <span className="nav-icon">🚪</span>
-            <span>Logout</span>
-          </Link>
-        </div>
-      </aside>
-
-      {/* Main Content */}
+      {/* MAIN CONTENT */}
       <main className="main-content">
-        {/* Header */}
         <header className="content-header">
-          <h1 className="page-title">
-            Dashboard Administrasi
-          </h1>
+          <h1 className="page-title">Dashboard Administrasi</h1>
         </header>
 
-        {/* Metrics Grid */}
+        {/* METRICS (Bisa diganti data real nanti) */}
         <div className="metrics-grid">
-          {metrics.map((metric, index) => (
-            <MetricCard
-              key={index}
-              value={metric.value}
-              title={metric.title}
-              subtitle={metric.subtitle}
-              icon={metric.icon}
-              iconColor={metric.iconColor}
-            />
+          {[
+            { value: users.length.toString(), title: 'User Terdaftar', subtitle: 'Total di Database', icon: '👥' },
+            { value: '342', title: 'Dokter Terverifikasi', subtitle: '30 Rumah Sakit', icon: '👨‍⚕️' },
+            { value: '10,275', title: 'Pendonor Aktif', subtitle: 'Seluruh Provinsi', icon: '🩸' },
+            { value: '47', title: 'Event', subtitle: 'Di berbagai RS', icon: '📅' },
+            { value: '20,234', title: 'Stok Darah (kantong)', subtitle: '30 Rumah Sakit', icon: '🧪' },
+            { value: '587', title: 'Event Terlaksana', subtitle: 'Seluruh Provinsi', icon: '✅' }
+          ].map((metric, index) => (
+            <MetricCard key={index} {...metric} iconColor="#dc2626" />
           ))}
         </div>
 
-        {/* User Management Section */}
+        {/* USER TABLE SECTION */}
         <div className="users-table-container">
           <div className="table-header">
-            <h3 className="table-title">
-              Daftar User
-            </h3>
+            <h3 className="table-title">Daftar User</h3>
           </div>
-          
-          {/* Filter Section */}
+
+          {/* FILTER SECTION */}
           <div className="filters-section">
             <div className="filters-grid">
               <div className="filter-group">
-                <label className="filter-label">
-                  Filter Nama User:
-                </label>
+                <label className="filter-label">Filter Nama User:</label>
                 <input
                   type="text"
+                  className="filter-input"
                   placeholder="Cari nama user..."
                   value={nameFilter}
                   onChange={(e) => setNameFilter(e.target.value)}
-                  className="filter-input"
                 />
               </div>
-              
+
               <div className="filter-group">
-                <label className="filter-label">
-                  Filter Golongan Darah:
-                </label>
+                <label className="filter-label">Golongan Darah:</label>
                 <select
                   value={bloodTypeFilter}
                   onChange={(e) => setBloodTypeFilter(e.target.value)}
                   className="filter-select"
                 >
                   <option value="Semua Golongan">Semua Golongan</option>
-                  <option value="A+">A+</option>
-                  <option value="A-">A-</option>
-                  <option value="B+">B+</option>
-                  <option value="B-">B-</option>
-                  <option value="AB+">AB+</option>
-                  <option value="AB-">AB-</option>
-                  <option value="O+">O+</option>
-                  <option value="O-">O-</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="AB">AB</option>
+                  <option value="O">O</option>
                 </select>
               </div>
-              
+
               <div className="filter-group">
-                <label className="filter-label">
-                  Filter Status:
-                </label>
+                <label className="filter-label">Status:</label>
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
@@ -246,42 +147,95 @@ const ManajemenUser = () => {
                   <option value="Tidak Aktif">Tidak Aktif</option>
                 </select>
               </div>
-              
+
               <div className="filter-group">
-                <button className="filter-button">
-                  Filter
-                </button>
+                <button className="filter-button">Filter</button>
               </div>
             </div>
           </div>
 
-          {/* User Table */}
+          {/* USER TABLE */}
           <div className="table-container">
+            {loading ? (
+                <p style={{textAlign: "center", padding: "20px"}}>Sedang memuat data...</p>
+            ) : (
             <table className="user-table">
               <thead>
                 <tr>
                   <th>Nama</th>
                   <th>Email</th>
-                  <th>Jumlah Donor</th>
+                  <th>No HP</th>
                   <th>Gol. Darah</th>
-                  <th>Status</th>
+                  <th>Role</th>
                   <th>Aksi</th>
                 </tr>
               </thead>
+
               <tbody>
                 {filteredUsers.map(user => (
-                  <UserRow
-                    key={user.id}
-                    user={user}
-                  />
+                  <tr key={user.ID}> {/* Gunakan ID dari GORM */}
+                    <td>{user.nama}</td>
+                    <td>{user.email}</td>
+                    <td>{user.no_hp || "-"}</td>
+                    <td>{user.gol_darah}</td>
+                    <td><StatusBadge status={user.role || "User"} /></td>
+                    <td>
+                      <div className="action-buttons">
+                        <button
+                          className="action-button view-button"
+                          onClick={() => setSelectedUser(user)}
+                        >
+                          Lihat Info
+                        </button>
+
+                        <button className="action-button hapus-button">
+                          Hapus
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
                 ))}
               </tbody>
             </table>
+            )}
+            
+            {!loading && filteredUsers.length === 0 && (
+                <p style={{textAlign: "center", padding: "20px"}}>Tidak ada data user ditemukan.</p>
+            )}
           </div>
         </div>
+
+        {/* ========================= */}
+        {/* MODAL           */}
+        {/* ========================= */}
+        {selectedUser && (
+          <div className="modal-overlay" onClick={() => setSelectedUser(null)}>
+            <div
+              className="modal-card"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3 className="modal-title">Detail User</h3>
+
+              <div className="modal-content">
+                <p><strong>Nama:</strong> {selectedUser.nama}</p>
+                <p><strong>Email:</strong> {selectedUser.email}</p>
+                <p><strong>Golongan Darah:</strong> {selectedUser.gol_darah}</p>
+                <p><strong>Rhesus:</strong> {selectedUser.rhesus}</p>
+                <p><strong>Nomor HP:</strong> {selectedUser.no_hp}</p>
+                <p><strong>Role:</strong> {selectedUser.role}</p>
+              </div>
+
+              <button
+                className="modal-close"
+                onClick={() => setSelectedUser(null)}
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        )}
+
       </main>
     </div>
   );
-};
-
-export default ManajemenUser;
+}

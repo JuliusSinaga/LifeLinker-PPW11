@@ -1,172 +1,303 @@
-import React from "react";
-import "./DashboardDokter.css";
-import { Bar } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import "./DaftarDokter.css";
+import axiosClient from "../service/axiosClient"; // Aktifkan jika backend siap
 
-// === React Icons ===
-import {
-  FaTachometerAlt,
-  FaTint,
-  FaCalendarAlt,
-  FaComments,
-  FaUserMd,
-  FaSignOutAlt,
-} from "react-icons/fa";
+export default function DaftarDokter() {
+  const navigate = useNavigate();
+  const [notif, setNotif] = useState({ show: false, type: "", message: "" });
 
-// Registrasi Chart.js
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+    name: "",          
+    str_number: "",    
+    specialization: "",
+    hospital: "",      
+    birth_date: "",    
+    gender: "",        
+    phone: "",         
+    city: "",          
+  });
 
-const DashboardDokter = () => {
-  // === Data Grafik Stok Darah ===
-  const data = {
-    labels: ["A", "B", "AB", "O"],
-    datasets: [
-      {
-        label: "Stok Darah (Unit)",
-        data: [320, 210, 120, 405],
-        backgroundColor: ["#e74c3c", "#3498db", "#f39c12", "#2ecc71"],
-        borderRadius: 6,
-      },
-    ],
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // === Opsi Tampilan Grafik ===
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: { display: false },
-      title: {
-        display: true,
-        text: "Distribusi Stok Darah Berdasarkan Golongan",
-        font: { size: 16 },
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        ticks: { stepSize: 100 },
-      },
-    },
+  const isValid =
+    form.email.trim() !== "" &&
+    form.password.trim() !== "" &&
+    form.name.trim() !== "" &&
+    form.str_number.trim() !== "";
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!isValid) {
+      setNotif({
+        show: true,
+        type: "error",
+        message: "Lengkapi field wajib: Email, Password, Nama Lengkap, Nomor STR.",
+      });
+      setTimeout(() => setNotif({ show: false, type: "", message: "" }), 3000);
+      return;
+    }
+
+    // Payload data yang akan dikirim ke Backend
+    const payload = {
+      ...form,
+      role: "dokter", // Backend akan menyimpan ini sebagai dokter
+    };
+
+    try {
+      // 1. AKTIFKAN BARIS INI (Kirim data ke Backend)
+      const res = await axiosClient.post("/users", payload); 
+      
+      // 2. Jika sukses (status 200/201), jalankan notifikasi
+      console.log("Response Backend:", res.data);
+
+      setNotif({
+        show: true,
+        type: "success",
+        message: "Pendaftaran berhasil! Akun Anda sedang menunggu verifikasi STR oleh Admin. Anda akan diarahkan ke Beranda.",
+      });
+
+      // 3. Redirect ke Halaman Beranda (Tanpa Login) setelah 3 detik
+      setTimeout(() => {
+        navigate("/home"); 
+      }, 3000);
+
+    } catch (error) {
+      console.error("Error Register:", error);
+      // Tampilkan pesan error dari backend jika ada
+      const errorMsg = error.response?.data?.error || "Gagal mendaftar. Silakan coba lagi.";
+      
+      setNotif({
+        show: true,
+        type: "error",
+        message: errorMsg,
+      });
+      setTimeout(() => setNotif({ show: false, type: "", message: "" }), 3000);
+    }
   };
 
   return (
-    <div className="dashboard-wrapper">
-      {/* ================= SIDEBAR ================= */}
-      <div className="sidebar">
-        <div className="doctor-profile">
-          <img
-            src="/images/doctor-avatar.png"
-            alt="Dokter"
-            className="doctor-photo"
-          />
-          <h4>Dr. Anastasya</h4>
-          <p>Spesialis Hematologi</p>
-        </div>
-
-        <div className="sidebar-menu">
-          <a href="#" className="active">
-            <FaTachometerAlt className="menu-icon" /> Dashboard
-          </a>
-          <a href="#">
-            <FaTint className="menu-icon" /> Manajemen Stok
-          </a>
-          <a href="#">
-            <FaCalendarAlt className="menu-icon" /> Manajemen Event
-          </a>
-          <a href="#">
-            <FaComments className="menu-icon" /> Konsultasi & Edukasi
-          </a>
-          <a href="#">
-            <FaUserMd className="menu-icon" /> Profil Saya
-          </a>
-          <a href="#" className="logout">
-            <FaSignOutAlt className="menu-icon" /> Logout
-          </a>
-        </div>
-      </div>
-
-      {/* ================= KONTEN UTAMA ================= */}
-      <div className="main-container">
-        <div className="dashboard-header">
-          <h2>Dashboard Utama</h2>
-          <button className="refresh-btn">Refresh Data</button>
-        </div>
-
-        {/* === CARD STATISTIK === */}
-        <div className="dashboard-cards">
-          <div className="card merah">
-            <h3>1,247</h3>
-            <p>Total Stok Darah (Unit)</p>
-            <span>RS Siloam Kebon Jeruk</span>
+    <div className="dd-page">
+      <div className="dd-card">
+        
+        {/* Notifikasi */}
+        {notif.show && (
+          <div
+            style={{
+              padding: "12px",
+              marginBottom: "20px",
+              borderRadius: "8px",
+              textAlign: "center",
+              fontWeight: "600",
+              fontSize: "14px",
+              backgroundColor: notif.type === "success" ? "#d4edda" : "#f8d7da",
+              color: notif.type === "success" ? "#155724" : "#721c24",
+              border: `1px solid ${notif.type === "success" ? "#c3e6cb" : "#f5c6cb"}`
+            }}
+          >
+            {notif.message}
           </div>
+        )}
 
-          <div className="card biru">
-            <h3>89</h3>
-            <p>Pendonor Bulan Ini</p>
-            <span>Target: 120 orang</span>
-          </div>
+        <h1 className="dd-title">Pendaftaran Akun Dokter</h1>
 
-          <div className="card oranye">
-            <h3>15</h3>
-            <p>Total Event RS Kami</p>
-            <span>12 selesai, 3 berlangsung</span>
-          </div>
-
-          <div className="card hijau">
-            <h3>845</h3>
-            <p>Pendonor Aktif</p>
-            <span>Di rumah sakit kami</span>
+        <div className="dd-info" role="status" aria-live="polite">
+          <div className="dd-info-icon" aria-hidden="true">i</div>
+          <div className="dd-info-text">
+            Akun Anda akan aktif setelah data dan Nomor STR berhasil diverifikasi oleh Admin.
           </div>
         </div>
 
-        {/* === GRAFIK & NOTIFIKASI === */}
-        <div className="grafik-notif-container">
-          <div className="grafik-section">
-            <h4>Perbandingan Stok Darah</h4>
-            <div className="grafik-box">
-              <Bar data={data} options={options} />
+        <form className="dd-form" onSubmit={handleSubmit} noValidate>
+          <h3 className="dd-section-title">Informasi Akun</h3>
+
+          <div className="dd-row">
+            <div className="dd-field">
+              <label htmlFor="email">Email</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                value={form.email}
+                onChange={handleChange}
+                placeholder="name@example.com"
+                required
+              />
+            </div>
+
+            <div className="dd-field">
+              <label htmlFor="password">Password</label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                value={form.password}
+                onChange={handleChange}
+                placeholder="Minimal 8 karakter"
+                required
+              />
             </div>
           </div>
 
-          <div className="notif-section">
-            <div className="notif-header">
-              <h4>Notifikasi Terbaru</h4>
-              <button className="mark-read-btn">Tandai Sudah Dibaca</button>
+          <h3 className="dd-section-title">Informasi Profesional & Pribadi</h3>
+
+          <div className="dd-field full">
+            {/* Ganti fullName -> name */}
+            <label htmlFor="name">Nama Lengkap (dengan gelar)</label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              value={form.name}
+              onChange={handleChange}
+              placeholder="Contoh : Dr. Julius Sinaga, Sp.PD"
+              required
+            />
+          </div>
+
+          <div className="dd-row">
+            <div className="dd-field">
+              {/* Ganti strNumber -> str_number */}
+              <label htmlFor="str_number">Nomor STR (Wajib)</label>
+              <input
+                id="str_number"
+                name="str_number"
+                type="text"
+                value={form.str_number}
+                onChange={handleChange}
+                placeholder="Masukkan Nomor Valid Anda"
+                required
+              />
             </div>
 
-            <ul className="notif-list">
-              <li>
-                ✅ Request event "Bakti Sosial" disetujui Admin
-                <span>2 jam yang lalu</span>
-              </li>
-              <li>
-                💬 Konsultasi baru menunggu balasan
-                <span>5 jam yang lalu</span>
-              </li>
-              <li>
-                ⚠️ 5 kantong darah (A+) akan kedaluwarsa dalam 3 hari
-                <span>1 hari yang lalu</span>
-              </li>
-              <li>
-                🧍‍♀️ 12 pendonor baru terdaftar minggu ini
-                <span>2 hari yang lalu</span>
-              </li>
-            </ul>
-
-            <div className="lihat-semua">Lihat semua notifikasi</div>
+            <div className="dd-field">
+              <label htmlFor="specialization">Spesialisasi</label>
+              <input
+                id="specialization"
+                name="specialization"
+                type="text"
+                value={form.specialization}
+                onChange={handleChange}
+                placeholder="Contoh : Penyakit Dalam"
+              />
+            </div>
           </div>
-        </div>
+
+          <div className="dd-field full">
+            <label htmlFor="hospital">Nama Rumah Sakit / Instansi</label>
+            <input
+              id="hospital"
+              name="hospital"
+              type="text"
+              value={form.hospital}
+              onChange={handleChange}
+              placeholder="Contoh : RSUP Porsea"
+            />
+          </div>
+
+          <div className="dd-row">
+            <div className="dd-field">
+              {/* Ganti birthDate -> birth_date */}
+              <label htmlFor="birth_date">Tanggal Lahir</label>
+              <input
+                id="birth_date"
+                name="birth_date"
+                type="date"
+                value={form.birth_date}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="dd-field">
+              <label htmlFor="gender">Jenis Kelamin</label>
+              <select id="gender" name="gender" value={form.gender} onChange={handleChange}>
+                <option value="">Pilih Jenis Kelamin</option>
+                <option value="male">Laki-laki</option>
+                <option value="female">Perempuan</option>
+                <option value="other">Lainnya</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="dd-row">
+            <div className="dd-field">
+              <label htmlFor="phone">Nomor Telepon (WhatsApp)</label>
+              <input
+                id="phone"
+                name="phone"
+                type="tel"
+                value={form.phone}
+                onChange={handleChange}
+                placeholder="+62 8123xxxx"
+              />
+            </div>
+
+            <div className="dd-field">
+              <label htmlFor="city">Kota Domisili</label>
+              <input
+                id="city"
+                name="city"
+                type="text"
+                value={form.city}
+                onChange={handleChange}
+                placeholder="Contoh : Laguboti"
+              />
+            </div>
+          </div>
+
+          <div className="dd-submit-wrap">
+            <button type="submit" className="dd-submit" disabled={!isValid}>
+              Daftar &amp; Kirim Verifikasi
+            </button>
+          </div>
+
+          {/* Fitur Google (Opsional - Backend harus handle register dokter via Google) */}
+          <div style={{ display: "flex", alignItems: "center", margin: "25px 0 15px" }}>
+            <div style={{ flex: 1, borderBottom: "1px solid #e5e7eb" }}></div>
+            <span style={{ padding: "0 10px", color: "#9ca3af", fontSize: "13px", fontWeight: "600" }}>
+              ATAU
+            </span>
+            <div style={{ flex: 1, borderBottom: "1px solid #e5e7eb" }}></div>
+          </div>
+
+          <button
+            type="button"
+            className="dd-submit"
+            style={{
+              backgroundColor: "white",
+              color: "#374151",
+              border: "2px solid #e5e7eb",
+              boxShadow: "none",
+              marginTop: "0",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "10px",
+            }}
+            onClick={() => alert("Fitur daftar dengan Google")}
+          >
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png"
+              alt="Google"
+              style={{ width: "20px", height: "20px" }}
+            />
+            Daftar dengan Google
+          </button>
+
+          <div className="dd-footer">
+            Sudah punya akun?{" "}
+            <Link to="/login-dokter" className="dd-link">
+              Masuk di sini
+            </Link>
+          </div>
+        </form>
       </div>
     </div>
   );
-};
-
-export default DashboardDokter;
+}

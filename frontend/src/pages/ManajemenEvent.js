@@ -1,281 +1,298 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import './ManajemenEvent.css';
+import React, { useState } from "react";
+import DokterSidebar from "../components/DokterSidebar";
+import "../styles/ManajemenEvent.css";
 
-// MetricCard component untuk statistik
-function MetricCard({ value, title, subtitle, icon, iconColor }) {
-  return (
-    <div className="metric-card">
-      <div className="metric-header">
-        <div className="metric-content">
-          <div className="metric-value">{value}</div>
-          <div className="metric-title">{title}</div>
-          <div className="metric-subtitle">{subtitle}</div>
-        </div>
-        <div className="metric-icon" style={{ color: iconColor }}>{icon}</div>
-      </div>
-    </div>
-  );
-}
-
-const ManajemenEvent = () => {
-  const [nameFilter, setNameFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState('Semua Status');
-  const [monthFilter, setMonthFilter] = useState('Semua Bulan');
-
-  // Data statistik sesuai UI
-  const metrics = [
-    { value: '20,847', title: 'User Terdaftar', subtitle: 'Seluruh Sumatera Utara', icon: '👥', iconColor: '#dc2626' },
-    { value: '342', title: 'Dokter Terverifikasi', subtitle: '30 Rumah Sakit', icon: '👨‍⚕️', iconColor: '#dc2626' },
-    { value: '10,275', title: 'Pendonor Aktif', subtitle: 'Seluruh Provinsi', icon: '🩸', iconColor: '#dc2626' },
-    { value: '47', title: 'Event', subtitle: 'Di berbagai RS', icon: '📅', iconColor: '#dc2626' },
-    { value: '20,234', title: 'Stok Darah (kantong)', subtitle: '30 Rumah Sakit', icon: '🧪', iconColor: '#dc2626' },
-    { value: '587', title: 'Event Terlaksana', subtitle: 'Seluruh Provinsi', icon: '✅', iconColor: '#dc2626' }
-  ];
-
-  // Sample event data sesuai UI
-  const events = [
-    {
-      id: 1,
-      name: 'Donor Darah Akbar',
-      email: 'Dr. Amanda Sari, Sp.A',
-      location: 'RSUP H. Adam Malik',
-      date: '15 Nov 2024',
-      status: 'Disetujui'
-    },
-    {
-      id: 2,
-      name: 'Pemeriksaan Kesehatan Gratis',
-      email: 'Dr. Eko Prasetyo',
-      location: 'RS HKBP Balige',
-      date: '20 Nov 2024',
-      status: 'Menunggu Persetujuan'
-    },
-    {
-      id: 3,
-      name: 'Sosialisasi Donor Darah',
-      email: 'Dr. Siti Nurhaliza, Sp.JP',
-      location: 'RSU Pirgandi',
-      date: '25 Nov 2024',
-      status: 'Ditolak'
-    }
-  ];
-
-  // Filter events
-  const filteredEvents = events.filter(event => {
-    const nameMatch = nameFilter === '' || event.name.toLowerCase().includes(nameFilter.toLowerCase());
-    const statusMatch = statusFilter === 'Semua Status' || event.status === statusFilter;
-    // Simple month filter - in real app would parse date properly
-    const monthMatch = monthFilter === 'Semua Bulan' || event.date.includes(monthFilter);
-    return nameMatch && statusMatch && monthMatch;
+export default function ManajemenEvent() {
+  const [form, setForm] = useState({
+    namaEvent: "",
+    tanggalMulai: "",
+    tanggalSelesai: "",
+    lokasi: "",
+    targetKantong: "",
+    deskripsi: "",
+    partner: "",
+    targetDonor: "",
+    unggahPoster: null,
   });
 
+  const [requests, setRequests] = useState([
+    { id: 1, nama: "Donor Darah Kemanusiaan", tanggal: "17 Apr 2025", lokasi: "IT DEL", status: "Disetujui", deskripsi: "Event kemanusiaan besar", partner: "IT Del", donor: 50 },
+    { id: 2, nama: "Bakti Sosial 2025", tanggal: "11 Feb 2025", lokasi: "Lapangan Legi", status: "Menunggu", deskripsi: "Acara bakti sosial", partner: "PMI", donor: 70 },
+    { id: 3, nama: "Donor Darah Ramadhan", tanggal: "17 Mar 2025", lokasi: "Depan Pasar", status: "Ditolak", deskripsi: "Event Ramadhan", partner: "Diknas", donor: 30 }
+  ]);
+
+  const completed = [
+    { id: 1, title: "World Blood Donor Day 2024", date: "14 Jun 2024", donors: 127 },
+    { id: 2, title: "Donor Darah Hari Kartini", date: "21 Apr 2024", donors: 89 },
+  ];
+
+  // STATE UNTUK MODAL VIEW + EDIT
+  const [selected, setSelected] = useState(null);
+  const [editing, setEditing] = useState(null);
+
+  function handleChange(e) {
+    const { name, value, files } = e.target;
+    if (name === "unggahPoster") {
+      setForm((s) => ({ ...s, unggahPoster: files && files[0] }));
+    } else {
+      setForm((s) => ({ ...s, [name]: value }));
+    }
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    const newReq = {
+      id: Date.now(),
+      nama: form.namaEvent || "(Belum diisi)",
+      tanggal: form.tanggalMulai || "-",
+      lokasi: form.lokasi || "-",
+      deskripsi: form.deskripsi,
+      partner: form.partner,
+      donor: form.targetDonor,
+      status: "Menunggu",
+    };
+    setRequests((r) => [newReq, ...r]);
+
+    setForm({
+      namaEvent: "",
+      tanggalMulai: "",
+      tanggalSelesai: "",
+      lokasi: "",
+      targetKantong: "",
+      deskripsi: "",
+      partner: "",
+      targetDonor: "",
+      unggahPoster: null,
+    });
+  }
+
+  function handleEditSubmit(e) {
+    e.preventDefault();
+    setRequests((prev) =>
+      prev.map((req) =>
+        req.id === editing.id ? { ...editing } : req
+      )
+    );
+    setEditing(null);
+  }
+
   return (
-    <div className="manajemen-event-container">
-      {/* Sidebar */}
-      <aside className="sidebar">
-        {/* Logo */}
-        <div className="sidebar-logo">
-          <div className="logo-content">
-            <div className="logo-icon">
-              ❤️
-            </div>
-            <div>
-              <div className="logo-text">LifeLinker</div>
-              <div className="logo-subtitle">Admin</div>
-            </div>
-          </div>
-        </div>
-        
-        {/* Navigation */}
-        <nav className="sidebar-nav">
-          <Link to="/dashboard-admin" className="nav-link">
-            <span className="nav-icon">📊</span>
-            <span>Dashboard</span>
-          </Link>
-          
-          <Link to="/manajemen-dokter" className="nav-link">
-            <span className="nav-icon">👨‍⚕️</span>
-            <span>Manajemen Dokter</span>
-          </Link>
-          
-          <Link to="/manajemen-user" className="nav-link">
-            <span className="nav-icon">👤</span>
-            <span>Manajemen User</span>
-          </Link>
-          
-          <Link to="/manajemen-event" className="nav-link active">
-            <span className="nav-icon">📋</span>
-            <span>Manajemen Event</span>
-          </Link>
-          
-          <Link to="/manajemen-pendonor" className="nav-link">
-            <span className="nav-icon">🩸</span>
-            <span>Manajemen Pendonor</span>
-          </Link>
-          
-          <Link to="/laporan" className="nav-link">
-            <span className="nav-icon">📈</span>
-            <span>Laporan</span>
-          </Link>
-          
-          <Link to="/profil-admin" className="nav-link">
-            <span className="nav-icon">👤</span>
-            <span>Profile</span>
-          </Link>
-        </nav>
+    <div className="dokter-layout">
+      <DokterSidebar />
 
-        {/* Logout */}
-        <div className="sidebar-logout">
-          <Link to="/logout" className="nav-link">
-            <span className="nav-icon">🚪</span>
-            <span>Logout</span>
-          </Link>
-        </div>
-      </aside>
+      <main className="dokter-main">
+        <h1 className="page-title">Request Event Donor Darah</h1>
 
-      {/* Main Content */}
-      <main className="main-content">
-        {/* Header */}
-        <header className="content-header">
-          <h1 className="page-title">
-            Dashboard Administrasi
-          </h1>
-        </header>
+        <div className="event-container">
 
-        {/* Metrics Grid */}
-        <div className="metrics-grid">
-          {metrics.map((metric, index) => (
-            <MetricCard
-              key={index}
-              value={metric.value}
-              title={metric.title}
-              subtitle={metric.subtitle}
-              icon={metric.icon}
-              iconColor={metric.iconColor}
-            />
-          ))}
-        </div>
+          {/* FORM */}
+          <div className="card event-form-card">
+            <h3 className="card-title">📄 Formulir Pengajuan Event</h3>
 
-        {/* Event Management Section */}
-        <div className="event-management-section">
-          <h3 className="section-title">
-            Manajemen Event
-          </h3>
-          
-          {/* Filter Section */}
-          <div className="filter-section">
-            <div className="filter-group">
-              <label className="filter-label">
-                Filter Nama Event:
-              </label>
-              <input
-                type="text"
-                placeholder="Cari nama event..."
-                value={nameFilter}
-                onChange={(e) => setNameFilter(e.target.value)}
-                className="filter-input"
-              />
-            </div>
-            
-            <div className="filter-group">
-              <label className="filter-label">
-                Filter Status:
-              </label>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="filter-select"
-              >
-                <option value="Semua Status">Semua Status</option>
-                <option value="Disetujui">Disetujui</option>
-                <option value="Menunggu Persetujuan">Menunggu Persetujuan</option>
-                <option value="Ditolak">Ditolak</option>
-              </select>
-            </div>
-            
-            <div className="filter-group">
-              <label className="filter-label">
-                Filter Bulan:
-              </label>
-              <select
-                value={monthFilter}
-                onChange={(e) => setMonthFilter(e.target.value)}
-                className="filter-select"
-              >
-                <option value="Semua Bulan">Semua Bulan</option>
-                <option value="Nov">November</option>
-                <option value="Dec">Desember</option>
-              </select>
-            </div>
+            <form onSubmit={handleSubmit} className="event-form">
+
+              <div className="form-group">
+                <label>Nama Event</label>
+                <input 
+                  name="namaEvent"
+                  placeholder="Contoh: Donor Darah Sehat Bersama"
+                  value={form.namaEvent}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Tanggal Mulai</label>
+                  <input type="date" name="tanggalMulai" value={form.tanggalMulai} onChange={handleChange} />
+                </div>
+
+                <div className="form-group">
+                  <label>Tanggal Selesai</label>
+                  <input type="date" name="tanggalSelesai" value={form.tanggalSelesai} onChange={handleChange} />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Lokasi Event</label>
+                <input 
+                  name="lokasi"
+                  placeholder="Contoh: Aula Utama RSUP H. Adam Malik"
+                  value={form.lokasi}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Target Kantong Darah</label>
+                  <input 
+                    name="targetKantong"
+                    placeholder="Contoh: 50"
+                    value={form.targetKantong}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Unggah Poster (Opsional)</label>
+                  <input type="file" name="unggahPoster" onChange={handleChange} />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Deskripsi</label>
+                <textarea 
+                  name="deskripsi"
+                  placeholder="Jelaskan detail mengenai acara ini"
+                  value={form.deskripsi}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Partner / Sponsor</label>
+                  <input 
+                    name="partner"
+                    placeholder="Contoh: IT Del, PMI, Diknas, dll"
+                    value={form.partner}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Target Donor</label>
+                  <input 
+                    name="targetDonor"
+                    placeholder="Contoh: 50"
+                    value={form.targetDonor}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <button className="btn-submit">Request Event</button>
+            </form>
           </div>
 
-          {/* Event Table */}
-          <div className="table-container">
+          {/* TABLE */}
+          <div className="card event-table-card">
+            <h3 className="card-title">📊 Status Pengajuan Event</h3>
+
             <table className="event-table">
-              <thead className="table-header">
+              <thead>
                 <tr>
-                  <th className="table-th">
-                    Nama
-                  </th>
-                  <th className="table-th">
-                    Email
-                  </th>
-                  <th className="table-th center">
-                    Lokasi
-                  </th>
-                  <th className="table-th center">
-                    Tanggal
-                  </th>
-                  <th className="table-th center">
-                    Status
-                  </th>
+                  <th>Nama Event</th>
+                  <th>Tanggal</th>
+                  <th>Lokasi</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
                 </tr>
               </thead>
+
               <tbody>
-                {filteredEvents.map(event => (
-                  <tr key={event.id} className="table-row">
-                    <td className="table-td">{event.name}</td>
-                    <td className="table-td">{event.email}</td>
-                    <td className="table-td center">{event.location}</td>
-                    <td className="table-td center">{event.date}</td>
-                    <td className="table-td center">
-                      <div className="status-container">
-                        <span className={`status-badge ${
-                          event.status === 'Disetujui' ? 'status-approved' : 
-                          event.status === 'Menunggu Persetujuan' ? 'status-pending' : 
-                          'status-rejected'
-                        }`}>
-                          {event.status}
-                        </span>
-                        
-                        {event.status === 'Menunggu Persetujuan' && (
-                          <>
-                            <button className="action-button approve-button">
-                              ✓
-                            </button>
-                            <button className="action-button reject-button">
-                              ✗
-                            </button>
-                          </>
-                        )}
-                      </div>
+                {requests.map((r) => (
+                  <tr key={r.id}>
+                    <td>{r.nama}</td>
+                    <td>{r.tanggal}</td>
+                    <td>{r.lokasi}</td>
+                    <td>
+                      <span className={`status-badge ${r.status.toLowerCase()}`}>
+                        {r.status}
+                      </span>
+                    </td>
+                    <td className="aksi-btns">
+                      <button className="view-btn" onClick={() => setSelected(r)}>👁 View</button>
+                      <button className="edit-btn" onClick={() => setEditing({...r})}>✏ Edit</button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            
-            {filteredEvents.length === 0 && (
-              <div className="empty-state">
-                <p className="empty-message">Tidak ada event yang sesuai dengan filter yang dipilih.</p>
-              </div>
-            )}
           </div>
+
+          {/* EVENT SELESAI */}
+          <div className="card event-completed-card">
+            <h3 className="card-title">🎉 Event Yang Telah Selesai</h3>
+
+            <div className="completed-grid">
+              {completed.map((e) => (
+                <div className="completed-card" key={e.id}>
+                  <div className="completed-top">
+                    <h4>{e.title}</h4>
+                    <p>{e.date}</p>
+                  </div>
+                  <div className="completed-bottom">
+                    <div className="big-number">{e.donors}</div>
+                    <div className="label">Donor Terkumpul</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+          </div>
+
         </div>
       </main>
+
+      {/* MODAL VIEW */}
+      {selected && (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <h3>Detail Event</h3>
+            <p><b>Nama:</b> {selected.nama}</p>
+            <p><b>Tanggal:</b> {selected.tanggal}</p>
+            <p><b>Lokasi:</b> {selected.lokasi}</p>
+            <p><b>Status:</b> {selected.status}</p>
+            <p><b>Deskripsi:</b> {selected.deskripsi}</p>
+            <p><b>Partner:</b> {selected.partner}</p>
+
+            <button className="close-btn" onClick={() => setSelected(null)}>Tutup</button>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL EDIT */}
+      {editing && (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <h3>Edit Event</h3>
+
+            <form onSubmit={handleEditSubmit}>
+              <label>Nama Event</label>
+              <input 
+                value={editing.nama}
+                onChange={(e) => setEditing({ ...editing, nama: e.target.value })}
+              />
+
+              <label>Tanggal</label>
+              <input 
+                value={editing.tanggal}
+                onChange={(e) => setEditing({ ...editing, tanggal: e.target.value })}
+              />
+
+              <label>Lokasi</label>
+              <input 
+                value={editing.lokasi}
+                onChange={(e) => setEditing({ ...editing, lokasi: e.target.value })}
+              />
+
+              <label>Deskripsi</label>
+              <textarea
+                value={editing.deskripsi}
+                onChange={(e) => setEditing({ ...editing, deskripsi: e.target.value })}
+              />
+
+              <div className="edit-actions">
+                <button type="button" className="cancel-btn" onClick={() => setEditing(null)}>Batal</button>
+                <button type="submit" className="save-btn">Simpan</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
-};
-
-export default ManajemenEvent;
+}

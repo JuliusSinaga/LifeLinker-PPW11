@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './ManajemenDokter.css';
+import SidebarAdmin from "../components/SidebarAdmin";
 
-// MetricCard component untuk statistik
+// MetricCard component
 function MetricCard({ value, title, subtitle, icon, iconColor }) {
   return (
     <div className="metric-card">
@@ -18,8 +19,10 @@ function MetricCard({ value, title, subtitle, icon, iconColor }) {
   );
 }
 
-// DoctorRow component untuk setiap baris dokter
-function DoctorRow({ doctor }) {
+// DoctorRow component
+function DoctorRow({ doctor, openModal }) {
+  const isWaiting = doctor.status === "Menunggu Verifikasi";
+
   const getStatusBadge = (status) => {
     if (status === 'Terverifikasi') {
       return <span className="status-badge status-verified">Terverifikasi</span>;
@@ -30,57 +33,54 @@ function DoctorRow({ doctor }) {
     }
   };
 
-  const getActionButtons = (status) => {
-    if (status === 'Terverifikasi') {
-      return (
-        <div className="action-buttons">
-          <button className="action-button view-button">
-            Lihat Info
-          </button>
-        </div>
-      );
-    } else if (status === 'Menunggu Verifikasi') {
-      return (
-        <div className="action-buttons">
-          <button className="action-button view-button">
-            Lihat Info
-          </button>
-          <button className="action-button verify-button">
-            ✓
-          </button>
-          <button className="action-button reject-button">
-            ✗
-          </button>
-        </div>
-      );
-    } else {
-      return (
-        <div className="action-buttons">
-          <button className="action-button view-button">
-            Lihat Info
-          </button>
-        </div>
-      );
-    }
-  };
-
   return (
-    <tr>
+    <tr className="doctor-row">
       <td>{doctor.name}</td>
       <td>{doctor.hospital}</td>
       <td>{doctor.specialization}</td>
       <td>{getStatusBadge(doctor.status)}</td>
-      <td>{getActionButtons(doctor.status)}</td>
+
+      {/* Aksi dengan animasi */}
+      <td className="action-cell">
+        <div className="action-buttons action-hover-area">
+
+          {/* Tombol Lihat Info */}
+          <button
+            className="action-button view-button"
+            onClick={() => openModal(doctor)}
+          >
+            Lihat Info
+          </button>
+
+          {/* Tombol animasi muncul saat hover */}
+          <div className="action-animate-wrapper">
+            <button
+              className={`action-button verify-button ${!isWaiting ? "disabled-btn" : ""}`}
+              disabled={!isWaiting}
+            >
+              ✓
+            </button>
+
+            <button
+              className={`action-button reject-button ${!isWaiting ? "disabled-btn" : ""}`}
+              disabled={!isWaiting}
+            >
+              ✗
+            </button>
+          </div>
+
+        </div>
+      </td>
     </tr>
   );
 }
 
 export default function ManajemenDokter() {
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [nameFilter, setNameFilter] = useState('');
   const [strNumberFilter, setStrNumberFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('Semua Status');
 
-  // Sample data untuk metrics - sesuai Dashboard Administrasi
   const metrics = [
     { value: '20,847', title: 'User Terdaftar', subtitle: 'Seluruh Sumatera Utara', icon: '👥', iconColor: '#dc2626' },
     { value: '342', title: 'Dokter Terverifikasi', subtitle: '30 Rumah Sakit', icon: '👨‍⚕️', iconColor: '#dc2626' },
@@ -90,33 +90,13 @@ export default function ManajemenDokter() {
     { value: '587', title: 'Event Terlaksana', subtitle: 'Seluruh Provinsi', icon: '✅', iconColor: '#dc2626' }
   ];
 
-  // Sample data untuk dokter - sesuai UI
   const doctors = [
-    {
-      id: 1,
-      name: 'Dr. Amanda Sari, Sp.A',
-      hospital: 'RSUP H. Adam Malik',
-      specialization: 'Spesialis Anak',
-      status: 'Terverifikasi'
-    },
-    {
-      id: 2,
-      name: 'Dr. Eko Prasetyo',
-      hospital: 'RS HKBP Balige',
-      specialization: 'Dokter Umum',
-      status: 'Menunggu Verifikasi'
-    },
-    {
-      id: 3,
-      name: 'Dr. Siti Nurhaliza, Sp.JP',
-      hospital: 'RSU Pirgandi',
-      specialization: 'Spesialis Jantung',
-      status: 'Terverifikasi'
-    }
+    { id: 1, name: 'Dr. Amanda Sari, Sp.A', hospital: 'RSUP H. Adam Malik', specialization: 'Spesialis Anak', status: 'Terverifikasi' },
+    { id: 2, name: 'Dr. Eko Prasetyo', hospital: 'RS HKBP Balige', specialization: 'Dokter Umum', status: 'Menunggu Verifikasi' },
+    { id: 3, name: 'Dr. Siti Nurhaliza, Sp.JP', hospital: 'RSU Pirgandi', specialization: 'Spesialis Jantung', status: 'Terverifikasi' }
   ];
 
-  // Filter doctors berdasarkan input
-  const filteredDoctors = doctors.filter(doctor => {
+  const filteredDoctors = doctors.filter((doctor) => {
     const nameMatch = nameFilter === '' || doctor.name.toLowerCase().includes(nameFilter.toLowerCase());
     const statusMatch = statusFilter === 'Semua Status' || doctor.status === statusFilter;
     return nameMatch && statusMatch;
@@ -124,152 +104,69 @@ export default function ManajemenDokter() {
 
   return (
     <div className="manajemen-dokter-container">
-      {/* Sidebar */}
-      <aside className="sidebar">
-        {/* Logo */}
-        <div className="sidebar-logo">
-          <div className="logo-content">
-            <div className="logo-icon">
-              ❤️
-            </div>
-            <div>
-              <div className="logo-text">LifeLinker</div>
-              <div className="logo-subtitle">Admin</div>
-            </div>
-          </div>
-        </div>
-        
-        {/* Navigation */}
-        <nav className="sidebar-nav">
-          <Link to="/dashboard-admin" className="nav-link">
-            <span className="nav-icon">📊</span>
-            <span>Dashboard</span>
-          </Link>
-          
-          <Link to="/manajemen-dokter" className="nav-link active">
-            <span className="nav-icon">👨‍⚕️</span>
-            <span>Manajemen Dokter</span>
-          </Link>
-          
-          <Link to="/manajemen-user" className="nav-link">
-            <span className="nav-icon">👤</span>
-            <span>Manajemen User</span>
-          </Link>
-          
-          <Link to="/manajemen-event" className="nav-link">
-            <span className="nav-icon">📋</span>
-            <span>Manajemen Event</span>
-          </Link>
-          
-          <Link to="/manajemen-pendonor" className="nav-link">
-            <span className="nav-icon">🩸</span>
-            <span>Manajemen Pendonor</span>
-          </Link>
-          
-          <Link to="/laporan" className="nav-link">
-            <span className="nav-icon">📈</span>
-            <span>Laporan</span>
-          </Link>
-          
-          <Link to="/profil-admin" className="nav-link">
-            <span className="nav-icon">👤</span>
-            <span>Profile</span>
-          </Link>
-        </nav>
+      <SidebarAdmin />
 
-        {/* Logout */}
-        <div className="sidebar-logout">
-          <Link to="/logout" className="nav-link">
-            <span className="nav-icon">🚪</span>
-            <span>Logout</span>
-          </Link>
-        </div>
-      </aside>
-
-      {/* Main Content */}
       <main className="main-content">
-        {/* Header */}
         <header className="content-header">
-          <h1 className="page-title">
-            Dashboard Administrasi
-          </h1>
+          <h1 className="page-title">Dashboard Administrasi</h1>
         </header>
 
-        {/* Metrics Grid */}
+        {/* Metrics */}
         <div className="metrics-grid">
-          {metrics.map((metric, index) => (
-            <MetricCard
-              key={index}
-              value={metric.value}
-              title={metric.title}
-              subtitle={metric.subtitle}
-              icon={metric.icon}
-              iconColor={metric.iconColor}
-            />
-          ))}
+          {metrics.map((metric, i) => <MetricCard key={i} {...metric} />)}
         </div>
 
-        {/* Doctor Management Section */}
+        {/* Doctors Table */}
         <div className="doctors-table-container">
-          <div className="table-header">
-            <h3 className="table-title">
-              Daftar Dokter
-            </h3>
-          </div>
-          
-          {/* Filter Section */}
+          <h3 className="table-title">Daftar Dokter</h3>
+
+          {/* Filters */}
           <div className="filters-section">
             <div className="filters-grid">
+
               <div className="filter-group">
-                <label className="filter-label">
-                  Filter Nama Dokter:
-                </label>
+                <label className="filter-label">Filter Nama Dokter:</label>
                 <input
                   type="text"
+                  className="filter-input"
                   placeholder="Cari nama dokter..."
                   value={nameFilter}
                   onChange={(e) => setNameFilter(e.target.value)}
-                  className="filter-input"
                 />
               </div>
-              
+
               <div className="filter-group">
-                <label className="filter-label">
-                  Filter Nomor STR:
-                </label>
+                <label className="filter-label">Filter Nomor STR:</label>
                 <input
                   type="text"
+                  className="filter-input"
                   placeholder="Cari nomor STR..."
                   value={strNumberFilter}
                   onChange={(e) => setStrNumberFilter(e.target.value)}
-                  className="filter-input"
                 />
               </div>
-              
+
               <div className="filter-group">
-                <label className="filter-label">
-                  Status:
-                </label>
+                <label className="filter-label">Status:</label>
                 <select
+                  className="filter-select"
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="filter-select"
                 >
                   <option value="Semua Status">Semua Status</option>
                   <option value="Terverifikasi">Terverifikasi</option>
                   <option value="Menunggu Verifikasi">Menunggu Verifikasi</option>
                 </select>
               </div>
-              
+
               <div className="filter-group">
-                <button className="filter-button">
-                  Filter
-                </button>
+                <button className="filter-button">Filter</button>
               </div>
+
             </div>
           </div>
 
-          {/* Doctor Table */}
+          {/* Table */}
           <div className="table-container">
             <table className="doctor-table">
               <thead>
@@ -281,17 +178,40 @@ export default function ManajemenDokter() {
                   <th>Aksi</th>
                 </tr>
               </thead>
+
               <tbody>
-                {filteredDoctors.map(doctor => (
+                {filteredDoctors.map((doctor) => (
                   <DoctorRow
                     key={doctor.id}
                     doctor={doctor}
+                    openModal={setSelectedDoctor}
                   />
                 ))}
               </tbody>
             </table>
           </div>
         </div>
+
+        {/* Modal Detail */}
+        {selectedDoctor && (
+          <div className="modal-overlay" onClick={() => setSelectedDoctor(null)}>
+            <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+              <h2 className="modal-title">Detail Dokter</h2>
+
+              <div className="modal-content">
+                <p><strong>Nama:</strong> {selectedDoctor.name}</p>
+                <p><strong>Rumah Sakit:</strong> {selectedDoctor.hospital}</p>
+                <p><strong>Spesialis:</strong> {selectedDoctor.specialization}</p>
+                <p><strong>Status:</strong> {selectedDoctor.status}</p>
+              </div>
+
+              <button className="modal-close" onClick={() => setSelectedDoctor(null)}>
+                Tutup
+              </button>
+            </div>
+          </div>
+        )}
+
       </main>
     </div>
   );

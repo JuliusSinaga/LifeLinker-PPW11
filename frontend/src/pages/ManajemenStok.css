@@ -1,143 +1,259 @@
-/* WRAPPER */
-.stok-wrapper {
+/* ===================== LAYOUT ===================== */
+.dokter-layout {
   display: flex;
-  background: #f4f6f9;
-  height: 100vh;
-  font-family: Arial, sans-serif;
+  background: #f5f7fb;
+  min-height: 100vh;
 }
 
-/* SIDEBAR */
-.sidebar {
-  width: 250px;
-  background: #1a1d2e;
-  color: white;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
+.dokter-main {
+  flex: 1;
+  padding: 35px 45px;
 }
 
-.doctor-profile {
-  text-align: center;
+.page-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 25px;
+}
+
+
+/* ===================== CARD BOX ===================== */
+.stok-card,
+.pendonor-card {
+  background: white;
+  padding: 25px;
+  border-radius: 18px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
   margin-bottom: 30px;
 }
 
-.doctor-profile img {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-}
-
-.menu-links a {
-  color: #e0e0e0;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-  margin: 8px 0;
-  text-decoration: none;
-  font-size: 14px;
-  border-radius: 6px;
-  transition: 0.2s;
-}
-
-.menu-links a:hover,
-.menu-links a.active {
-  background: #27304b;
-  color: #fff;
-}
-
-.logout {
-  margin-top: auto;
-  background: #b92a2a;
-  color: white !important;
-  border-radius: 6px;
-}
-
-/* MAIN */
-.stok-container {
-  flex: 1;
-  padding: 30px;
-}
-
-.stok-header {
+.stok-card-header,
+.pendonor-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 18px;
 }
 
-.btn-tambah {
-  background: #e63946;
+.stok-card-header h3,
+.pendonor-header h3 {
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+
+/* ===================== BUTTON GROUP ===================== */
+.btn-group {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-export {
+  background: #eef3ff;
+  color: #2c3e50;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.btn-export:hover {
+  background: #d9e4ff;
+}
+
+.btn-add {
+  background: #ff6b6b;
   color: white;
   border: none;
-  padding: 10px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.btn-tambah:hover {
-  background: #c62828;
-}
-
-/* TABLE */
-.table-container {
-  margin-top: 20px;
-  background: white;
-  padding: 20px;
+  padding: 10px 18px;
   border-radius: 10px;
-  overflow-x: auto;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
 }
 
-table {
+.btn-add:hover {
+  background: #ff5252;
+}
+
+
+/* ===================== TABEL STOK DARAH ===================== */
+.stok-table {
   width: 100%;
   border-collapse: collapse;
+  margin-top: 10px;
 }
 
-thead {
-  background: #27304b;
-  color: white;
+.stok-table th {
+  text-align: left;
+  padding: 12px 8px;
+  font-weight: 700;
+  color: #333;
+  font-size: 14px;
+  border-bottom: 2px solid #f0f0f0;
 }
 
-th, td {
-  padding: 12px;
-  text-align: center;
-  border-bottom: 1px solid #ccc;
+.stok-table td {
+  padding: 12px 8px;
+  font-size: 14px;
+  color: #444;
+  border-bottom: 1px solid #f0f0f0;
 }
 
-.status-badge {
-  padding: 6px 10px;
-  color: white;
-  border-radius: 6px;
-  font-size: 13px;
-}
-
-.status-aman {
-  background: #2ecc71;
-}
-
-.status-standar {
-  background: #f1c40f;
-}
-
-.status-kritikal {
-  background: #e74c3c;
-}
-
-.aksi button {
-  background: none;
-  border: none;
+.aksi-buttons {
+  display: flex;
+  gap: 8px;
   cursor: pointer;
-  font-size: 18px;
 }
 
-.edit-btn {
-  color: #3498db;
-  margin-right: 10px;
+
+/* ===================== BADGES ===================== */
+.badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-block;
 }
 
-.delete-btn {
-  color: #e74c3c;
+.badge.green {
+  background: #d4f8d2;
+  color: #2e8b57;
+}
+
+.badge.yellow {
+  background: #fff4c4;
+  color: #b38b00;
+}
+
+.badge.red {
+  background: #ffd4d4;
+  color: #c0392b;
+}
+
+
+/* ===================== PENDONOR CARD ===================== */
+.pendonor-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+.pendonor-table th {
+  text-align: left;
+  padding: 12px 8px;
+  font-weight: 700;
+  color: #333;
+  font-size: 14px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.pendonor-table td {
+  padding: 12px 8px;
+  font-size: 14px;
+  color: #444;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.filter-group {
+  display: flex;
+  gap: 12px;
+}
+
+.filter-input {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+}
+
+
+/* ===================== MODAL ===================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99;
+}
+
+.modal-box {
+  width: 420px;
+  background: white;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+  animation: pop 0.25s ease-out;
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+.modal-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 5px;
+}
+
+.btn-cancel {
+  background: #ddd;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  border: none;
+}
+
+.btn-cancel:hover {
+  background: #c5c5c5;
+}
+
+.btn-save {
+  background: #4d9eff;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  border: none;
+}
+
+.btn-save:hover {
+  background: #2f8cff;
 }
