@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import "./DaftarPengguna.css";
 import axiosClient from "../service/axiosClient";
 import { useGoogleLogin } from "@react-oauth/google"; 
+// Import Icon
+import { FaArrowLeft } from "react-icons/fa"; 
 
 export default function DaftarPengguna() {
   const [notif, setNotif] = useState({ show: false, type: "", message: "" });
@@ -118,6 +120,12 @@ export default function DaftarPengguna() {
   return (
     <div className="daftar-wrapper">
       <div className="daftar-container">
+        
+        {/* TOMBOL KEMBALI */}
+        <button className="back-button-register" onClick={() => navigate("/")}>
+            <FaArrowLeft /> Kembali
+        </button>
+
         {notif.show && (
           <div
             className={`notif ${

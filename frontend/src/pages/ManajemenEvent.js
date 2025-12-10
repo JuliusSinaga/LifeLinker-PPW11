@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import DokterSidebar from "../components/DokterSidebar";
+import DokterSidebar from "../components/SidebarDokter";
 import "../styles/ManajemenEvent.css";
 
 export default function ManajemenEvent() {

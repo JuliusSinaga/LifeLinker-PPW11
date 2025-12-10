@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import SidebarDokter from "../components/DokterSidebar";
+import SidebarDokter from "../components/SidebarDokter";
 import "./ManajemenStok.css";
 
 export default function ManajemenStok() {

@@ -272,3 +272,32 @@ body{
   color: #b92c2c !important;       /* Merah sedikit lebih gelap */
   text-decoration: underline;
 }
+
+/* --- Style Tombol Kembali (Daftar Dokter) --- */
+.back-button-dokter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: #6b7280; /* Warna abu-abu */
+  cursor: pointer;
+  margin-bottom: 20px; /* Jarak ke judul/notif */
+  font-size: 14px;
+  font-weight: 500;
+  padding: 0;
+  transition: all 0.2s ease;
+  align-self: flex-start; /* Pastikan tombol di kiri */
+}
+
+/* Efek Hover */
+.back-button-dokter:hover {
+  color: #374151; /* Lebih gelap saat hover */
+  transform: translateX(-3px); /* Geser kiri sedikit */
+}
+
+/* Efek Klik */
+.back-button-dokter:active {
+  color: #111827;
+  transform: translateX(0);
+}

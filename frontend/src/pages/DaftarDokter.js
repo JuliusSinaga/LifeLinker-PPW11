@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./DaftarDokter.css";
-// 1. Import axiosClient dan Google Hook
 import axiosClient from "../service/axiosClient"; 
 import { useGoogleLogin } from "@react-oauth/google"; 
+import { FaArrowLeft } from "react-icons/fa";
 
 export default function DaftarDokter() {
   const navigate = useNavigate();
@@ -125,6 +125,11 @@ export default function DaftarDokter() {
             {notif.message}
           </div>
         )}
+
+        {/* TOMBOL KEMBALI */}
+        <button className="back-button-dokter" onClick={() => navigate("/")}>
+            <FaArrowLeft /> Kembali
+        </button>
 
         <h1 className="dd-title">Pendaftaran Akun Dokter</h1>
 

@@ -208,6 +208,37 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
+/* --- Style Tombol Kembali (Register) --- */
+.back-button-register {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: #6b7280; /* Warna abu-abu */
+  cursor: pointer;
+  margin-bottom: 15px; /* Jarak ke header */
+  font-size: 14px;
+  font-weight: 500;
+  padding: 0;
+  transition: all 0.2s ease;
+  align-self: flex-start; /* Pastikan tombol di kiri */
+}
+
+/* Efek Hover */
+.back-button-register:hover {
+  color: #374151; /* Lebih gelap saat hover */
+  transform: translateX(-3px); /* Geser kiri sedikit */
+}
+
+/* Efek Klik */
+.back-button-register:active {
+  color: #111827;
+  transform: translateX(0);
+}
+
+
+
 @keyframes slideDown {
   from { opacity: 0; transform: translateY(-20px); }
   to { opacity: 1; transform: translateY(0); }

@@ -10,7 +10,7 @@ export default function Header() {
   const [user, setUser] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
   
-  // State untuk Modal Logout (Sama seperti SidebarAdmin)
+  // State untuk Modal Logout
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const checkLoginStatus = () => {
@@ -34,25 +34,21 @@ export default function Header() {
     };
   }, []);
 
-  // 1. Fungsi saat tombol "Keluar" di dropdown diklik (Hanya buka modal)
+  // 1. Buka Modal Logout
   const handleLogoutClick = () => {
-    setShowDropdown(false); // Tutup dropdown dulu
-    setShowLogoutModal(true); // Buka modal konfirmasi
+    setShowDropdown(false);
+    setShowLogoutModal(true);
   };
 
-  // 2. Fungsi Eksekusi Logout (Dipanggil tombol "Logout" di dalam modal)
+  // 2. Eksekusi Logout
   const confirmLogout = () => {
-    setShowLogoutModal(false); // Tutup modal
-    
-    // Hapus data sesi
+    setShowLogoutModal(false);
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     
-    // Update state header
     setIsLoggedIn(false);
     setUser(null);
 
-    // Redirect
     navigate("/");
   };
 
@@ -95,34 +91,31 @@ export default function Header() {
 
           <div className="app-nav-actions">
             {isLoggedIn && user ? (
-              <div className="app-user-info" style={{ position: 'relative' }}>
+              <div className="app-user-info">
                 <span className="user-name">Halo, {user.nama || user.name}</span>
                 
+                {/* Avatar */}
                 <div 
                   className="app-user-avatar" 
                   onClick={() => setShowDropdown(!showDropdown)}
-                  style={{ cursor: 'pointer', backgroundColor: '#ef4444', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}
                 >
                   {getInitials(user.nama || user.name)}
                 </div>
 
+                {/* Dropdown Menu */}
                 {showDropdown && (
-                  <div className="user-dropdown" style={{
-                      position: 'absolute', top: '50px', right: '0', backgroundColor: 'white',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.15)', borderRadius: '8px', padding: '10px', minWidth: '150px', zIndex: 100
-                  }}>
-                      <Link to="/profile" className="dropdown-item" style={{display:'block', padding:'8px 12px', color:'#333', textDecoration:'none'}}>Profil Saya</Link>
+                  <div className="user-dropdown">
+                      <Link to="/profile" className="dropdown-item">Profil Saya</Link>
+                      
                       {user.role === 'admin' && (
-                          <Link to="/dashboard-admin" className="dropdown-item" style={{display:'block', padding:'8px 12px', color:'#333', textDecoration:'none'}}>Dashboard Admin</Link>
+                          <Link to="/dashboard-admin" className="dropdown-item">Dashboard Admin</Link>
                       )}
+                      
                       {user.role === 'dokter' && (
-                          <Link to="/dashboard-dokter" className="dropdown-item" style={{display:'block', padding:'8px 12px', color:'#333', textDecoration:'none'}}>Dashboard Dokter</Link>
+                          <Link to="/dashboard-dokter" className="dropdown-item">Dashboard Dokter</Link>
                       )}
-                      <div 
-                          onClick={handleLogoutClick} // Panggil fungsi pembuka modal
-                          className="dropdown-item" 
-                          style={{display:'block', padding:'8px 12px', color:'#dc2626', cursor:'pointer', borderTop:'1px solid #eee', marginTop:'5px'}}
-                      >
+                      
+                      <div onClick={handleLogoutClick} className="dropdown-item logout">
                           Keluar
                       </div>
                   </div>
@@ -139,22 +132,18 @@ export default function Header() {
       </header>
 
       {/* ===================== LOGOUT MODAL ===================== */}
-      {/* Persis seperti di SidebarAdmin */}
       {showLogoutModal && (
-        <div className="logout-modal-overlay">
-          <div className="logout-modal">
+        <div className="header-modal-overlay">
+          <div className="header-modal">
             <h3>Konfirmasi Logout</h3>
             <p>Apakah Anda yakin ingin logout?</p>
 
-            <div className="logout-actions">
-              <button
-                className="cancel-logout"
-                onClick={() => setShowLogoutModal(false)}
-              >
+            <div className="header-modal-actions">
+              <button className="btn-header-cancel" onClick={() => setShowLogoutModal(false)}>
                 Batal
               </button>
 
-              <button className="confirm-logout" onClick={confirmLogout}>
+              <button className="btn-header-confirm" onClick={confirmLogout}>
                 Logout
               </button>
             </div>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import DokterSidebar from "../components/DokterSidebar";
+import DokterSidebar from "../components/SidebarDokter";
 import "../styles/KonsultasiEdukasi.css";
 import { FaVideo, FaEdit, FaTrash, FaClock, FaPaperPlane } from "react-icons/fa";
 

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import DokterSidebar from "../components/DokterSidebar";
+import DokterSidebar from "../components/SidebarDokter";
 import "../styles/DashboardDokter.css";
 
 import { FaSyncAlt } from "react-icons/fa";

@@ -252,6 +252,161 @@
   background-color: #b91c1c;
 }
 
+/* --- User Info Wrapper --- */
+.app-user-info {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* --- Avatar User (Bulat dengan Inisial) --- */
+.app-user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #ef4444; /* Merah Brand */
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+  border: 2px solid white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.app-user-avatar:hover {
+  transform: scale(1.05);
+  background-color: #dc2626;
+}
+
+/* --- Dropdown Menu --- */
+.user-dropdown {
+  position: absolute;
+  top: 55px;
+  right: 0;
+  background-color: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 8px 0;
+  min-width: 180px;
+  z-index: 1000;
+  border: 1px solid #f3f4f6;
+  animation: slideDown 0.2s ease-out;
+}
+
+.dropdown-item {
+  display: block;
+  padding: 10px 16px;
+  color: #374151;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: background-color 0.2s, color 0.2s;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background-color: #f3f4f6;
+  color: #ef4444;
+}
+
+/* Item Khusus Logout di Dropdown */
+.dropdown-item.logout {
+  color: #dc2626;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 5px;
+  padding-top: 12px;
+}
+
+.dropdown-item.logout:hover {
+  background-color: #fee2e2;
+}
+
+/* --- Modal Konfirmasi Logout --- */
+.header-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  backdrop-filter: blur(2px);
+}
+
+.header-modal {
+  background-color: white;
+  padding: 25px;
+  border-radius: 12px;
+  width: 350px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  animation: fadeInModal 0.3s ease;
+}
+
+.header-modal h3 {
+  margin: 0 0 10px 0;
+  color: #1f2937;
+  font-size: 1.25rem;
+}
+
+.header-modal p {
+  color: #6b7280;
+  margin-bottom: 25px;
+}
+
+.header-modal-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.btn-header-cancel,
+.btn-header-confirm {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn-header-cancel {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.btn-header-cancel:hover {
+  background-color: #d1d5db;
+}
+
+.btn-header-confirm {
+  background-color: #dc2626;
+  color: white;
+}
+
+.btn-header-confirm:hover {
+  background-color: #b91c1c;
+}
+
+/* Animasi Dropdown & Modal */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-20px); }
   to { opacity: 1; transform: translateY(0); }

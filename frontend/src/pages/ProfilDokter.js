@@ -1,5 +1,5 @@
 import React from "react";
-import DokterSidebar from "../components/DokterSidebar";
+import DokterSidebar from "../components/SidebarDokter";
 import "../styles/ProfilDokter.css";
 
 export default function ProfilDokter() {
