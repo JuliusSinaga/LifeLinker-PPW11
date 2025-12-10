@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./KonsultasiPage.css";
 import {
   FaPaperPlane,
@@ -8,14 +8,22 @@ import {
   FaUserMd,
 } from "react-icons/fa";
 import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 
 const KonsultasiPage = () => {
   const [chatMessage, setChatMessage] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [emailForm, setEmailForm] = useState({
     email: "",
     question: "",
   });
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const userRole = localStorage.getItem("role");
+    if (token && userRole === "pengguna") {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   const handleChatSubmit = (e) => {
     e.preventDefault();
@@ -100,7 +108,7 @@ const KonsultasiPage = () => {
 
   return (
     <div className="konsultasi-page">
-      <Header />
+      <Header showUserProfile={isLoggedIn} />
 
       <div className="konsultasi-container">
         <div className="hero-section">
@@ -303,8 +311,6 @@ const KonsultasiPage = () => {
           </div>
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 };

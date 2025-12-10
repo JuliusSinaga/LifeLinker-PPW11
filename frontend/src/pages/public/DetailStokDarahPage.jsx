@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import "./DetailStokDarahPage.css";
 import {
@@ -13,7 +13,6 @@ import {
   FaClipboardList,
 } from "react-icons/fa";
 import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 
 // Sample detailed blood stock data for specific hospitals
 const hospitalDetailData = {
@@ -287,6 +286,15 @@ const procedureInfo = [
 export default function DetailStokDarahPage() {
   const { id } = useParams();
   const hospital = hospitalDetailData[id] || hospitalDetailData[1];
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const userRole = localStorage.getItem("role");
+    if (token && userRole === "pengguna") {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   const [selectedFilter, setSelectedFilter] = useState("Tampilkan Semua");
   const filterOptions = [
@@ -343,7 +351,7 @@ export default function DetailStokDarahPage() {
 
   return (
     <div className="detail-stok-root">
-      <Header />
+      <Header showUserProfile={isLoggedIn} />
 
       {/* Hospital Info Section */}
       <section className="hospital-info-section" style={{ paddingTop: "40px" }}>
@@ -606,8 +614,6 @@ export default function DetailStokDarahPage() {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

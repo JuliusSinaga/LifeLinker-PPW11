@@ -121,6 +121,33 @@
   font-weight: 500;
 }
 
+.btn-logout {
+  margin-top: 20px;
+  width: 100%;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, var(--primary-red), var(--primary-dark));
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-logout:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(220, 38, 38, 0.3);
+}
+
+.btn-logout:active {
+  transform: translateY(0);
+}
+
 /* Digital Donor Card - Enhanced */
 .profile-donor-card {
   background: linear-gradient(

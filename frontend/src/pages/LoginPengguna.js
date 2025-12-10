@@ -6,11 +6,29 @@ import Footer from "../components/Footer";
 const LoginPengguna = () => {
   const navigate = useNavigate();
   const [role, setRole] = useState("pengguna");
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleLogin = (e) => {
     e.preventDefault();
-    // nanti dihubungkan ke backend
-    navigate("/home");
+    
+    // Simpan data login ke localStorage (simulasi - nanti dihubungkan ke backend)
+    localStorage.setItem("token", "dummy-token-" + Date.now());
+    localStorage.setItem("role", "pengguna");
+    localStorage.setItem("userName", formData.email.split("@")[0]); // Ambil nama dari email
+    localStorage.setItem("email", formData.email);
+    
+    // Redirect ke beranda
+    navigate("/beranda");
   };
 
   return (
@@ -65,14 +83,20 @@ const LoginPengguna = () => {
           <form onSubmit={handleLogin} className="login-form">
             <input
               type="email"
+              name="email"
               placeholder="Alamat Email"
               className="form-input"
+              value={formData.email}
+              onChange={handleChange}
               required
             />
             <input
               type="password"
+              name="password"
               placeholder="Password"
               className="form-input"
+              value={formData.password}
+              onChange={handleChange}
               required
             />
             <button type="submit" className="btn-login">
@@ -93,7 +117,7 @@ const LoginPengguna = () => {
 
           {/* Link daftar */}
           <p className="register-text">
-            Belum punya akun? <a href="/daftar">Daftar Sekarang</a>
+            Belum punya akun? <a href="/daftar-pengguna">Daftar Sekarang</a>
           </p>
         </div>
       </div>

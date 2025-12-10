@@ -1,9 +1,17 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./Header.css";
 
 export default function Header({ showUserProfile = false }) {
   const location = useLocation();
+  const [userName, setUserName] = useState("User");
+
+  useEffect(() => {
+    if (showUserProfile) {
+      const name = localStorage.getItem("userName") || localStorage.getItem("name") || "Budi Setiawan";
+      setUserName(name);
+    }
+  }, [showUserProfile]);
 
   const isActive = (path) => {
     if (path === "/" || path === "/beranda") {
@@ -84,7 +92,7 @@ export default function Header({ showUserProfile = false }) {
         <div className="app-nav-actions">
           {showUserProfile ? (
             <div className="app-user-info">
-              <span>Budi Setiawan</span>
+              <span className="user-name">{userName}</span>
               <Link to="/profile" className="app-user-avatar">
                 <img
                   src={process.env.PUBLIC_URL + "/images/budi-avatar.png"}

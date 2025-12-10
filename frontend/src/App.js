@@ -99,10 +99,10 @@ function AppContent() {
           <Route path="/konsultasi-edukasi" element={<KonsultasiEdukasi />} />
 
           {/* === Fallback Pages === */}
-          <Route path="/home" element={<Home />} />
+          <Route path="/home" element={<Navigate to="/beranda" replace />} />
           
           {/* Fallback jika route salah */}
-          <Route path="*" element={<h1>404 - Halaman Tidak Ditemukan</h1>} />
+          <Route path="*" element={<Navigate to="/beranda" replace />} />
         </Routes>
       </div>
       

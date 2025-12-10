@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./EventPage.css";
 import {
@@ -10,7 +10,6 @@ import {
   FaCalendarCheck,
 } from "react-icons/fa";
 import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 
 // Sample events data
 const eventsData = {
@@ -52,6 +51,15 @@ const participationStats = {
 
 export default function EventPage() {
   const [selectedFilter, setSelectedFilter] = useState("Semua Lokasi");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const userRole = localStorage.getItem("role");
+    if (token && userRole === "pengguna") {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   const filterOptions = [
     "Semua Lokasi",
@@ -63,7 +71,7 @@ export default function EventPage() {
 
   return (
     <div className="event-page-root">
-      <Header />
+      <Header showUserProfile={isLoggedIn} />
 
       {/* Hero Section */}
       <section className="event-hero">
@@ -230,8 +238,6 @@ export default function EventPage() {
           </section>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

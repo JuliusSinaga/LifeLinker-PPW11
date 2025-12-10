@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import "./DetailLokasiPage.css";
 import {
@@ -16,7 +16,6 @@ import {
   FaBullhorn,
 } from "react-icons/fa";
 import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 
 // Sample data for hospital details
 const hospitalData = {
@@ -135,6 +134,15 @@ const hospitalData = {
 export default function DetailLokasiPage() {
   const { id } = useParams();
   const hospital = hospitalData[id] || hospitalData[1];
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const userRole = localStorage.getItem("role");
+    if (token && userRole === "pengguna") {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   const [formData, setFormData] = useState({
     namaLengkap: "",
@@ -198,7 +206,7 @@ export default function DetailLokasiPage() {
 
   return (
     <div className="detail-root">
-      <Header />
+      <Header showUserProfile={isLoggedIn} />
 
       {/* Hero Section */}
       <section className="detail-hero">
@@ -432,8 +440,6 @@ export default function DetailLokasiPage() {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

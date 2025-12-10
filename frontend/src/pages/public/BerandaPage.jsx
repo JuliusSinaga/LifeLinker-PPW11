@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom"; // Untuk navigasi
 // import { getPublicStats } from "../../services/publicService"; // Kita pakai data statis dulu
 import "./BerandaPage.css";
 import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 
 // --- Import Icons (Pastikan Anda sudah 'npm install react-icons') ---
 import {
@@ -26,6 +25,17 @@ import {
 } from "react-icons/fa";
 
 export default function BerandaPage() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Check if user is logged in
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const userRole = localStorage.getItem("role");
+    if (token && userRole === "pengguna") {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
   // Kita gunakan data statis dulu agar 100% cocok dengan UI
   const stats = {
     total_users: 15204,
@@ -37,15 +47,13 @@ export default function BerandaPage() {
   return (
     <div className="beranda-root">
       {/* Shared Header Component */}
-      <Header />
+      <Header showUserProfile={isLoggedIn} />
 
       {/* 1. LAYAR PENUH: HERO Section with background image */}
       <section
         className="hero"
         style={{
-          backgroundImage: `url(${encodeURI(
-            process.env.PUBLIC_URL + "/images/bg beranda awal.jpg"
-          )})`,
+          backgroundImage: `url(${process.env.PUBLIC_URL}/images/bg%20beranda%20awal.jpg)`,
           backgroundPosition: "center right",
           backgroundSize: "cover",
         }}
@@ -305,9 +313,6 @@ export default function BerandaPage() {
           </div>
         </div>
       </section>
-
-      {/* Shared Footer Component */}
-      <Footer />
     </div>
   );
 }

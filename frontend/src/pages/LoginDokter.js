@@ -4,16 +4,32 @@ import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 
 const LoginDokter = () => {
-const navigate = useNavigate();
-const [role, setRole] = useState("dokter");
+  const navigate = useNavigate();
+  const [role, setRole] = useState("dokter");
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
 
-const handleLogin = (e) => {
-e.preventDefault();
-// nanti disambungkan ke backend
-navigate("/home");
-};
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
 
-return (
+  const handleLogin = (e) => {
+    e.preventDefault();
+    
+    // Simpan data login ke localStorage (simulasi - nanti dihubungkan ke backend)
+    localStorage.setItem("token", "dokter-token-" + Date.now());
+    localStorage.setItem("role", "dokter");
+    localStorage.setItem("userName", formData.email.split("@")[0]);
+    localStorage.setItem("email", formData.email);
+    
+    // Redirect ke dashboard dokter
+    navigate("/dashboard");
+  };return (
 <> <div className="login-container"> <div className="login-card">
   
       {/* Logo */}
@@ -66,14 +82,20 @@ return (
       <form onSubmit={handleLogin} className="login-form">
         <input
           type="email"
+          name="email"
           placeholder="Alamat Email"
           className="form-input"
+          value={formData.email}
+          onChange={handleChange}
           required
         />
         <input
           type="password"
+          name="password"
           placeholder="Password"
           className="form-input"
+          value={formData.password}
+          onChange={handleChange}
           required
         />
         <button type="submit" className="btn-login">

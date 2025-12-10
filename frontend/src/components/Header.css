@@ -120,11 +120,28 @@
   color: var(--text-dark);
 }
 
+.app-user-info .user-name {
+  font-size: 15px;
+  color: var(--text-dark);
+  font-weight: 600;
+}
+
+.app-user-avatar {
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+.app-user-avatar:hover {
+  transform: scale(1.05);
+}
+
 .app-user-avatar img {
   width: 40px;
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
+  border: 2px solid var(--primary-red);
 }
 
 /* Responsive */

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./StokDarahPage.css";
 import {
@@ -10,7 +10,6 @@ import {
   FaHospital,
 } from "react-icons/fa";
 import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 
 // Sample hospitals with blood stock data
 const hospitalsData = [
@@ -87,6 +86,15 @@ const hospitalsData = [
 export default function StokDarahPage() {
   const [selectedFilter, setSelectedFilter] = useState("Semua Kota");
   const [selectedBloodType, setSelectedBloodType] = useState("Semua Golongan");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const userRole = localStorage.getItem("role");
+    if (token && userRole === "pengguna") {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   const filterOptions = ["Semua Kota", "Medan", "Balige"];
 
@@ -127,7 +135,7 @@ export default function StokDarahPage() {
 
   return (
     <div className="stok-darah-root">
-      <Header />
+      <Header showUserProfile={isLoggedIn} />
 
       {/* Hero Section */}
       <section className="stok-hero">
@@ -295,8 +303,6 @@ export default function StokDarahPage() {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./RiwayatPage.css";
 import {
   FaTint,
@@ -10,7 +11,6 @@ import {
   FaChartLine,
 } from "react-icons/fa";
 import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 
 // Sample user data
 const userData = {
@@ -70,11 +70,23 @@ const userData = {
 };
 
 export default function RiwayatPage() {
+  const navigate = useNavigate();
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
     minutes: 0,
   });
+
+  // Check if user is logged in
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const userRole = localStorage.getItem("role");
+    
+    // If not logged in or not a regular user, redirect to login
+    if (!token || userRole !== "pengguna") {
+      navigate("/login-pengguna");
+    }
+  }, [navigate]);
 
   // Countdown timer effect
   useEffect(() => {
@@ -205,8 +217,6 @@ export default function RiwayatPage() {
           </section>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

@@ -1,12 +1,44 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "./ProfilePage.css";
-import { FaInstagram, FaFacebookF, FaTwitter } from "react-icons/fa";
+import { FaInstagram, FaFacebookF, FaTwitter, FaSignOutAlt } from "react-icons/fa";
 import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("profil");
+  const [userData, setUserData] = useState({
+    name: "Budi Setiawan",
+    email: "budi.setiawan@email.com"
+  });
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Get user data from localStorage
+    const userName = localStorage.getItem("userName") || localStorage.getItem("name") || "Budi Setiawan";
+    const userEmail = localStorage.getItem("email") || "user@email.com";
+    setUserData({
+      name: userName.charAt(0).toUpperCase() + userName.slice(1),
+      email: userEmail
+    });
+
+    // Check if user is logged in
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login-pengguna");
+    }
+  }, [navigate]);
+
+  const handleLogout = () => {
+    // Clear localStorage
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("name");
+    localStorage.removeItem("email");
+    
+    // Redirect to login
+    navigate("/login-pengguna");
+  };
 
   return (
     <div className="profile-root">
@@ -20,11 +52,15 @@ export default function ProfilePage() {
               <div className="profile-user-avatar">
                 <img
                   src={process.env.PUBLIC_URL + "/images/budi-avatar.png"}
-                  alt="Budi Setiawan"
+                  alt={userData.name}
                 />
               </div>
-              <h3>Budi Setiawan</h3>
+              <h3>{userData.name}</h3>
               <p>Medan, Sumatera Utara</p>
+              
+              <button className="btn-logout" onClick={handleLogout}>
+                <FaSignOutAlt /> Keluar
+              </button>
             </div>
 
             <div className="profile-donor-card">
@@ -80,7 +116,7 @@ export default function ProfilePage() {
                   <div className="form-row">
                     <div className="form-group">
                       <label>Nama Lengkap</label>
-                      <input type="text" value="Budi Setiawan" />
+                      <input type="text" value={userData.name} readOnly />
                     </div>
                     <div className="form-group">
                       <label>Tanggal Lahir</label>
@@ -198,8 +234,9 @@ export default function ProfilePage() {
                     <label>Email</label>
                     <input
                       type="email"
-                      value="budi.setiawan@email.com"
+                      value={userData.email}
                       className="settings-input"
+                      readOnly
                     />
                   </div>
 
@@ -231,9 +268,6 @@ export default function ProfilePage() {
           </div>
         </div>
       </main>
-
-      {/* Shared Footer Component */}
-      <Footer />
     </div>
   );
 }

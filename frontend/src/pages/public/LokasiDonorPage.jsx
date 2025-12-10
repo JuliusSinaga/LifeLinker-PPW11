@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./LokasiDonorPage.css";
 import {
@@ -10,7 +10,6 @@ import {
   FaUsers,
 } from "react-icons/fa";
 import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 
 const sampleLocations = [
   {
@@ -49,10 +48,20 @@ const sampleLocations = [
 ];
 
 export default function LokasiDonorPage() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const userRole = localStorage.getItem("role");
+    if (token && userRole === "pengguna") {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
   return (
     <div className="lokasid-root">
       {/* Shared Header Component */}
-      <Header />
+      <Header showUserProfile={isLoggedIn} />
 
       {/* Hero Section with background image */}
       <section
@@ -154,9 +163,6 @@ export default function LokasiDonorPage() {
           ))}
         </div>
       </main>
-
-      {/* Shared Footer Component */}
-      <Footer />
     </div>
   );
 }

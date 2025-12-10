@@ -13,7 +13,6 @@ import {
   FaFacebook,
 } from "react-icons/fa";
 import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 
 // Sample detailed event data
 const eventDetailData = {
@@ -76,6 +75,7 @@ const eventDetailData = {
 export default function DetailEventPage() {
   const { id } = useParams();
   const event = eventDetailData[id] || eventDetailData[1];
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
@@ -91,6 +91,15 @@ export default function DetailEventPage() {
     pilihTanggal: "",
     pilihJam: "",
   });
+
+  // Check if user is logged in
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const userRole = localStorage.getItem("role");
+    if (token && userRole === "pengguna") {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   // Countdown timer effect
   useEffect(() => {
@@ -138,7 +147,7 @@ export default function DetailEventPage() {
 
   return (
     <div className="detail-event-root">
-      <Header />
+      <Header showUserProfile={isLoggedIn} />
 
       {/* Hero Section with Countdown */}
       <section className="event-hero-detail">
@@ -405,8 +414,6 @@ export default function DetailEventPage() {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }
