@@ -10,131 +10,115 @@ import {
   FaHospital,
 } from "react-icons/fa";
 import Header from "../../components/Header";
-
-// Sample hospitals with blood stock data
-const hospitalsData = [
-  {
-    id: 1,
-    name: "RSUP H. Adam Malik",
-    city: "Medan",
-    address: "Jl. Bunga Lau No.17, Medan",
-    operationalHours: "08:00 - 15:00 WIB",
-    distance: "12.3 km",
-    bloodStock: {
-      "A+": { status: "Kritis", units: 12, statusClass: "critical" },
-      "A-": { status: "Standar", units: 45, statusClass: "standard" },
-      "B+": { status: "Aman", units: 97, statusClass: "safe" },
-      "B-": { status: "Kritis", units: 9, statusClass: "critical" },
-      "O+": { status: "Standar", units: 45, statusClass: "standard" },
-      "O-": { status: "Kritis", units: 5, statusClass: "critical" },
-    },
-    urgentNeeds: ["A+", "B-", "O-"],
-  },
-  {
-    id: 2,
-    name: "RS HKBP Balige",
-    city: "Balige",
-    address: "Jl. Gereja No.17, Balige",
-    operationalHours: "08:00 - 15:00 WIB",
-    distance: "2.3 km",
-    bloodStock: {
-      "A+": { status: "Standar", units: 32, statusClass: "standard" },
-      "A-": { status: "Aman", units: 65, statusClass: "safe" },
-      "B+": { status: "Aman", units: 87, statusClass: "safe" },
-      "B-": { status: "Kritis", units: 7, statusClass: "critical" },
-      "O+": { status: "Standar", units: 34, statusClass: "standard" },
-      "O-": { status: "Kritis", units: 3, statusClass: "critical" },
-    },
-    urgentNeeds: ["B-", "O-"],
-  },
-  {
-    id: 3,
-    name: "RS Universitas Sumatera Utara",
-    city: "Medan",
-    address: "Jl. Dr. Mansyur No.5, Medan",
-    operationalHours: "08:00 - 16:00 WIB",
-    distance: "8.7 km",
-    bloodStock: {
-      "A+": { status: "Aman", units: 78, statusClass: "safe" },
-      "A-": { status: "Standar", units: 23, statusClass: "standard" },
-      "B+": { status: "Aman", units: 65, statusClass: "safe" },
-      "B-": { status: "Standar", units: 18, statusClass: "standard" },
-      "O+": { status: "Kritis", units: 8, statusClass: "critical" },
-      "O-": { status: "Kritis", units: 4, statusClass: "critical" },
-    },
-    urgentNeeds: ["O+", "O-"],
-  },
-  {
-    id: 4,
-    name: "PMI Kota Medan",
-    city: "Medan",
-    address: "Jl. Pemuda No.32, Medan",
-    operationalHours: "08:00 - 14:00 WIB",
-    distance: "15.2 km",
-    bloodStock: {
-      "A+": { status: "Standar", units: 42, statusClass: "standard" },
-      "A-": { status: "Kritis", units: 6, statusClass: "critical" },
-      "B+": { status: "Aman", units: 89, statusClass: "safe" },
-      "B-": { status: "Kritis", units: 4, statusClass: "critical" },
-      "O+": { status: "Aman", units: 92, statusClass: "safe" },
-      "O-": { status: "Kritis", units: 2, statusClass: "critical" },
-    },
-    urgentNeeds: ["A-", "B-", "O-"],
-  },
-];
+import axiosClient from "../../service/axiosClient"; // 1. Import API Client
 
 export default function StokDarahPage() {
   const [selectedFilter, setSelectedFilter] = useState("Semua Kota");
   const [selectedBloodType, setSelectedBloodType] = useState("Semua Golongan");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+  // State Data Dinamis
+  const [hospitals, setHospitals] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+  const filterOptions = ["Semua Kota", "Medan", "Balige"];
+  const bloodTypeOptions = ["Semua Golongan", "A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"];
+
+  // 1. Cek Login
   useEffect(() => {
     const token = localStorage.getItem("token");
-    const userRole = localStorage.getItem("role");
-    if (token && userRole === "pengguna") {
+    if (token) {
       setIsLoggedIn(true);
     }
   }, []);
 
-  const filterOptions = ["Semua Kota", "Medan", "Balige"];
+  // 2. Fetch Data dari Backend
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Ambil data Lokasi dan Stok Darah secara paralel
+        const [lokasiRes, stokRes] = await Promise.all([
+          axiosClient.get("/lokasi"),
+          axiosClient.get("/stok-darah")
+        ]);
 
-  const bloodTypeOptions = [
-    "Semua Golongan",
-    "A+",
-    "A-",
-    "B+",
-    "B-",
-    "O+",
-    "O-",
-    "AB+",
-    "AB-",
-  ];
+        const lokasiData = lokasiRes.data.data || [];
+        const stokDataRaw = stokRes.data.data || [];
 
-  const filteredHospitals = hospitalsData.filter((hospital) => {
-    const cityMatch =
-      selectedFilter === "Semua Kota" || hospital.city === selectedFilter;
-    const bloodTypeMatch =
-      selectedBloodType === "Semua Golongan" ||
-      hospital.bloodStock[selectedBloodType];
+        // Format Data Stok agar mudah dibaca UI
+        // Ubah dari Array backend ke Object: { "A+": { status: "Aman", units: 50, ... } }
+        const formattedStock = {};
+        const urgentList = [];
+
+        stokDataRaw.forEach((item) => {
+          const type = `${item.gol_darah}${item.rhesus}`;
+          formattedStock[type] = {
+            status: item.ketersediaan,
+            units: item.jumlah_kantong,
+            statusClass: getStatusClass(item.ketersediaan)
+          };
+
+          if (item.ketersediaan === "Kritis" || item.ketersediaan === "Kurang") {
+            urgentList.push(type);
+          }
+        });
+
+        // Gabungkan Data Lokasi dengan Stok
+        const mappedHospitals = lokasiData.map((loc, index) => {
+          // Deteksi kota sederhana
+          const city = loc.alamat_lokasi.includes("Balige") ? "Balige" : "Medan";
+
+          return {
+            id: loc.ID,
+            name: loc.nama_lokasi,
+            city: city,
+            address: loc.alamat_lokasi,
+            operationalHours: loc.jam_operasional_lokasi || "08:00 - 15:00 WIB",
+            distance: `${(2 + index * 2.5).toFixed(1)} km`, // Jarak dummy
+            bloodStock: formattedStock, // Gunakan data stok DB
+            urgentNeeds: urgentList,
+          };
+        });
+
+        setHospitals(mappedHospitals);
+      } catch (error) {
+        console.error("Gagal mengambil data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Helper Class CSS
+  const getStatusClass = (status) => {
+    switch (status) {
+      case "Kritis": return "critical";
+      case "Kurang": return "critical"; // Mapping Kurang ke Critical style
+      case "Standar": return "standard";
+      case "Aman": return "safe";
+      default: return "standard";
+    }
+  };
+
+  // Filter Logic
+  const filteredHospitals = hospitals.filter((hospital) => {
+    const cityMatch = selectedFilter === "Semua Kota" || hospital.city === selectedFilter;
+    
+    let bloodTypeMatch = true;
+    if (selectedBloodType !== "Semua Golongan") {
+      const stockItem = hospital.bloodStock && hospital.bloodStock[selectedBloodType];
+      // Tampilkan jika datanya ada
+      bloodTypeMatch = !!stockItem; 
+    }
 
     return cityMatch && bloodTypeMatch;
   });
 
-  const getStatusClass = (status) => {
-    switch (status) {
-      case "Kritis":
-        return "critical";
-      case "Standar":
-        return "standard";
-      case "Aman":
-        return "safe";
-      default:
-        return "standard";
-    }
-  };
-
   return (
     <div className="stok-darah-root">
+      {/* Shared Header Component */}
       <Header showUserProfile={isLoggedIn} />
 
       {/* Hero Section */}
@@ -190,9 +174,12 @@ export default function StokDarahPage() {
           </div>
         </div>
 
-        <div className="stok-container">
-          {/* Results Info */}
-          {filteredHospitals.length > 0 && (
+        {/* Loading State */}
+        {loading ? (
+          <div style={{ textAlign: "center", padding: "50px" }}>Memuat Stok Darah...</div>
+        ) : (
+          <div className="stok-container">
+            {/* Results Info */}
             <div
               style={{
                 marginBottom: "20px",
@@ -203,106 +190,108 @@ export default function StokDarahPage() {
             >
               Menampilkan {filteredHospitals.length} rumah sakit
             </div>
-          )}
 
-          {/* Hospital Cards */}
-          <div className="hospitals-grid">
-            {filteredHospitals.length > 0 ? (
-              filteredHospitals.map((hospital) => (
-                <div key={hospital.id} className="hospital-card">
-                  <div className="hospital-card-header">
-                    <div className="hospital-basic-info">
-                      <span className="hospital-city-tag">{hospital.city}</span>
-                      <h3>{hospital.name}</h3>
-                      <div className="hospital-meta">
-                        <div className="meta-item">
-                          <FaMapMarkerAlt className="meta-icon" />
-                          <span>{hospital.address}</span>
-                        </div>
-                        <div className="meta-item">
-                          <FaClock className="meta-icon" />
-                          <span>{hospital.operationalHours}</span>
-                        </div>
-                        <div className="meta-item">
-                          <FaMapPin className="meta-icon" />
-                          <span>{hospital.distance}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Blood Stock Summary */}
-                  <div className="blood-stock-summary">
-                    <h4>Status Stok Darah:</h4>
-                    <div className="blood-types-grid">
-                      {Object.entries(hospital.bloodStock).map(
-                        ([type, data]) => (
-                          <div
-                            key={type}
-                            className={`blood-type-badge ${getStatusClass(
-                              data.status
-                            )}`}
-                          >
-                            <span className="blood-type">{type}</span>
-                            <span className="blood-units">
-                              {data.units} Kantong
-                            </span>
-                            <span className="blood-status">{data.status}</span>
+            {/* Hospital Cards */}
+            <div className="hospitals-grid">
+              {filteredHospitals.length > 0 ? (
+                filteredHospitals.map((hospital) => (
+                  <div key={hospital.id} className="hospital-card">
+                    <div className="hospital-card-header">
+                      <div className="hospital-basic-info">
+                        <span className="hospital-city-tag">{hospital.city}</span>
+                        <h3>{hospital.name}</h3>
+                        <div className="hospital-meta">
+                          <div className="meta-item">
+                            <FaMapMarkerAlt className="meta-icon" />
+                            <span>{hospital.address}</span>
                           </div>
-                        )
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Urgent Needs */}
-                  {hospital.urgentNeeds.length > 0 && (
-                    <div className="urgent-needs">
-                      <strong>Kebutuhan Mendesak</strong>
-                      <div className="urgent-blood-types">
-                        {hospital.urgentNeeds.map((type) => (
-                          <span key={type} className="urgent-blood-badge">
-                            {type}
-                          </span>
-                        ))}
+                          <div className="meta-item">
+                            <FaClock className="meta-icon" />
+                            <span>{hospital.operationalHours}</span>
+                          </div>
+                          <div className="meta-item">
+                            <FaMapPin className="meta-icon" />
+                            <span>{hospital.distance}</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  )}
 
-                  <div className="hospital-card-actions">
-                    <Link
-                      to={`/stok-darah/${hospital.id}`}
-                      className="detail-button"
-                    >
-                      Lihat Detail Stok <FaChevronRight />
-                    </Link>
+                    {/* Blood Stock Summary */}
+                    <div className="blood-stock-summary">
+                      <h4>Status Stok Darah:</h4>
+                      <div className="blood-types-grid">
+                        {hospital.bloodStock && Object.entries(hospital.bloodStock).map(
+                          ([type, data]) => (
+                            <div
+                              key={type}
+                              className={`blood-type-badge ${data.statusClass}`}
+                            >
+                              <span className="blood-type">{type}</span>
+                              <span className="blood-units">
+                                {data.units} Kantong
+                              </span>
+                              <span className="blood-status">{data.status}</span>
+                            </div>
+                          )
+                        )}
+                        {(!hospital.bloodStock || Object.keys(hospital.bloodStock).length === 0) && (
+                            <p style={{fontSize:'12px', color:'#888'}}>Data stok belum tersedia.</p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Urgent Needs */}
+                    {hospital.urgentNeeds && hospital.urgentNeeds.length > 0 && (
+                      <div className="urgent-needs">
+                        <strong>Kebutuhan Mendesak</strong>
+                        <div className="urgent-blood-types">
+                          {hospital.urgentNeeds.map((type) => (
+                            <span key={type} className="urgent-blood-badge">
+                              {type}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="hospital-card-actions">
+                      <Link
+                        to={`/stok-darah/${hospital.id}`}
+                        className="detail-button"
+                      >
+                        Lihat Detail Stok <FaChevronRight />
+                      </Link>
+                    </div>
                   </div>
-                </div>
-              ))
-            ) : (
-              <div
-                style={{
-                  gridColumn: "1 / -1",
-                  textAlign: "center",
-                  padding: "40px",
-                  background: "white",
-                  borderRadius: "16px",
-                  boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-                }}
-              >
-                <p
+                ))
+              ) : (
+                <div
                   style={{
-                    fontSize: "16px",
-                    color: "#666",
-                    margin: 0,
+                    gridColumn: "1 / -1",
+                    textAlign: "center",
+                    padding: "40px",
+                    background: "white",
+                    borderRadius: "16px",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
                   }}
                 >
-                  Tidak ada rumah sakit yang sesuai dengan filter yang dipilih.
-                </p>
-              </div>
-            )}
+                  <p
+                    style={{
+                      fontSize: "16px",
+                      color: "#666",
+                      margin: 0,
+                    }}
+                  >
+                    Tidak ada rumah sakit yang sesuai dengan filter yang dipilih.
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </main>
+      
     </div>
   );
 }

@@ -283,3 +283,65 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Style Tombol Kembali */
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: #6b7280; /* Warna abu-abu */
+  cursor: pointer;
+  margin-bottom: 20px; /* Sedikit diperlebar agar tidak terlalu mepet */
+  font-size: 14px;
+  font-weight: 500;
+  align-self: flex-start;
+  padding: 0;
+  transition: color 0.2s ease, transform 0.2s ease; /* Animasi halus */
+}
+
+/* Efek saat mouse diarahkan (Hover) */
+.back-button:hover {
+  color: #374151; /* Warna abu-abu lebih gelap */
+  transform: translateX(-3px); /* Efek geser sedikit ke kiri */
+}
+
+/* Efek saat diklik (Active) */
+.back-button:active {
+  color: #111827;
+  transform: translateX(0);
+}
+/* Tambahkan ini di bagian bawah file LoginShared.css */
+
+.google-login-wrapper {
+  margin-bottom: 20px;
+}
+
+.google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 10px;
+  background-color: #ffffff;
+  border: 1px solid #dadce0;
+  border-radius: 50px; /* Membuat bentuk pill/kapsul */
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #3c4043;
+  gap: 10px; /* Jarak antara ikon dan teks */
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.google-btn:hover {
+  background-color: #f7fafe;
+  border-color: #d2e3fc;
+  box-shadow: 0 1px 2px rgba(60,64,67,0.3);
+}
+
+.google-btn img {
+  width: 18px;
+  height: 18px;
+}

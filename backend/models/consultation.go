@@ -7,16 +7,29 @@ import (
 
 type Consultation struct {
 	gorm.Model
-	// Foreign Key: Pasien
-	UserID uint `json:"user_id"`
+	
+	// --- RELASI ---
+
+	// Pasien (User) - Wajib ada
+	UserID uint `gorm:"not null" json:"user_id"`
 	User   User `gorm:"foreignKey:UserID" json:"user"`
 
-	// Foreign Key: Dokter
-	DoctorID uint `json:"doctor_id"`
+	// Dokter - Wajib ada
+	DoctorID uint `gorm:"not null" json:"doctor_id"`
 	Doctor   User `gorm:"foreignKey:DoctorID" json:"doctor"`
 
-	ConsultationDate time.Time `json:"consultation_date"`
-	Issue            string    `json:"issue"`          // Keluhan pasien
-	Recommendation   string    `json:"recommendation"` // Saran dokter
-	Status           string    `json:"status"`         // Scheduled, Completed, Cancelled
+	// --- DATA KONSULTASI ---
+
+	ConsultationDate time.Time `gorm:"not null" json:"consultation_date"`
+	
+	// Keluhan Pasien: Gunakan tipe TEXT agar bisa panjang
+	Issue string `gorm:"type:text;not null" json:"issue"` 
+	
+	// Saran Dokter: Gunakan tipe TEXT. 
+	// Tidak pakai 'not null' karena saat baru dibuat (Scheduled), rekomendasi masih kosong.
+	Recommendation string `gorm:"type:text" json:"recommendation"` 
+	
+	// Status: "Scheduled", "In Progress", "Completed", "Cancelled"
+	// Default: "Scheduled"
+	Status string `gorm:"default:'Scheduled';size:20" json:"status"`
 }

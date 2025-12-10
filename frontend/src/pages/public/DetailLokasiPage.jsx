@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import "./DetailLokasiPage.css";
 import {
   FaStar,
   FaPhone,
   FaClock,
   FaMapMarkerAlt,
-  FaCalendarAlt,
   FaInfoCircle,
   FaComments,
   FaRoute,
@@ -14,136 +13,20 @@ import {
   FaHeart,
   FaTrophy,
   FaBullhorn,
+  FaArrowLeft,
 } from "react-icons/fa";
 import Header from "../../components/Header";
-
-// Sample data for hospital details
-const hospitalData = {
-  1: {
-    id: 1,
-    name: "RSUP H. Adam Malik",
-    city: "Medan",
-    fullAddress: "Medan, Sumatera Utara",
-    rating: 4.6,
-    reviewCount: 125,
-    phone: "08123456789",
-    operationalHours: "Senin - Jumat, 08:00 - 16:00",
-    event: {
-      title: "Event Donor Darah Spesial!",
-      subtitle: "Bekerja sama dengan Institut Teknologi Del.",
-      date: "15-17 Oktober 2025",
-    },
-    bloodStock: {
-      "A+": "Kritis",
-      "AB-": "Standar",
-      "B+": "Aman",
-      "O+": "Kritis",
-    },
-    quotaUsed: 250,
-    quotaTotal: 500,
-    features: [
-      {
-        icon: "FaUsers",
-        title: "Dibutuhkan Segera",
-        subtitle:
-          "Golongan darah O adalah donor universal yang paling sering dibutuhkan untuk keadaan darurat.",
-      },
-      {
-        icon: "FaHeart",
-        title: "Manfaat Sehat",
-        subtitle:
-          "Donor darah rutin dapat membantu mengurangi risiko penyakit jantung dan membakar kalori hingga tiga ratus.",
-      },
-      {
-        icon: "FaTrophy",
-        title: "Selamatkan 3 Nyawa",
-        subtitle:
-          "Satu kantong darah yang Anda donasikan dapat dipisah dan menyelamatkan hingga tiga nyawa.",
-      },
-    ],
-    reviews: [
-      {
-        name: "Dina Siagian",
-        rating: 5,
-        text: "Penyelenggaraan sangat ramah dan profesional. Tempatnya bersih dan nyaman, kecaneratatisas!",
-      },
-      {
-        name: "Friska Patria",
-        rating: 4,
-        text: "Prosenya cepat, tidak lama menunggu sampai selesai cukup lima belas menit online dulu lewat halo chat.",
-      },
-    ],
-  },
-  2: {
-    id: 2,
-    name: "RS HKBP Balige",
-    city: "Balige",
-    fullAddress: "Porsea, Sumatera Utara",
-    rating: 4.0,
-    reviewCount: 100,
-    phone: "08123456789",
-    operationalHours: "Senin - Jumat, 08:00 - 16:00",
-    event: {
-      title: "Event Donor Darah Spesial!",
-      subtitle: "Bekerja sama dengan Institut Teknologi Del.",
-      date: "15-17 Oktober 2025",
-    },
-    bloodStock: {
-      "A+": "Kritis",
-      "AB-": "Standar",
-      "B+": "Aman",
-      "O+": "Kritis",
-    },
-    quotaUsed: 250,
-    quotaTotal: 500,
-    features: [
-      {
-        icon: "FaUsers",
-        title: "Dibutuhkan Segera",
-        subtitle:
-          "Golongan darah O adalah donor universal yang paling sering dibutuhkan untuk keadaan darurat.",
-      },
-      {
-        icon: "FaHeart",
-        title: "Manfaat Sehat",
-        subtitle:
-          "Donor darah rutin dapat membantu mengurangi risiko penyakit jantung dan membakar kalori hingga tiga ratus.",
-      },
-      {
-        icon: "FaTrophy",
-        title: "Selamatkan 3 Nyawa",
-        subtitle:
-          "Satu kantong darah yang Anda donasikan dapat dipisah dan menyelamatkan hingga tiga nyawa.",
-      },
-    ],
-    reviews: [
-      {
-        name: "Dina Siagian",
-        rating: 5,
-        text: "Penyelenggaraan sangat ramah dan profesional. Tempatnya bersih dan nyaman, kecaneratatisas!",
-      },
-      {
-        name: "Friska Patria",
-        rating: 4,
-        text: "Prosenya cepat, tidak lama menunggu sampai selesai cukup lima belas menit online dulu lewat halo chat.",
-      },
-    ],
-  },
-};
+import axiosClient from "../../service/axiosClient";
 
 export default function DetailLokasiPage() {
   const { id } = useParams();
-  const hospital = hospitalData[id] || hospitalData[1];
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const userRole = localStorage.getItem("role");
-    if (token && userRole === "pengguna") {
-      setIsLoggedIn(true);
-    }
-  }, []);
-
+  // State
+  const [hospital, setHospital] = useState(null);
+  const [loading, setLoading] = useState(true);
+  
+  // State Form Pendaftaran (Simulasi)
   const [formData, setFormData] = useState({
     namaLengkap: "",
     nomorHP: "",
@@ -153,64 +36,145 @@ export default function DetailLokasiPage() {
     pilihJam: "",
   });
 
+  // 1. Fetch Detail Lokasi dari Backend
+  useEffect(() => {
+    const fetchDetailLokasi = async () => {
+      try {
+        const response = await axiosClient.get(`/lokasi/${id}`);
+        const dataDB = response.data.data;
+
+        // 2. Gabungkan Data DB dengan Data Dummy (Hybrid)
+        // Data DB: Nama, Alamat, Kontak, Jam Ops, Gambar
+        // Data Dummy: Stok, Event, Review, Fitur (karena belum ada tabel relasinya)
+        const mergedData = {
+          id: dataDB.ID,
+          name: dataDB.nama_lokasi,
+          city: dataDB.alamat_lokasi.includes("Balige") ? "Balige" : "Medan", // Deteksi kota sederhana
+          fullAddress: dataDB.alamat_lokasi,
+          phone: dataDB.kontak_lokasi,
+          operationalHours: dataDB.jam_operasional_lokasi,
+          image: dataDB.gambar_lokasi || "/images/bg beranda awal.jpg",
+          
+          // --- Data Dummy Pelengkap ---
+          rating: 4.8,
+          reviewCount: 120,
+          event: {
+            title: "Donor Darah Rutin",
+            subtitle: "Mari donorkan darah Anda di lokasi ini.",
+            date: "Setiap Hari Kerja",
+          },
+          bloodStock: {
+            "A+": "Aman",
+            "AB-": "Kurang",
+            "B+": "Aman",
+            "O+": "Kritis",
+          },
+          quotaUsed: 45,
+          quotaTotal: 100,
+          features: [
+            { icon: "FaUsers", title: "Dibutuhkan", subtitle: "Golongan darah O+ sangat dibutuhkan." },
+            { icon: "FaHeart", title: "Pelayanan", subtitle: "Ramah dan profesional." },
+            { icon: "FaTrophy", title: "Fasilitas", subtitle: "Ruang tunggu nyaman dan ber-AC." },
+          ],
+          reviews: [
+            { name: "Andi S.", rating: 5, text: "Pelayanan sangat cepat dan tempat bersih." },
+            { name: "Budi P.", rating: 4, text: "Antrian cukup panjang tapi tertib." },
+          ],
+        };
+
+        setHospital(mergedData);
+      } catch (error) {
+        console.error("Gagal mengambil detail lokasi:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDetailLokasi();
+  }, [id]);
+
+  // Helper Functions
   const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert("Pendaftaran berhasil!");
+    alert("Pendaftaran berhasil (Simulasi)!");
   };
 
   const renderStars = (rating) => {
-    const stars = [];
-    for (let i = 1; i <= 5; i++) {
-      stars.push(
-        <FaStar
-          key={i}
-          className={i <= rating ? "star-filled" : "star-empty"}
-        />
-      );
-    }
-    return stars;
+    return Array.from({ length: 5 }, (_, i) => (
+      <FaStar key={i} className={i < rating ? "star-filled" : "star-empty"} />
+    ));
   };
 
   const getBloodTypeClass = (status) => {
     switch (status) {
-      case "Kritis":
-        return "blood-critical";
-      case "Standar":
-        return "blood-standard";
-      case "Aman":
-        return "blood-safe";
-      default:
-        return "blood-standard";
+      case "Kritis": return "blood-critical";
+      case "Kurang": return "blood-standard"; // Reuse standard style for 'Kurang'
+      case "Aman": return "blood-safe";
+      default: return "blood-standard";
     }
   };
 
   const renderIcon = (iconName) => {
     switch (iconName) {
-      case "FaUsers":
-        return <FaUsers />;
-      case "FaHeart":
-        return <FaHeart />;
-      case "FaTrophy":
-        return <FaTrophy />;
-      default:
-        return <FaInfoCircle />;
+      case "FaUsers": return <FaUsers />;
+      case "FaHeart": return <FaHeart />;
+      case "FaTrophy": return <FaTrophy />;
+      default: return <FaInfoCircle />;
     }
   };
 
+  // Render Loading
+  if (loading) {
+    return (
+      <div className="detail-root" style={{minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center'}}>
+        <p>Memuat data lokasi...</p>
+      </div>
+    );
+  }
+
+  // Render Not Found
+  if (!hospital) {
+    return (
+      <div className="detail-root" style={{textAlign:'center', padding:'50px'}}>
+        <h2>Lokasi tidak ditemukan</h2>
+        <button onClick={() => navigate('/lokasi-donor')} style={{marginTop:'20px', padding:'10px 20px', cursor:'pointer'}}>
+          Kembali ke Daftar
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="detail-root">
-      <Header showUserProfile={isLoggedIn} />
+      <Header />
 
       {/* Hero Section */}
       <section className="detail-hero">
         <div className="detail-hero-content">
+          {/* Tombol Kembali */}
+          <button 
+            className="btn-back" 
+            onClick={() => navigate(-1)} 
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '8px', 
+              background: 'transparent', 
+              border: 'none', 
+              color: 'white', 
+              cursor: 'pointer', 
+              marginBottom: '15px',
+              fontSize: '16px',
+              fontWeight: '600'
+            }}
+          >
+            <FaArrowLeft /> Kembali
+          </button>
+
           <h1>{hospital.name}</h1>
           <p>{hospital.fullAddress}</p>
           <div className="detail-rating">
@@ -237,7 +201,7 @@ export default function DetailLokasiPage() {
                 <p>{hospital.event.subtitle}</p>
                 <p>{hospital.event.date}</p>
               </div>
-              <button className="event-info-btn">Informasi & Stok Darah</button>
+              <button className="event-info-btn">Informasi</button>
             </div>
 
             {/* Informasi & Stok Darah */}
@@ -336,9 +300,7 @@ export default function DetailLokasiPage() {
                 <div
                   className="progress-fill"
                   style={{
-                    width: `${
-                      (hospital.quotaUsed / hospital.quotaTotal) * 100
-                    }%`,
+                    width: `${(hospital.quotaUsed / hospital.quotaTotal) * 100}%`,
                   }}
                 ></div>
               </div>
@@ -346,7 +308,7 @@ export default function DetailLokasiPage() {
 
             {/* Daftar Event */}
             <div className="registration-card">
-              <h3>Daftar Event</h3>
+              <h3>Daftar Donor Disini</h3>
               <form onSubmit={handleSubmit} className="registration-form">
                 <div className="form-group">
                   <label>Nama Lengkap</label>
@@ -361,9 +323,21 @@ export default function DetailLokasiPage() {
 
                 <div className="form-group">
                   <label>Nomor HP</label>
-                  <select
+                  <input
+                    type="tel"
                     name="nomorHP"
                     value={formData.nomorHP}
+                    onChange={handleInputChange}
+                    placeholder="Contoh: 0812..."
+                    required
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label>Golongan Darah</label>
+                  <select
+                    name="golonganDarah"
+                    value={formData.golonganDarah}
                     onChange={handleInputChange}
                     required
                   >
@@ -403,11 +377,10 @@ export default function DetailLokasiPage() {
                 <div className="form-group">
                   <label>Pilih Jam</label>
                   <input
-                    type="text"
+                    type="time"
                     name="pilihJam"
                     value={formData.pilihJam}
                     onChange={handleInputChange}
-                    placeholder="Pilih waktu donor"
                     required
                   />
                 </div>
@@ -433,13 +406,20 @@ export default function DetailLokasiPage() {
             {/* Arahkan ke Lokasi */}
             <div className="location-card">
               <h3>Arahkan ke Lokasi</h3>
-              <button className="maps-btn">
+              <a 
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hospital.fullAddress)}`}
+                target="_blank"
+                rel="noreferrer"
+                className="maps-btn"
+                style={{textDecoration: 'none', display:'flex', alignItems:'center', justifyContent:'center', gap:'10px'}}
+              >
                 <FaRoute /> Buka di Google Maps
-              </button>
+              </a>
             </div>
           </div>
         </div>
       </main>
+      
     </div>
   );
 }

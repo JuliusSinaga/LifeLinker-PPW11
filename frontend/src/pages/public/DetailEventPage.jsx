@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import "./DetailEventPage.css";
 import {
   FaCalendarAlt,
@@ -8,82 +8,20 @@ import {
   FaUsers,
   FaArrowLeft,
   FaStar,
-  FaPhone,
-  FaInstagram,
-  FaFacebook,
 } from "react-icons/fa";
 import Header from "../../components/Header";
-
-// Sample detailed event data
-const eventDetailData = {
-  1: {
-    id: 1,
-    title: "Donor Hari Pahlawan 2025",
-    description:
-      "Dalam rangka memperingati Hari Pahlawan, BEM Institut Teknologi Del bekerja sama dengan LifeLinker Community mengadakan aksi sosial donor darah terbesar di kota Laguboti. Acara ini terbuka untuk seluruh mahasiswa dan masyarakat umum. Setiap tetes darah adalah harapan bagi mereka yang membutuhkan. Mari jadi pahlawan kemanusiaan bersama kami!",
-    date: "15-17 Oktober 2025",
-    time: "08:00 - 14:00 WIB",
-    location: "Institut Teknologi Del",
-    address: "Jl. Sisingamangaraja, Sitoluama, Laguboti",
-    targetDate: new Date("2025-10-15T08:00:00"),
-    quota: {
-      current: 250,
-      total: 500,
-    },
-    timeline: [
-      {
-        time: "08:00 - 10:00",
-        activity: "Registrasi Ulang & Pemeriksaan Kesehatan",
-        status: "active",
-      },
-      {
-        time: "10:00 - 12:00",
-        activity: "Proses Donor Darah",
-        status: "upcoming",
-      },
-      { time: "12:00 - 13:00", activity: "Istirahat", status: "upcoming" },
-      {
-        time: "13:00 - 14:00",
-        activity: "Lanjut Proses Donor Darah",
-        status: "upcoming",
-      },
-    ],
-    partners: [
-      { name: "Institut Teknologi Del", logo: "del-logo.png" },
-      { name: "BEM IT Del", logo: "bem-logo.png" },
-      { name: "PMI Tobasa", logo: "pmi-logo.png" },
-    ],
-    testimonials: [
-      {
-        name: "Dina Siagian",
-        rating: 5,
-        comment:
-          "Eventnya terorganisir dengan baik, fasilitasnya ramah dan sangat membantu!",
-        avatar: "dina-avatar.jpg",
-      },
-      {
-        name: "Rachel S.",
-        rating: 4,
-        comment:
-          "Senang sekali bisa berpartisipasi. Semoga bisa diadakan lagi di tahun yang akan datang!",
-        avatar: "rachel-avatar.jpg",
-      },
-    ],
-  },
-};
+import axiosClient from "../../service/axiosClient";
 
 export default function DetailEventPage() {
   const { id } = useParams();
-  const event = eventDetailData[id] || eventDetailData[1];
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
 
-  const [timeLeft, setTimeLeft] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-  });
+  // State Data Event & Loading
+  const [event, setEvent] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
+  // State Form Pendaftaran
   const [formData, setFormData] = useState({
     nama: "",
     nomor: "",
@@ -92,17 +30,64 @@ export default function DetailEventPage() {
     pilihJam: "",
   });
 
-  // Check if user is logged in
+  // 1. Fetch Detail Event dari Backend
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const userRole = localStorage.getItem("role");
-    if (token && userRole === "pengguna") {
-      setIsLoggedIn(true);
-    }
-  }, []);
+    const fetchDetailEvent = async () => {
+      try {
+        const response = await axiosClient.get(`/events/${id}`);
+        const dataDB = response.data.data;
 
-  // Countdown timer effect
+        // Hitung kuota (Contoh: Total 300 - Jumlah Peserta Terdaftar)
+        const totalQuota = 300; 
+        const currentParticipants = dataDB.Participants ? dataDB.Participants.length : 0;
+
+        // Mapping data DB ke struktur frontend
+        const eventData = {
+          id: dataDB.ID,
+          title: dataDB.nama_event,
+          description: dataDB.deskripsi_event,
+          // Format tanggal: "Senin, 20 Oktober 2025"
+          date: formatDate(dataDB.tanggal_event),
+          time: "08:00 - 14:00 WIB", // Default karena di DB belum ada kolom jam
+          location: dataDB.lokasi?.nama_lokasi || "Lokasi belum ditentukan",
+          address: dataDB.lokasi?.alamat_lokasi || "Alamat belum tersedia",
+          image: dataDB.gambar_event || "bg beranda awal.jpg", // Gambar default jika kosong
+          targetDate: new Date(dataDB.tanggal_event), // Untuk countdown timer
+          
+          // Data Pelengkap (Dummy/Default untuk fitur yang belum ada di DB)
+          quota: { 
+            current: currentParticipants, 
+            total: totalQuota 
+          },
+          timeline: [
+            { time: "08:00 - 10:00", activity: "Registrasi & Cek Kesehatan", status: "active" },
+            { time: "10:00 - 14:00", activity: "Proses Donor Darah", status: "upcoming" },
+          ],
+          partners: [
+            { name: "PMI", logo: "pmi-logo.png" },
+            { name: "LifeLinker", logo: "lifelinker-logo.png" }
+          ],
+          testimonials: [
+            { name: "Peserta 1", rating: 5, comment: "Acara sangat bermanfaat!" },
+            { name: "Peserta 2", rating: 4, comment: "Antrian tertib." }
+          ]
+        };
+
+        setEvent(eventData);
+      } catch (error) {
+        console.error("Gagal mengambil detail event:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDetailEvent();
+  }, [id]);
+
+  // 2. Countdown Timer Logic
   useEffect(() => {
+    if (!event) return;
+
     const calculateTimeLeft = () => {
       const now = new Date().getTime();
       const target = event.targetDate.getTime();
@@ -111,32 +96,30 @@ export default function DetailEventPage() {
       if (difference > 0) {
         setTimeLeft({
           days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor(
-            (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-          ),
+          hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
           minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
           seconds: Math.floor((difference % (1000 * 60)) / 1000),
         });
+      } else {
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
       }
     };
 
     const timer = setInterval(calculateTimeLeft, 1000);
-    calculateTimeLeft();
+    calculateTimeLeft(); // Jalankan sekali di awal
 
     return () => clearInterval(timer);
-  }, [event.targetDate]);
+  }, [event]);
 
+  // Helper Functions
   const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    // Handle form submission
+    alert("Pendaftaran Event Berhasil (Simulasi)!");
+    // Nanti bisa tambahkan axiosClient.post('/events/register', formData) di sini
   };
 
   const renderStars = (rating) => {
@@ -145,12 +128,41 @@ export default function DetailEventPage() {
     ));
   };
 
+  const formatDate = (dateString) => {
+    if (!dateString) return "-";
+    const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+    return new Date(dateString).toLocaleDateString('id-ID', options);
+  };
+
+  // Render Loading & Error
+  if (loading) {
+    return (
+      <div className="detail-event-root" style={{display:'flex', justifyContent:'center', alignItems:'center', height:'100vh'}}>
+        <p>Memuat detail event...</p>
+      </div>
+    );
+  }
+
+  if (!event) {
+    return (
+      <div className="detail-event-root" style={{textAlign:'center', padding:'50px'}}>
+        <h2>Event tidak ditemukan.</h2>
+        <button onClick={() => navigate('/event')} style={{marginTop:'20px', padding:'10px 20px'}}>Kembali ke Daftar Event</button>
+      </div>
+    );
+  }
+
   return (
     <div className="detail-event-root">
-      <Header showUserProfile={isLoggedIn} />
+      {/* Header Shared */}
+      <Header />
 
       {/* Hero Section with Countdown */}
-      <section className="event-hero-detail">
+      <section className="event-hero-detail" style={{
+          backgroundImage: `url(${process.env.PUBLIC_URL + "/images/" + event.image})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+      }}>
         <div className="hero-overlay">
           <div className="hero-content-detail">
             <Link to="/event" className="back-link">
@@ -185,6 +197,7 @@ export default function DetailEventPage() {
       <main className="event-detail-main">
         <div className="event-detail-container">
           <div className="event-detail-grid">
+            
             {/* Left Column - Event Info */}
             <div className="event-info-column">
               {/* Event Description */}
@@ -244,62 +257,19 @@ export default function DetailEventPage() {
                 </div>
               </div>
 
-              {/* Location Map */}
-              <div className="location-card">
-                <h3>Lokasi di Peta</h3>
-                <div className="map-placeholder">
-                  <img
-                    src={process.env.PUBLIC_URL + "/images/bg beranda awal.jpg"}
-                    alt="Peta Lokasi"
-                  />
-                </div>
-              </div>
-
-              {/* Partners */}
-              <div className="partners-card">
-                <h3>Partner & Sponsor</h3>
-                <div className="partners-grid">
-                  {event.partners.map((partner, index) => (
-                    <div className="partner-item">
-                      <img
-                        src={
-                          process.env.PUBLIC_URL + "/images/bg beranda awal.jpg"
-                        }
-                        alt={partner.name}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-
               {/* Testimonials */}
               <div className="testimonials-card">
-                <h3>Testimoni Peserta Sebelumnya</h3>
+                <h3>Apa Kata Mereka?</h3>
                 <div className="testimonials-list">
                   {event.testimonials.map((testimonial, index) => (
                     <div key={index} className="testimonial-item">
                       <div className="testimonial-header">
-                        <div className="testimonial-avatar">
-                          <img
-                            src={
-                              process.env.PUBLIC_URL +
-                              "/images/bg beranda awal.jpg"
-                            }
-                            alt={testimonial.name}
-                          />
-                        </div>
                         <div className="testimonial-info">
-                          <div className="testimonial-name">
-                            {testimonial.name}
-                          </div>
-                          <div className="testimonial-rating">
-                            {renderStars(testimonial.rating)}
-                          </div>
+                          <div className="testimonial-name">{testimonial.name}</div>
+                          <div className="testimonial-rating">{renderStars(testimonial.rating)}</div>
                         </div>
                       </div>
-                      <div className="testimonial-comment">
-                        "{testimonial.comment}"
-                      </div>
+                      <div className="testimonial-comment">"{testimonial.comment}"</div>
                     </div>
                   ))}
                 </div>
@@ -318,9 +288,7 @@ export default function DetailEventPage() {
                       <div
                         className="quota-fill"
                         style={{
-                          width: `${
-                            (event.quota.current / event.quota.total) * 100
-                          }%`,
+                          width: `${(event.quota.current / event.quota.total) * 100}%`,
                         }}
                       ></div>
                     </div>
@@ -348,7 +316,7 @@ export default function DetailEventPage() {
                   </div>
 
                   <div className="form-group">
-                    <label htmlFor="nomor">Nomor HP</label>
+                    <label htmlFor="nomor">Golongan Darah</label>
                     <select
                       id="nomor"
                       name="nomor"
@@ -368,43 +336,8 @@ export default function DetailEventPage() {
                     </select>
                   </div>
 
-                  <div className="form-group">
-                    <label htmlFor="tanggalDonorTerakhir">
-                      Tanggal Donor Terakhir
-                    </label>
-                    <input
-                      type="date"
-                      id="tanggalDonorTerakhir"
-                      name="tanggalDonorTerakhir"
-                      value={formData.tanggalDonorTerakhir}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label htmlFor="pilihTanggal">Pilih Tanggal Donor</label>
-                    <input
-                      type="date"
-                      id="pilihTanggal"
-                      name="pilihTanggal"
-                      value={formData.pilihTanggal}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label htmlFor="pilihJam">Pilih Jam</label>
-                    <input
-                      type="time"
-                      id="pilihJam"
-                      name="pilihJam"
-                      value={formData.pilihJam}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-
+                  {/* Field tambahan bisa ditambahkan di sini */}
+                  
                   <button type="submit" className="register-button">
                     Daftar Sekarang
                   </button>
@@ -414,6 +347,7 @@ export default function DetailEventPage() {
           </div>
         </div>
       </main>
+      
     </div>
   );
 }

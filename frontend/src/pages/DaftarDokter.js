@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./DaftarDokter.css";
-import axiosClient from "../service/axiosClient"; // Aktifkan jika backend siap
+// 1. Import axiosClient dan Google Hook
+import axiosClient from "../service/axiosClient"; 
+import { useGoogleLogin } from "@react-oauth/google"; 
 
 export default function DaftarDokter() {
   const navigate = useNavigate();
@@ -10,14 +12,14 @@ export default function DaftarDokter() {
   const [form, setForm] = useState({
     email: "",
     password: "",
-    name: "",          
+    name: "",           
     str_number: "",    
     specialization: "",
-    hospital: "",      
+    hospital: "",       
     birth_date: "",    
     gender: "",        
     phone: "",         
-    city: "",          
+    city: "",           
   });
 
   const handleChange = (e) => {
@@ -31,6 +33,7 @@ export default function DaftarDokter() {
     form.name.trim() !== "" &&
     form.str_number.trim() !== "";
 
+  // --- LOGIC DAFTAR MANUAL ---
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -44,43 +47,61 @@ export default function DaftarDokter() {
       return;
     }
 
-    // Payload data yang akan dikirim ke Backend
     const payload = {
       ...form,
-      role: "dokter", // Backend akan menyimpan ini sebagai dokter
+      role: "dokter", // Set role sebagai dokter
     };
 
     try {
-      // 1. AKTIFKAN BARIS INI (Kirim data ke Backend)
-      const res = await axiosClient.post("/users", payload); 
+      await axiosClient.post("/users", payload); 
       
-      // 2. Jika sukses (status 200/201), jalankan notifikasi
-      console.log("Response Backend:", res.data);
-
       setNotif({
         show: true,
         type: "success",
-        message: "Pendaftaran berhasil! Akun Anda sedang menunggu verifikasi STR oleh Admin. Anda akan diarahkan ke Beranda.",
+        message: "Pendaftaran berhasil! Silakan Login.",
       });
 
-      // 3. Redirect ke Halaman Beranda (Tanpa Login) setelah 3 detik
       setTimeout(() => {
-        navigate("/home"); 
-      }, 3000);
+        navigate("/login-dokter"); 
+      }, 2000);
 
     } catch (error) {
       console.error("Error Register:", error);
-      // Tampilkan pesan error dari backend jika ada
       const errorMsg = error.response?.data?.error || "Gagal mendaftar. Silakan coba lagi.";
-      
-      setNotif({
-        show: true,
-        type: "error",
-        message: errorMsg,
-      });
+      setNotif({ show: true, type: "error", message: errorMsg });
       setTimeout(() => setNotif({ show: false, type: "", message: "" }), 3000);
     }
   };
+
+  // --- LOGIC DAFTAR DENGAN GOOGLE ---
+  const googleRegister = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        // Kirim Access Token ke Backend (/login/google akan auto-register jika belum ada)
+        const res = await axiosClient.post("/login/google", {
+          id_token: tokenResponse.access_token, 
+        });
+
+        // Simpan sesi (Login otomatis setelah daftar)
+        const { token, user } = res.data;
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
+        window.dispatchEvent(new Event("user-login"));
+
+        // Redirect ke Dashboard Dokter (atau profil untuk lengkapi data STR)
+        navigate("/dashboard-dokter");
+
+      } catch (err) {
+        console.error("Google Register Error:", err);
+        setNotif({ 
+            show: true, 
+            type: "error", 
+            message: "Gagal mendaftar dengan Google. Pastikan akun belum terdaftar." 
+        });
+      }
+    },
+    onError: () => console.log("Register Google Gagal"),
+  });
 
   return (
     <div className="dd-page">
@@ -148,7 +169,6 @@ export default function DaftarDokter() {
           <h3 className="dd-section-title">Informasi Profesional & Pribadi</h3>
 
           <div className="dd-field full">
-            {/* Ganti fullName -> name */}
             <label htmlFor="name">Nama Lengkap (dengan gelar)</label>
             <input
               id="name"
@@ -163,7 +183,6 @@ export default function DaftarDokter() {
 
           <div className="dd-row">
             <div className="dd-field">
-              {/* Ganti strNumber -> str_number */}
               <label htmlFor="str_number">Nomor STR (Wajib)</label>
               <input
                 id="str_number"
@@ -201,9 +220,9 @@ export default function DaftarDokter() {
             />
           </div>
 
+          {/* Sisa input form lainnya (Tgl Lahir, Gender, Phone, City) sama seperti sebelumnya */}
           <div className="dd-row">
             <div className="dd-field">
-              {/* Ganti birthDate -> birth_date */}
               <label htmlFor="birth_date">Tanggal Lahir</label>
               <input
                 id="birth_date"
@@ -213,14 +232,12 @@ export default function DaftarDokter() {
                 onChange={handleChange}
               />
             </div>
-
             <div className="dd-field">
               <label htmlFor="gender">Jenis Kelamin</label>
               <select id="gender" name="gender" value={form.gender} onChange={handleChange}>
                 <option value="">Pilih Jenis Kelamin</option>
                 <option value="male">Laki-laki</option>
                 <option value="female">Perempuan</option>
-                <option value="other">Lainnya</option>
               </select>
             </div>
           </div>
@@ -237,7 +254,6 @@ export default function DaftarDokter() {
                 placeholder="+62 8123xxxx"
               />
             </div>
-
             <div className="dd-field">
               <label htmlFor="city">Kota Domisili</label>
               <input
@@ -257,7 +273,7 @@ export default function DaftarDokter() {
             </button>
           </div>
 
-          {/* Fitur Google (Opsional - Backend harus handle register dokter via Google) */}
+          {/* DIVIDER */}
           <div style={{ display: "flex", alignItems: "center", margin: "25px 0 15px" }}>
             <div style={{ flex: 1, borderBottom: "1px solid #e5e7eb" }}></div>
             <span style={{ padding: "0 10px", color: "#9ca3af", fontSize: "13px", fontWeight: "600" }}>
@@ -266,29 +282,20 @@ export default function DaftarDokter() {
             <div style={{ flex: 1, borderBottom: "1px solid #e5e7eb" }}></div>
           </div>
 
-          <button
-            type="button"
-            className="dd-submit"
-            style={{
-              backgroundColor: "white",
-              color: "#374151",
-              border: "2px solid #e5e7eb",
-              boxShadow: "none",
-              marginTop: "0",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "10px",
-            }}
-            onClick={() => alert("Fitur daftar dengan Google")}
-          >
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png"
-              alt="Google"
-              style={{ width: "20px", height: "20px" }}
-            />
-            Daftar dengan Google
-          </button>
+          {/* CUSTOM GOOGLE BUTTON (Sesuai Permintaan) */}
+          <div className="google-login-wrapper">
+            <button 
+                type="button" 
+                className="google-btn" 
+                onClick={() => googleRegister()}
+            >
+              <img
+                src={process.env.PUBLIC_URL + "/images/G-logo.svg"}
+                alt="Google"
+              />
+              Daftar dengan Google
+            </button>
+          </div>
 
           <div className="dd-footer">
             Sudah punya akun?{" "}

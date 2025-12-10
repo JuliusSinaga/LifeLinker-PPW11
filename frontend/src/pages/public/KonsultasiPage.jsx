@@ -44,15 +44,15 @@ const KonsultasiPage = () => {
       id: 1,
       sender: "user",
       message:
-        "Halo, apakah Dr. Ada yang bisa saya tanyakan tentang donor darah?",
-      avatar: "/images/user-avatar.jpg",
+        "Halo Dokter, ada yang ingin saya tanyakan tentang donor darah",
+      avatar: "/images/user.png",
     },
     {
       id: 2,
       sender: "doctor",
       message:
         "Tentu! Saya Dr. Tuti. Silakan tanyakan apa yang ingin Anda ketahui tentang donor darah.",
-      avatar: "/images/doctor-avatar.jpg",
+      avatar: "/images/dokter-tuti.png",
       name: "Dr. Tuti Astuni",
     },
   ];
@@ -79,7 +79,7 @@ const KonsultasiPage = () => {
       topic:
         "Syarat & Kondisi Khusus Donor Senin, 29 Sep 2025 (10:00 - 11:00 WIB)",
       status: "available",
-      avatar: "/images/doctor-tuti.jpg",
+      avatar: "/images/dokter-tuti.png",
     },
     {
       id: 2,
@@ -87,7 +87,7 @@ const KonsultasiPage = () => {
       topic:
         "Persiapan Sebelum & Sesudah Donor Selasa, 30 Sep 2025 (14:00 - 15:00 WIB)",
       status: "full",
-      avatar: "/images/doctor-anastasya.jpg",
+      avatar: "/images/dokter-anas.jpg",
     },
   ];
 
@@ -96,13 +96,13 @@ const KonsultasiPage = () => {
       id: 1,
       name: "Aisha Feransiaka",
       question: "Saya punya tekanan darah rendah, apakah masih bisa donor?",
-      avatar: "/images/user1.jpg",
+      avatar: "/images/user.png",
     },
     {
       id: 2,
       name: "Aisha Triswana",
       question: "Saya punya tekanan darah rendah, apakah masih bisa donor?",
-      avatar: "/images/user2.jpg",
+      avatar: "/images/user.png",
     },
   ];
 
@@ -184,7 +184,7 @@ const KonsultasiPage = () => {
               <div className="doctor-responses">
                 <div className="doctor-response">
                   <div className="doctor-avatar">
-                    <img src="/images/doctor-tuti.jpg" alt="Dr. Tuti Astuni" />
+                    <img src="/images/dokter-tuti.png" alt="Dr. Tuti Astuni" />
                   </div>
                   <div className="doctor-content">
                     <div className="doctor-name">Dr. Tuti Astuni:</div>
@@ -199,7 +199,7 @@ const KonsultasiPage = () => {
                 <div className="doctor-response">
                   <div className="doctor-avatar">
                     <img
-                      src="/images/doctor-anastasya.jpg"
+                      src="/images/dokter-anas.jpg"
                       alt="Dr. Anastasya"
                     />
                   </div>

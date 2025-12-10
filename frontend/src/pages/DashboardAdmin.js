@@ -1,7 +1,9 @@
-import React from "react";
-import SidebarAdmin from "../components/SidebarAdmin";   // ⬅️ PENTING: Import SidebarAdmin
+import React, { useState, useEffect } from "react";
+import SidebarAdmin from "../components/SidebarAdmin";
 import "./DashboardAdmin.css";
+import axiosClient from "../service/axiosClient"; // 1. Import API Client
 
+// --- Sub-components (Tetap Sama) ---
 function MetricCard({ value, title, subtitle, icon }) {
   return (
     <div className="metric-card">
@@ -47,39 +49,103 @@ function EventItem({ title, location, date }) {
 }
 
 export default function DashboardAdmin() {
+  // 2. State untuk Data Dinamis
+  const [stats, setStats] = useState({
+    userCount: 0,
+    doctorCount: 0,
+    donorCount: 0,
+    eventCount: 0,
+    stockCount: 0,
+    completedEventCount: 0,
+  });
+  const [bloodStockData, setBloodStockData] = useState([]);
+  const [eventsData, setEventsData] = useState([]);
+  const [notificationsData, setNotificationsData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // 3. Fetch Data dari Backend
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const response = await axiosClient.get("/dashboard/admin");
+        const data = response.data.data;
+
+        // A. Set Statistik Utama
+        setStats({
+          userCount: data.user_count || 0,
+          doctorCount: data.doctor_count || 0,
+          donorCount: data.donor_count || 0,
+          eventCount: data.event_count || 0,
+          stockCount: data.stock_count || 0,
+          completedEventCount: 0, // Placeholder jika backend belum kirim
+        });
+
+        // B. Olah Data Stok Darah (Agregasi per Golongan)
+        // Backend mengirim array semua stok, kita jumlahkan manual di sini
+        const rawStock = data.blood_stock || [];
+        const aggregatedStock = { A: 0, B: 0, AB: 0, O: 0 };
+
+        rawStock.forEach((item) => {
+          // Asumsi item.gol_darah adalah "A", "B", dst.
+          const type = item.gol_darah; 
+          if (aggregatedStock[type] !== undefined) {
+            aggregatedStock[type] += item.jumlah_kantong;
+          }
+        });
+
+        setBloodStockData([
+          { type: "Golongan A", count: aggregatedStock.A, color: "red" },
+          { type: "Golongan B", count: aggregatedStock.B, color: "green" },
+          { type: "Golongan AB", count: aggregatedStock.AB, color: "orange" },
+          { type: "Golongan O", count: aggregatedStock.O, color: "blue" },
+        ]);
+
+        // C. Olah Data Event
+        const mappedEvents = (data.events || []).map((e) => ({
+          title: e.nama_event,
+          location: e.lokasi ? e.lokasi.nama_lokasi : "Lokasi Tidak Tersedia", // Handle preload
+          date: new Date(e.tanggal_event).toLocaleDateString("id-ID", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          }),
+        }));
+        setEventsData(mappedEvents);
+
+        // D. Notifikasi
+        setNotificationsData(data.notifications || []);
+
+        setLoading(false);
+      } catch (error) {
+        console.error("Gagal mengambil data dashboard:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  // 4. Data Metrics untuk Render (Menggunakan State)
   const metrics = [
-    { value: "20,847", title: "User Terdaftar", subtitle: "Seluruh Sumut", icon: "👥" },
-    { value: "342", title: "Dokter Terverifikasi", subtitle: "30 Rumah Sakit", icon: "👨‍⚕️" },
-    { value: "10,275", title: "Pendonor Aktif", subtitle: "Seluruh Provinsi", icon: "🩸" },
-    { value: "47", title: "Event", subtitle: "Di Berbagai RS", icon: "📅" },
-    { value: "20,234", title: "Stok Darah (Kantong)", subtitle: "30 Rumah Sakit", icon: "🧪" },
-    { value: "587", title: "Event Terlaksana", subtitle: "Seluruh Provinsi", icon: "✅" },
+    { value: stats.userCount.toLocaleString(), title: "User Terdaftar", subtitle: "Seluruh Sumut", icon: "👥" },
+    { value: stats.doctorCount.toLocaleString(), title: "Dokter Terverifikasi", subtitle: "Total Dokter", icon: "👨‍⚕️" },
+    { value: stats.donorCount.toLocaleString(), title: "Pendonor Potensial", subtitle: "User Terdaftar", icon: "🩸" },
+    { value: stats.eventCount.toLocaleString(), title: "Event Aktif", subtitle: "Berbagai Lokasi", icon: "📅" },
+    { value: stats.stockCount.toLocaleString(), title: "Total Stok Darah", subtitle: "Kantong", icon: "🧪" },
+    { value: "-", title: "Event Terlaksana", subtitle: "Data Belum Tersedia", icon: "✅" },
   ];
 
-  const bloodStock = [
-    { type: "Golongan A", count: "312", color: "red" },
-    { type: "Golongan B", count: "628", color: "green" },
-    { type: "Golongan AB", count: "184", color: "orange" },
-    { type: "Golongan O", count: "1270", color: "blue" },
-  ];
-
-  const notifications = [
-    { title: "Request Akun Dokter", message: "Dr. Amanda Sari Mengajukan Verifikasi", time: "2 jam lalu", type: "blue" },
-    { title: "Request Event Baru", message: "Donor Darah Akbar – RSUP Porsea", time: "4 jam lalu", type: "yellow" },
-    { title: "Stok Darah Menipis", message: "Golongan AB tersisa 25 kantong", time: "1 hari lalu", type: "red" },
-    { title: "Darah Hampir Kedaluwarsa", message: "3 kantong akan habis masa berlaku", time: "1 hari lalu", type: "pink" },
-  ];
-
-  const events = [
-    { title: "Donor Darah di RSUD Porsea", location: "RSUD Porsea", date: "12 Januari 2025" },
-    { title: "Sosialisasi Donor Darah", location: "RS HKBP Balige", date: "08 April 2025" },
-    { title: "Donor Darah IT Del", location: "IT Del", date: "24 Oktober 2025" },
-  ];
+  if (loading) {
+    return (
+      <div className="dashboard-admin" style={{display:'flex', justifyContent:'center', alignItems:'center', height:'100vh'}}>
+        <p>Memuat Data Dashboard...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="dashboard-admin">
-
-      {/* 🔥 Sidebar Bawaan Dokter Diganti SidebarAdmin */}
+      {/* Sidebar Admin */}
       <SidebarAdmin />
 
       {/* MAIN CONTENT */}
@@ -90,27 +156,28 @@ export default function DashboardAdmin() {
 
         {/* METRIC CARDS */}
         <div className="metrics-grid">
-          {metrics.map((m, i) => <MetricCard key={i} {...m} />)}
+          {metrics.map((m, i) => (
+            <MetricCard key={i} {...m} />
+          ))}
         </div>
 
         {/* BLOOD STOCK */}
         <div className="blood-stock-card">
-          <h3>Stok Darah Terkini</h3>
+          <h3>Stok Darah Terkini (Real-time)</h3>
           <div className="blood-types-grid">
-            {bloodStock.map((b, i) => <BloodTypeCard key={i} {...b} />)}
+            {bloodStockData.map((b, i) => (
+              <BloodTypeCard key={i} {...b} />
+            ))}
           </div>
         </div>
 
         {/* BOTTOM GRID */}
         <div className="bottom-grid">
-
           {/* LEFT COLUMN */}
           <div className="left-column">
-
-            {/* CHART */}
+            {/* CHART (Static SVG for Visual) */}
             <div className="chart-card">
               <h4>Perkembangan Stok Darah</h4>
-
               <div className="chart-container">
                 <svg
                   className="chart-svg"
@@ -121,19 +188,9 @@ export default function DashboardAdmin() {
                     fill="none"
                     stroke="#dc2626"
                     strokeWidth="6"
-                    points="
-                      80,230 
-                      160,180 
-                      240,150 
-                      320,130 
-                      400,160 
-                      480,140 
-                      560,170 
-                      640,150
-                    "
+                    points="80,230 160,180 240,150 320,130 400,160 480,140 560,170 640,150"
                   />
-
-                  {/* DOTS */}
+                  {/* Dots chart hiasan */}
                   <circle cx="80" cy="230" r="10" fill="#dc2626" />
                   <circle cx="160" cy="180" r="10" fill="#dc2626" />
                   <circle cx="240" cy="150" r="10" fill="#dc2626" />
@@ -148,24 +205,34 @@ export default function DashboardAdmin() {
 
             {/* EVENTS */}
             <div className="events-card">
-              <h4>Event per Bulan</h4>
-
+              <h4>Event Terbaru</h4>
               <div className="events-list">
-                {events.map((e, i) => <EventItem key={i} {...e} />)}
+                {eventsData.length > 0 ? (
+                  eventsData.map((e, i) => <EventItem key={i} {...e} />)
+                ) : (
+                  <p style={{ color: "#888", fontStyle: "italic", padding: "10px" }}>
+                    Belum ada event terbaru.
+                  </p>
+                )}
               </div>
             </div>
-
           </div>
 
           {/* RIGHT COLUMN - NOTIFICATIONS */}
           <div className="notifications-card">
             <h4>Notifikasi Terbaru</h4>
-
             <div className="notifications-list">
-              {notifications.map((n, i) => <NotificationCard key={i} {...n} />)}
+              {notificationsData.length > 0 ? (
+                notificationsData.map((n, i) => (
+                  <NotificationCard key={i} {...n} />
+                ))
+              ) : (
+                <p style={{ color: "#888", fontStyle: "italic", padding: "10px" }}>
+                  Tidak ada notifikasi baru.
+                </p>
+              )}
             </div>
           </div>
-
         </div>
       </main>
     </div>

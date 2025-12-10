@@ -14,7 +14,6 @@ import ProfilePage from "./pages/public/ProfilePage";
 
 // === Login & Auth ===
 import RoleSelection from "./pages/RoleSelection";
-import LoginAdmin from "./pages/LoginAdmin";
 import LoginDokter from "./pages/LoginDokter";
 import LoginPengguna from "./pages/LoginPengguna";
 import DaftarPengguna from "./pages/DaftarPengguna";
@@ -41,6 +40,9 @@ import Footer from "./components/Footer";
 // === Fallback Pages ===
 import Home from "./pages/Home";
 
+// === Not Found Page ===
+import NotFoundPage from "./pages/public/NotFoundPage";
+
 function AppContent() {
   const location = useLocation();
   const hideFooterPaths = [
@@ -48,7 +50,7 @@ function AppContent() {
     "/login-admin", "/login-user", "/login-dokter", "/login-pengguna", 
     "/dashboard-admin", "/manajemen-dokter", "/manajemen-user", 
     "/manajemen-event", "/manajemen-pendonor", "/laporan", "/profil-admin", 
-    "/logout", "/dashboard", "/manajemen-stok", "/konsultasi-edukasi"
+    "/logout", "/dashboard", "/manajemen-stok", "/konsultasi-edukasi", "/error", "/forbidden"
   ];
 
   return (
@@ -75,7 +77,6 @@ function AppContent() {
           {/* === Login & Role === */}
           <Route path="/pilih-role" element={<RoleSelection />} />
           <Route path="/role-selection" element={<RoleSelection />} />
-          <Route path="/login-admin" element={<LoginAdmin />} />
           <Route path="/login-user" element={<Navigate to="/login-pengguna" replace />} />
           <Route path="/login-dokter" element={<LoginDokter />} />
           <Route path="/login-pengguna" element={<LoginPengguna />} />
@@ -102,6 +103,14 @@ function AppContent() {
           
           {/* Fallback jika route salah */}
           <Route path="*" element={<Navigate to="/beranda" replace />} />
+
+          {/* Route Khusus Error 403 / 500 (Jika ingin dipanggil manual) */}
+          <Route path="/error" element={<NotFoundPage type="500" />} />
+          <Route path="/forbidden" element={<NotFoundPage type="403" />} />
+
+          {/* Route Catch-All untuk 404 (WAJIB PALING BAWAH) */}
+          <Route path="*" element={<NotFoundPage type="404" />} />
+            
         </Routes>
       </div>
       

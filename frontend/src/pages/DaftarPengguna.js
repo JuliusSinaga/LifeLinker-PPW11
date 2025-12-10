@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./DaftarPengguna.css";
+// 1. Import axiosClient dan Google Hook
 import axiosClient from "../service/axiosClient";
+import { useGoogleLogin } from "@react-oauth/google"; 
 
 export default function DaftarPengguna() {
   const [notif, setNotif] = useState({ show: false, type: "", message: "" });
@@ -26,14 +28,13 @@ export default function DaftarPengguna() {
     });
   };
 
+  // --- LOGIC DAFTAR MANUAL ---
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      // Menggunakan axiosClient untuk post data
-      const res = await axiosClient.post("/users", formData);
+      await axiosClient.post("/users", formData);
 
-      // Jika berhasil (axios akan melempar error jika status bukan 2xx)
       setNotif({
         show: true,
         type: "success",
@@ -42,37 +43,71 @@ export default function DaftarPengguna() {
 
       // Reset form
       setFormData({
-        name: "",
-        email: "",
-        password: "",
-        birth_date: "",
-        gender: "",
-        phone: "",
-        city: "",
-        blood_type: "",
-        rhesus: "",
-        weight: "",
+        name: "", email: "", password: "", birth_date: "", gender: "", 
+        phone: "", city: "", blood_type: "", rhesus: "", weight: "",
       });
 
-      // Redirect ke halaman Login Pengguna setelah 2 detik
       setTimeout(() => {
         navigate("/login-pengguna");
       }, 2000);
 
     } catch (error) {
       const errorMessage = error.response?.data?.error || "Gagal mendaftarkan akun. Coba lagi.";
-      setNotif({
-        show: true,
-        type: "error",
-        message: errorMessage,
-      });
+      setNotif({ show: true, type: "error", message: errorMessage });
     }
 
-    // Hilangkan notifikasi setelah 3 detik
     setTimeout(() => {
       setNotif({ show: false, type: "", message: "" });
     }, 3000);
   };
+
+  // --- LOGIC DAFTAR DENGAN GOOGLE ---
+  const googleRegister = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        // Kirim Access Token ke Backend (/login/google akan auto-register jika user belum ada)
+        const res = await axiosClient.post("/login/google", {
+          id_token: tokenResponse.access_token, 
+        });
+
+        const { token, user } = res.data;
+
+        // Validasi Role: Pastikan bukan dokter/admin
+        if (user.role === 'dokter' || user.role === 'admin') {
+            setNotif({ 
+                show: true, 
+                type: "error", 
+                message: "Akun Google ini sudah terdaftar sebagai Dokter/Admin. Silakan login." 
+            });
+            return;
+        }
+
+        // Simpan sesi (Login otomatis)
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
+        window.dispatchEvent(new Event("user-login"));
+
+        setNotif({
+            show: true,
+            type: "success",
+            message: "Pendaftaran Google berhasil! Mengalihkan...",
+        });
+
+        setTimeout(() => {
+            navigate("/beranda"); // Langsung ke beranda user
+        }, 1500);
+
+      } catch (err) {
+        console.error("Google Register Error:", err);
+        setNotif({ 
+            show: true, 
+            type: "error", 
+            message: "Gagal mendaftar dengan Google. Silakan coba lagi." 
+        });
+      }
+    },
+    onError: () => console.log("Register Google Gagal"),
+  });
 
   return (
     <div className="daftar-wrapper">
@@ -90,7 +125,7 @@ export default function DaftarPengguna() {
         <header className="daftar-header">
           <h1 className="logo">
             <img
-              src="/images/lifelinker-logo.png"
+              src={process.env.PUBLIC_URL + "/images/lifelinker-logo.png"}
               alt="LifeLinker Logo"
               className="logo-image"
             />
@@ -235,6 +270,28 @@ export default function DaftarPengguna() {
           <button type="submit" className="btn-submit">
             Buat Akun
           </button>
+
+          <div style={{ display: "flex", alignItems: "center", margin: "25px 0 15px" }}>
+            <div style={{ flex: 1, borderBottom: "1px solid #e5e7eb" }}></div>
+            <span style={{ padding: "0 10px", color: "#9ca3af", fontSize: "13px", fontWeight: "600" }}>
+              ATAU
+            </span>
+            <div style={{ flex: 1, borderBottom: "1px solid #e5e7eb" }}></div>
+          </div>
+
+          <div className="google-login-wrapper">
+            <button 
+                type="button" 
+                className="google-btn" 
+                onClick={() => googleRegister()}
+            >
+              <img
+                src={process.env.PUBLIC_URL + "/images/G-logo.svg"}
+                alt="Google"
+              />
+              Daftar dengan Google
+            </button>
+          </div>
 
           <p className="login-link">
             Sudah punya akun? <Link to="/login-pengguna">Masuk di sini</Link>

@@ -7,20 +7,35 @@ import (
 
 type Event struct {
 	gorm.Model
-	NamaEvent      string    `json:"nama_event"`
-	TanggalEvent   time.Time `json:"tanggal_event"`
-	DeskripsiEvent string    `json:"deskripsi_event"`
+	// Tambahkan 'not null' untuk field wajib
+	NamaEvent      string    `gorm:"not null" json:"nama_event"`
+	TanggalEvent   time.Time `gorm:"not null" json:"tanggal_event"`
+	
+	// Gunakan type:text agar bisa menampung deskripsi panjang
+	DeskripsiEvent string    `gorm:"type:text" json:"deskripsi_event"` 
 	GambarEvent    string    `json:"gambar_event"`
 
-	// Foreign Key: Lokasi
-	LokasiID uint   `json:"lokasi_id"`
+	// --- FITUR TAMBAHAN (Sangat Disarankan) ---
+	
+	// 1. Status Event: "Open", "Closed", "Completed", "Cancelled"
+	// Defaultnya "Open" saat dibuat
+	Status string `gorm:"default:'Open';size:20" json:"status"`
+
+	// 2. Kuota Peserta: Untuk membatasi jumlah pendaftar
+	// Default 0 bisa berarti unlimited, atau set default 50/100
+	Kuota int `gorm:"default:100" json:"kuota"` 
+
+	// --- RELASI ---
+
+	// LokasiID Wajib ada (not null)
+	LokasiID uint   `gorm:"not null" json:"lokasi_id"`
 	Lokasi   Lokasi `gorm:"foreignKey:LokasiID" json:"lokasi"`
 
-	// Foreign Key: Admin yang membuat event (Organizer)
-	OrganizerID uint `json:"organizer_id"`
+	// OrganizerID Wajib ada (not null)
+	OrganizerID uint `gorm:"not null" json:"organizer_id"`
 	Organizer   User `gorm:"foreignKey:OrganizerID" json:"organizer"`
 
-	// Many-to-Many: Daftar User yang hadir
-	// GORM akan otomatis membuat tabel perantara bernama 'event_participants'
-	Participants []User `gorm:"many2many:event_participants;" json:"participants"`
+	// Daftar Peserta
+	// omitempty agar JSON response tidak penuh jika peserta kosong
+	Participants []User `gorm:"many2many:event_participants;" json:"participants,omitempty"`
 }

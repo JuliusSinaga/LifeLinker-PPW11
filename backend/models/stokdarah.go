@@ -7,9 +7,12 @@ import (
 
 type StokDarah struct {
 	gorm.Model
-	GolDarah       string    `json:"gol_darah"`    // A, B, AB, O
-	Rhesus         string    `json:"rhesus"`       // +, -
-	Ketersediaan   string    `json:"ketersediaan"` // Aman, Kurang, Kritis
+	// Tambahkan `uniqueIndex` agar kombinasi Golongan + Rhesus bersifat UNIK.
+	// Artinya: Hanya boleh ada SATU baris data untuk "A" dan "+".
+	GolDarah       string    `gorm:"size:5;not null;uniqueIndex:idx_gol_rhesus" json:"gol_darah"` 
+	Rhesus         string    `gorm:"size:5;not null;uniqueIndex:idx_gol_rhesus" json:"rhesus"`
+	
+	Ketersediaan   string    `gorm:"size:20" json:"ketersediaan"` // Aman, Kurang, Kritis
 	JumlahKantong  int       `json:"jumlah_kantong"`
 	WaktuPembaruan time.Time `json:"waktu_pembaruan"`
 

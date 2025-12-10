@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import "./DetailStokDarahPage.css";
 import {
   FaPhone,
@@ -13,290 +13,23 @@ import {
   FaClipboardList,
 } from "react-icons/fa";
 import Header from "../../components/Header";
-
-// Sample detailed blood stock data for specific hospitals
-const hospitalDetailData = {
-  1: {
-    id: 1,
-    name: "RSUP H. Adam Malik",
-    address: "Jl. Bunga Lau No.17, Medan",
-    operationalHours: "Senin - Jumat (08:00 - 15:00 WIB)",
-    phone: "08123456789",
-    bloodStockData: [
-      {
-        type: "A+",
-        status: "Kritis",
-        units: 12,
-        percentage: 15,
-        statusClass: "critical",
-      },
-      {
-        type: "A-",
-        status: "Standar",
-        units: 45,
-        percentage: 60,
-        statusClass: "standard",
-      },
-      {
-        type: "B+",
-        status: "Aman",
-        units: 97,
-        percentage: 85,
-        statusClass: "safe",
-      },
-      {
-        type: "B-",
-        status: "Kritis",
-        units: 9,
-        percentage: 12,
-        statusClass: "critical",
-      },
-      {
-        type: "O+",
-        status: "Standar",
-        units: 45,
-        percentage: 55,
-        statusClass: "standard",
-      },
-      {
-        type: "O-",
-        status: "Kritis",
-        units: 5,
-        percentage: 8,
-        statusClass: "critical",
-      },
-      {
-        type: "AB+",
-        status: "Aman",
-        units: 60,
-        percentage: 78,
-        statusClass: "safe",
-      },
-      {
-        type: "AB-",
-        status: "Standar",
-        units: 43,
-        percentage: 65,
-        statusClass: "standard",
-      },
-    ],
-  },
-  2: {
-    id: 2,
-    name: "RS HKBP Balige",
-    address: "Jl. Gereja No.17, Balige",
-    operationalHours: "Senin - Jumat (08:00 - 15:00 WIB)",
-    phone: "08123456788",
-    bloodStockData: [
-      {
-        type: "A+",
-        status: "Standar",
-        units: 32,
-        percentage: 45,
-        statusClass: "standard",
-      },
-      {
-        type: "A-",
-        status: "Aman",
-        units: 65,
-        percentage: 80,
-        statusClass: "safe",
-      },
-      {
-        type: "B+",
-        status: "Aman",
-        units: 87,
-        percentage: 90,
-        statusClass: "safe",
-      },
-      {
-        type: "B-",
-        status: "Kritis",
-        units: 7,
-        percentage: 10,
-        statusClass: "critical",
-      },
-      {
-        type: "O+",
-        status: "Standar",
-        units: 34,
-        percentage: 50,
-        statusClass: "standard",
-      },
-      {
-        type: "O-",
-        status: "Kritis",
-        units: 3,
-        percentage: 5,
-        statusClass: "critical",
-      },
-      {
-        type: "AB+",
-        status: "Aman",
-        units: 78,
-        percentage: 85,
-        statusClass: "safe",
-      },
-      {
-        type: "AB-",
-        status: "Standar",
-        units: 23,
-        percentage: 40,
-        statusClass: "standard",
-      },
-    ],
-  },
-  3: {
-    id: 3,
-    name: "RS Universitas Sumatera Utara",
-    address: "Jl. Dr. Mansyur No.5, Medan",
-    operationalHours: "Senin - Jumat (08:00 - 16:00 WIB)",
-    phone: "08123456787",
-    bloodStockData: [
-      {
-        type: "A+",
-        status: "Aman",
-        units: 78,
-        percentage: 82,
-        statusClass: "safe",
-      },
-      {
-        type: "A-",
-        status: "Standar",
-        units: 23,
-        percentage: 48,
-        statusClass: "standard",
-      },
-      {
-        type: "B+",
-        status: "Aman",
-        units: 65,
-        percentage: 75,
-        statusClass: "safe",
-      },
-      {
-        type: "B-",
-        status: "Standar",
-        units: 18,
-        percentage: 42,
-        statusClass: "standard",
-      },
-      {
-        type: "O+",
-        status: "Kritis",
-        units: 8,
-        percentage: 10,
-        statusClass: "critical",
-      },
-      {
-        type: "O-",
-        status: "Kritis",
-        units: 4,
-        percentage: 6,
-        statusClass: "critical",
-      },
-      {
-        type: "AB+",
-        status: "Aman",
-        units: 55,
-        percentage: 70,
-        statusClass: "safe",
-      },
-      {
-        type: "AB-",
-        status: "Standar",
-        units: 30,
-        percentage: 52,
-        statusClass: "standard",
-      },
-    ],
-  },
-  4: {
-    id: 4,
-    name: "PMI Kota Medan",
-    address: "Jl. Pemuda No.32, Medan",
-    operationalHours: "Senin - Jumat (08:00 - 14:00 WIB)",
-    phone: "08123456786",
-    bloodStockData: [
-      {
-        type: "A+",
-        status: "Standar",
-        units: 42,
-        percentage: 55,
-        statusClass: "standard",
-      },
-      {
-        type: "A-",
-        status: "Kritis",
-        units: 6,
-        percentage: 8,
-        statusClass: "critical",
-      },
-      {
-        type: "B+",
-        status: "Aman",
-        units: 89,
-        percentage: 88,
-        statusClass: "safe",
-      },
-      {
-        type: "B-",
-        status: "Kritis",
-        units: 4,
-        percentage: 5,
-        statusClass: "critical",
-      },
-      {
-        type: "O+",
-        status: "Aman",
-        units: 92,
-        percentage: 90,
-        statusClass: "safe",
-      },
-      {
-        type: "O-",
-        status: "Kritis",
-        units: 2,
-        percentage: 3,
-        statusClass: "critical",
-      },
-      {
-        type: "AB+",
-        status: "Standar",
-        units: 38,
-        percentage: 58,
-        statusClass: "standard",
-      },
-      {
-        type: "AB-",
-        status: "Standar",
-        units: 25,
-        percentage: 45,
-        statusClass: "standard",
-      },
-    ],
-  },
-};
+import axiosClient from "../../service/axiosClient";
 
 const procedureInfo = [
   "Siapkan surat permintaan darah resmi dari dokter yang merawat.",
   "Sangat disarankan untuk menghubungi unit darah rumah sakit terlebih dahulu untuk konfirmasi stok dan prosedur.",
+  "Bawa identitas diri (KTP/SIM) keluarga pasien yang mengambil.",
 ];
 
 export default function DetailStokDarahPage() {
   const { id } = useParams();
-  const hospital = hospitalDetailData[id] || hospitalDetailData[1];
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const userRole = localStorage.getItem("role");
-    if (token && userRole === "pengguna") {
-      setIsLoggedIn(true);
-    }
-  }, []);
-
+  const navigate = useNavigate();
+  
+  // State Data
+  const [hospital, setHospital] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [selectedFilter, setSelectedFilter] = useState("Tampilkan Semua");
+
   const filterOptions = [
     "Tampilkan Semua",
     "Kritis Saja",
@@ -304,54 +37,115 @@ export default function DetailStokDarahPage() {
     "Aman Saja",
   ];
 
-  const filteredData = hospital.bloodStockData.filter((item) => {
-    if (selectedFilter === "Tampilkan Semua") return true;
-    if (selectedFilter === "Kritis Saja") return item.status === "Kritis";
-    if (selectedFilter === "Standar Saja") return item.status === "Standar";
-    if (selectedFilter === "Aman Saja") return item.status === "Aman";
-    return true;
-  });
+  // 1. Fetch Data dari Backend
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Ambil detail lokasi & data stok secara paralel
+        const [lokasiRes, stokRes] = await Promise.all([
+          axiosClient.get(`/lokasi/${id}`),
+          axiosClient.get("/stok-darah")
+        ]);
+
+        const lokasiData = lokasiRes.data.data;
+        const rawStock = stokRes.data.data || [];
+
+        // Mapping Data Stok Backend ke Format UI
+        // Backend: { gol_darah: "A", rhesus: "+", jumlah_kantong: 50, ketersediaan: "Aman" }
+        // Frontend UI: { type: "A+", status: "Aman", units: 50, percentage: 80, statusClass: "safe" }
+        const mappedStock = rawStock.map(item => {
+          const statusClass = getStatusClass(item.ketersediaan);
+          // Simulasi persentase: Asumsi max kapasitas per golongan = 100 kantong
+          const percentage = Math.min((item.jumlah_kantong / 100) * 100, 100); 
+
+          return {
+            type: `${item.gol_darah}${item.rhesus}`,
+            status: item.ketersediaan,
+            units: item.jumlah_kantong,
+            percentage: percentage,
+            statusClass: statusClass, 
+          };
+        });
+
+        // Urutkan agar rapi (A+, A-, B+, B-, dst)
+        const order = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+        mappedStock.sort((a, b) => order.indexOf(a.type) - order.indexOf(b.type));
+
+        // Gabungkan ke object hospital
+        setHospital({
+          id: lokasiData.ID,
+          name: lokasiData.nama_lokasi,
+          address: lokasiData.alamat_lokasi,
+          operationalHours: lokasiData.jam_operasional_lokasi || "08:00 - 16:00 WIB",
+          phone: lokasiData.kontak_lokasi,
+          bloodStockData: mappedStock
+        });
+
+      } catch (error) {
+        console.error("Gagal mengambil data detail stok:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id]);
+
+  // Helper Functions
+  const getStatusClass = (status) => {
+    switch (status) {
+      case "Kritis": return "critical";
+      case "Kurang": return "critical"; // Mapping Kurang -> Critical style
+      case "Standar": return "standard";
+      case "Aman": return "safe";
+      default: return "standard";
+    }
+  };
 
   const getProgressBarClass = (statusClass) => {
     switch (statusClass) {
-      case "critical":
-        return "progress-critical";
-      case "standard":
-        return "progress-standard";
-      case "safe":
-        return "progress-safe";
-      default:
-        return "progress-standard";
+      case "critical": return "progress-critical";
+      case "standard": return "progress-standard";
+      case "safe": return "progress-safe";
+      default: return "progress-standard";
     }
   };
 
   const getStatusBadgeClass = (statusClass) => {
     switch (statusClass) {
-      case "critical":
-        return "status-critical";
-      case "standard":
-        return "status-standard";
-      case "safe":
-        return "status-safe";
-      default:
-        return "status-standard";
+      case "critical": return "status-critical";
+      case "standard": return "status-standard";
+      case "safe": return "status-safe";
+      default: return "status-standard";
     }
   };
 
+  // Render Loading / Error
+  if (loading) return <div style={{textAlign:'center', padding:'50px'}}>Memuat data stok...</div>;
+  if (!hospital) return (
+    <div style={{textAlign:'center', padding:'50px'}}>
+      <h2>Data tidak ditemukan</h2>
+      <button onClick={() => navigate('/stok-darah')}>Kembali</button>
+    </div>
+  );
+
+  // Filter Logic Client-side
+  const filteredData = hospital.bloodStockData.filter((item) => {
+    if (selectedFilter === "Tampilkan Semua") return true;
+    if (selectedFilter === "Kritis Saja") return item.status === "Kritis" || item.status === "Kurang";
+    if (selectedFilter === "Standar Saja") return item.status === "Standar";
+    if (selectedFilter === "Aman Saja") return item.status === "Aman";
+    return true;
+  });
+
   // Calculate statistics
-  const criticalCount = hospital.bloodStockData.filter(
-    (item) => item.status === "Kritis"
-  ).length;
-  const standardCount = hospital.bloodStockData.filter(
-    (item) => item.status === "Standar"
-  ).length;
-  const safeCount = hospital.bloodStockData.filter(
-    (item) => item.status === "Aman"
-  ).length;
+  const criticalCount = hospital.bloodStockData.filter(item => item.status === "Kritis" || item.status === "Kurang").length;
+  const standardCount = hospital.bloodStockData.filter(item => item.status === "Standar").length;
+  const safeCount = hospital.bloodStockData.filter(item => item.status === "Aman").length;
 
   return (
     <div className="detail-stok-root">
-      <Header showUserProfile={isLoggedIn} />
+      <Header />
 
       {/* Hospital Info Section */}
       <section className="hospital-info-section" style={{ paddingTop: "40px" }}>
@@ -364,13 +158,7 @@ export default function DetailStokDarahPage() {
 
           <div className="hospital-info">
             <h1>
-              <FaHospital
-                style={{
-                  display: "inline",
-                  marginRight: "12px",
-                  color: "var(--primary-red)",
-                }}
-              />
+              <FaHospital style={{ display: "inline", marginRight: "12px", color: "var(--primary-red)" }} />
               {hospital.name}
             </h1>
             <div className="hospital-details">
@@ -379,13 +167,9 @@ export default function DetailStokDarahPage() {
                 <span>{hospital.address}</span>
               </div>
               <div className="detail-item">
-                <FaClock
-                  className="detail-icon"
-                  style={{ color: "var(--primary-red)" }}
-                />
+                <FaClock className="detail-icon" style={{ color: "var(--primary-red)" }} />
                 <span>
-                  <strong>Jam Operasional Unit Darah:</strong>{" "}
-                  {hospital.operationalHours}
+                  <strong>Jam Operasional Unit Darah:</strong> {hospital.operationalHours}
                 </span>
               </div>
             </div>
@@ -397,9 +181,16 @@ export default function DetailStokDarahPage() {
               <button className="btn-whatsapp">
                 <FaWhatsapp /> WhatsApp
               </button>
-              <button className="btn-maps">
+              {/* Link Google Maps Dinamis */}
+              <a 
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hospital.name + " " + hospital.address)}`} 
+                target="_blank" 
+                rel="noreferrer" 
+                className="btn-maps"
+                style={{textDecoration:'none', display:'flex', alignItems:'center', justifyContent:'center', gap:'8px'}}
+              >
                 <FaMapMarkerAlt /> Lihat Lokasi di Google Maps
-              </button>
+              </a>
             </div>
           </div>
         </div>
@@ -408,106 +199,21 @@ export default function DetailStokDarahPage() {
       {/* Main Content */}
       <main className="stok-main">
         <div className="stok-container">
+          
           {/* Statistics Summary */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-              gap: "20px",
-              marginBottom: "30px",
-            }}
-          >
-            <div
-              style={{
-                background: "linear-gradient(135deg, #fee2e2, #fecaca)",
-                padding: "20px",
-                borderRadius: "16px",
-                textAlign: "center",
-                border: "2px solid #ef4444",
-                animation: "fadeInUp 0.5s ease-out",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "32px",
-                  fontWeight: "800",
-                  color: "#991b1b",
-                  marginBottom: "8px",
-                }}
-              >
-                {criticalCount}
-              </div>
-              <div
-                style={{
-                  fontSize: "14px",
-                  color: "#991b1b",
-                  fontWeight: "600",
-                }}
-              >
-                Golongan Kritis
-              </div>
+          <div className="stats-summary-grid">
+            {/* ... Anda bisa menggunakan CSS Grid di sini atau style inline seperti sebelumnya ... */}
+            <div className="stat-box-stok critical">
+              <div className="stat-number-stok">{criticalCount}</div>
+              <div className="stat-label-stok">Golongan Kritis</div>
             </div>
-
-            <div
-              style={{
-                background: "linear-gradient(135deg, #fef3c7, #fde68a)",
-                padding: "20px",
-                borderRadius: "16px",
-                textAlign: "center",
-                border: "2px solid #f59e0b",
-                animation: "fadeInUp 0.5s ease-out 0.1s both",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "32px",
-                  fontWeight: "800",
-                  color: "#92400e",
-                  marginBottom: "8px",
-                }}
-              >
-                {standardCount}
-              </div>
-              <div
-                style={{
-                  fontSize: "14px",
-                  color: "#92400e",
-                  fontWeight: "600",
-                }}
-              >
-                Golongan Standar
-              </div>
+            <div className="stat-box-stok standard">
+              <div className="stat-number-stok">{standardCount}</div>
+              <div className="stat-label-stok">Golongan Standar</div>
             </div>
-
-            <div
-              style={{
-                background: "linear-gradient(135deg, #dcfce7, #bbf7d0)",
-                padding: "20px",
-                borderRadius: "16px",
-                textAlign: "center",
-                border: "2px solid #10b981",
-                animation: "fadeInUp 0.5s ease-out 0.2s both",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "32px",
-                  fontWeight: "800",
-                  color: "#166534",
-                  marginBottom: "8px",
-                }}
-              >
-                {safeCount}
-              </div>
-              <div
-                style={{
-                  fontSize: "14px",
-                  color: "#166534",
-                  fontWeight: "600",
-                }}
-              >
-                Golongan Aman
-              </div>
+            <div className="stat-box-stok safe">
+              <div className="stat-number-stok">{safeCount}</div>
+              <div className="stat-label-stok">Golongan Aman</div>
             </div>
           </div>
 
@@ -515,7 +221,7 @@ export default function DetailStokDarahPage() {
           <div className="filter-section">
             <div className="filter-label">
               <FaFilter className="filter-icon" />
-              <span>Filter Golongan Darah:</span>
+              <span>Filter Status Stok:</span>
             </div>
             <select
               className="filter-dropdown"
@@ -523,9 +229,7 @@ export default function DetailStokDarahPage() {
               onChange={(e) => setSelectedFilter(e.target.value)}
             >
               {filterOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
+                <option key={option} value={option}>{option}</option>
               ))}
             </select>
           </div>
@@ -549,21 +253,13 @@ export default function DetailStokDarahPage() {
                       </td>
                       <td className="status-cell">
                         <div className="progress-container">
-                          <div
-                            className={`progress-bar ${getProgressBarClass(
-                              item.statusClass
-                            )}`}
-                          >
+                          <div className={`progress-bar ${getProgressBarClass(item.statusClass)}`}>
                             <div
                               className="progress-fill"
                               style={{ width: `${item.percentage}%` }}
                             ></div>
                           </div>
-                          <span
-                            className={`status-badge ${getStatusBadgeClass(
-                              item.statusClass
-                            )}`}
-                          >
+                          <span className={`status-badge ${getStatusBadgeClass(item.statusClass)}`}>
                             {item.status}
                           </span>
                         </div>
@@ -575,15 +271,8 @@ export default function DetailStokDarahPage() {
                   ))
                 ) : (
                   <tr>
-                    <td
-                      colSpan="3"
-                      style={{
-                        textAlign: "center",
-                        padding: "40px",
-                        color: "#666",
-                      }}
-                    >
-                      Tidak ada data yang sesuai dengan filter yang dipilih.
+                    <td colSpan="3" style={{ textAlign: "center", padding: "40px", color: "#666" }}>
+                      Tidak ada data yang sesuai filter.
                     </td>
                   </tr>
                 )}
@@ -594,13 +283,7 @@ export default function DetailStokDarahPage() {
           {/* Informasi & Prosedur */}
           <div className="procedure-section">
             <h3>
-              <FaClipboardList
-                style={{
-                  color: "var(--primary-red)",
-                  marginRight: "10px",
-                  display: "inline",
-                }}
-              />
+              <FaClipboardList style={{ color: "var(--primary-red)", marginRight: "10px", display: "inline" }} />
               Informasi & Prosedur Permintaan
             </h3>
             <div className="procedure-list">
@@ -614,6 +297,8 @@ export default function DetailStokDarahPage() {
           </div>
         </div>
       </main>
+      
+      {/* Footer Dihapus (Sudah ada di App.js) */}
     </div>
   );
 }

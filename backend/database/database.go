@@ -7,8 +7,8 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-
-	"github.com/JuliusSinaga/LifeLinker-PPW11/backend/models"
+    // Hapus import "github.com/JuliusSinaga/LifeLinker-PPW11/backend/models"
+    // Karena kita tidak lagi melakukan migrasi di file ini.
 )
 
 var DB *gorm.DB
@@ -31,20 +31,9 @@ func ConnectDB() {
 		log.Fatal("❌ Gagal konek ke PostgreSQL: ", err)
 	}
 
-	// Auto Migrate tetap di sini agar rapi
-	err = database.AutoMigrate(
-		&models.User{},
-		&models.Lokasi{},
-		&models.Event{},
-		&models.StokDarah{},
-		&models.DonationHistory{},
-		&models.Consultation{},
-	)
-
-	if err != nil {
-		log.Fatal("❌ Gagal melakukan migrasi database: ", err)
-	}
-
-	fmt.Println("✅ Database connected & Migrated successfully!")
+	// --- PERUBAHAN: HAPUS BAGIAN AUTO MIGRATE DI SINI ---
+	// Kita sudah memindahkannya ke main.go agar dijalankan sebelum seeder.
+	
+	fmt.Println("✅ Database connected successfully!")
 	DB = database
 }
