@@ -33,6 +33,7 @@ import Logout from "./pages/Logout";
 import DashboardDokter from "./pages/DashboardDokter";
 import ManajemenStok from "./pages/ManajemenStok";
 import KonsultasiEdukasi from "./pages/KonsultasiEdukasi";
+import ProfilDokter from "./pages/ProfilDokter";
 
 // === Components ===
 import Footer from "./components/Footer";
@@ -94,10 +95,10 @@ function AppContent() {
           <Route path="/logout" element={<Logout />} />
 
           {/* === Dokter Dashboard === */}
-          <Route path="/dashboard" element={<DashboardDokter />} />
+          <Route path="/dashboard-dokter" element={<DashboardDokter />} />
           <Route path="/manajemen-stok" element={<ManajemenStok />} />
           <Route path="/konsultasi-edukasi" element={<KonsultasiEdukasi />} />
-
+          <Route path="/profile-dokter" element={<ProfilDokter />} />
           {/* === Fallback Pages === */}
           <Route path="/home" element={<Navigate to="/beranda" replace />} />
           

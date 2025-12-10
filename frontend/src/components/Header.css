@@ -181,3 +181,78 @@
     margin-left: 0;
   }
 }
+
+/* --- Styles untuk Modal Logout (Sama dengan SidebarAdmin) --- */
+
+.logout-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5); /* Latar belakang gelap transparan */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Pastikan di atas semua elemen header */
+}
+
+.logout-modal {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  width: 350px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease;
+}
+
+.logout-modal h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.logout-modal p {
+  color: #666;
+  margin-bottom: 25px;
+}
+
+.logout-actions {
+  display: flex;
+  justify-content: space-around;
+  gap: 15px;
+}
+
+.cancel-logout,
+.confirm-logout {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  flex: 1;
+}
+
+.cancel-logout {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.cancel-logout:hover {
+  background-color: #d1d5db;
+}
+
+.confirm-logout {
+  background-color: #dc2626;
+  color: white;
+}
+
+.confirm-logout:hover {
+  background-color: #b91c1c;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

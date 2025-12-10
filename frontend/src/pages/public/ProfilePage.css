@@ -688,3 +688,121 @@
     text-align: center;
   }
 }
+
+/* --- CSS untuk Tombol Logout di Pengaturan --- */
+.settings-logout-section {
+  margin-top: 40px;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 25px;
+}
+
+.settings-logout-title {
+  color: #dc2626;
+  margin-bottom: 15px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.btn-logout-settings {
+  background-color: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #dc2626;
+  width: 100%;
+  justify-content: center;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.btn-logout-settings:hover {
+  background-color: #fca5a5; /* Merah muda lebih gelap saat hover */
+  transform: translateY(-2px);
+}
+
+/* --- CSS untuk Modal Konfirmasi Logout --- */
+.logout-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* Overlay gelap transparan */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.logout-modal {
+  background-color: white;
+  padding: 25px;
+  border-radius: 10px;
+  width: 350px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.logout-modal h3 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 1.25rem;
+}
+
+.logout-modal p {
+  color: #666;
+  margin-bottom: 25px;
+}
+
+.logout-actions {
+  display: flex;
+  justify-content: space-around;
+  gap: 15px;
+}
+
+.btn-modal-cancel,
+.btn-modal-confirm {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  flex: 1;
+  transition: opacity 0.2s;
+}
+
+.btn-modal-cancel {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.btn-modal-cancel:hover {
+  background-color: #d1d5db;
+}
+
+.btn-modal-confirm {
+  background-color: #dc2626;
+  color: white;
+}
+
+.btn-modal-confirm:hover {
+  background-color: #b91c1c;
+}
+
+/* Animasi sederhana */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

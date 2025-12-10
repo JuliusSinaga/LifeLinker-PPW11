@@ -32,11 +32,11 @@ export default function DokterSidebar() {
         </div>
 
         <nav className="sidebar-menu">
-          <Link to="/dashboard" className={active("/dashboard")}>Dashboard</Link>
+          <Link to="/dashboard-dokter" className={active("/dashboard")}>Dashboard</Link>
           <Link to="/manajemen-stok" className={active("/manajemen-stok")}>Manajemen Stok</Link>
           <Link to="/manajemen-event" className={active("/manajemen-event")}>Manajemen Event</Link>
           <Link to="/konsultasi-edukasi" className={active("/konsultasi-edukasi")}>Konsultasi & Edukasi</Link>
-          <Link to="/profil-saya" className={active("/profil-saya")}>Profil Saya</Link>
+          <Link to="/profile-dokter" className={active("/profile-dokter")}>Profil Saya</Link>
         </nav>
 
         <button className="logout" onClick={() => setShowLogoutModal(true)}>

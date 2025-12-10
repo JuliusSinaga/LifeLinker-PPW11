@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./DaftarPengguna.css";
-// 1. Import axiosClient dan Google Hook
 import axiosClient from "../service/axiosClient";
 import { useGoogleLogin } from "@react-oauth/google"; 
 
@@ -33,7 +32,13 @@ export default function DaftarPengguna() {
     e.preventDefault();
 
     try {
-      await axiosClient.post("/users", formData);
+      // PERBAIKAN: Konversi weight ke Integer sebelum dikirim
+      const payload = {
+        ...formData,
+        weight: parseInt(formData.weight) || 0, // Pastikan jadi angka
+      };
+
+      await axiosClient.post("/users", payload);
 
       setNotif({
         show: true,
@@ -52,6 +57,7 @@ export default function DaftarPengguna() {
       }, 2000);
 
     } catch (error) {
+      console.error("Register Error:", error);
       const errorMessage = error.response?.data?.error || "Gagal mendaftarkan akun. Coba lagi.";
       setNotif({ show: true, type: "error", message: errorMessage });
     }
