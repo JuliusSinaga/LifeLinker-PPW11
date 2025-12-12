@@ -54,7 +54,7 @@ function AppContent() {
   const hideFooterPaths = [
     "/pilih-role", "/role-selection", 
     "/login-admin", "/login-user", "/login-dokter", "/login-pengguna", 
-    "/dashboard-admin", "/manajemen-dokter", "/manajemen-user", 
+    "/dashboard-admin", "/manajemen-dokter", "/manajemen-user", "/dashboard-dokter", "/profile-dokter",
     "/manajemen-event", "/manajemen-pendonor", "/laporan", "/profile-admin", 
     "/logout", "/dashboard", "/manajemen-stok", "/konsultasi-edukasi", "/error", "/forbidden", "lupa-password", "manajemen-event-admin"
   ];

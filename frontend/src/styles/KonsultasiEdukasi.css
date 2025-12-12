@@ -1,356 +1,568 @@
-/* ========== BASE LAYOUT ========== */
-.dokter-main {
-  margin-left: 240px;
-  padding: 24px;
-  background: #f6f7f9;
+/* Layout Utama */
+.dokter-layout {
+  display: flex;
   min-height: 100vh;
+  background-color: #f3f4f6;
+  font-family: 'Inter', sans-serif;
+}
+
+.dokter-main {
+  flex: 1;
+  padding: 30px 40px;
+  overflow-y: auto;
+  margin-left: 260px; /* Lebar Sidebar */
+  width: calc(100% - 260px);
 }
 
 .page-title {
-  font-size: 30px;
+  font-size: 26px;
   font-weight: 700;
-  margin-bottom: 20px;
+  color: #111827;
+  margin-bottom: 30px;
 }
 
-/* =====================================================================================
-   ███ 1. CHAT SECTION (LEFT CHAT LIST + RIGHT CHAT WINDOW)
-===================================================================================== */
-
-.chat-section {
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 20px;
+/* --- Section Container --- */
+.ke-section {
   background: white;
-  padding: 22px;
   border-radius: 16px;
-  margin-bottom: 28px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  border: 1px solid #f1dada;
+  padding: 25px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  border: 1px solid #e5e7eb;
 }
 
-/* CHAT LEFT LIST */
-.chat-left {
-  border-right: 1px solid #eee;
-  padding-right: 18px;
-}
-
-.chat-search {
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 10px;
-  border: 1px solid #ddd;
-  margin-bottom: 15px;
-}
-
-.chat-item {
-  padding: 12px;
-  background: #f7f7f7;
-  border-radius: 10px;
-  cursor: pointer;
-  margin-bottom: 10px;
-  transition: 0.2s;
-}
-
-.chat-item:hover {
-  background: #e3eefc;
-}
-
-.chat-item.active {
-  background: #d5e8ff;
-  border-left: 4px solid #4a90e2;
-}
-
-.chat-item h4 {
-  margin: 0;
-  font-size: 15px;
-  font-weight: 700;
-}
-
-.chat-item p {
-  margin: 4px 0 0;
-  font-size: 13px;
-  opacity: 0.8;
-}
-
-/* CHAT RIGHT WINDOW */
-.chat-right {
-  display: flex;
-  flex-direction: column;
-  /* jangan fix height agar input tidak nempel memenuhi ruang */
-  /* height: 360px;  <-- removed */
-}
-
-/* header */
-.chat-header {
-  font-weight: 700;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
-  margin-bottom: 10px;
-}
-
-/* chat messages area: beri max-height + scroll */
-.chat-window {
-  flex: 1;
-  max-height: 340px; /* batasi tinggi area pesan */
-  overflow-y: auto;
-  padding-right: 10px;
-}
-
-/* bubble */
-.chat-bubble {
-  padding: 12px 16px;
-  margin: 8px 0;
-  border-radius: 12px;
-  max-width: 75%;
-  font-size: 14px;
-}
-
-.chat-bubble.patient {
-  background: #eef2ff;
-  align-self: flex-start;
-}
-
-.chat-bubble.doctor {
-  background: #c7edff;
-  align-self: flex-end;
-}
-
-/* ================= CHAT INPUT (PERBAIKAN) ================= */
-
-/* gunakan flex agar textarea & tombol sejajar dan tidak membesar */
-.chat-input {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  margin-top: 12px;
-}
-
-/* textarea yang pendek, tidak auto-expand secara berlebihan */
-.reply-textarea {
-  flex: 1;
-  min-height: 44px;     /* tinggi awal */
-  max-height: 120px;    /* maksimal jika user resize (kita matikan resize vertikal) */
-  padding: 10px 14px;
-  border-radius: 12px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  resize: none;         /* non-aktifkan resize vertical — ubah ke "vertical" kalau mau */
-  overflow: auto;
-  line-height: 1.3;
-  background: #fff;
-}
-
-/* tombol kirim bulat kanan */
-.send-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: none;
-  background: #2b95f7;
-  color: white;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 16px;
-  box-shadow: 0 4px 8px rgba(43,149,247,0.18);
-}
-
-/* hover effects */
-.send-btn:hover { transform: translateY(-1px); }
-
-/* =====================================================================================
-   ███ 2. VIDEO CONSULTATION SESSIONS  (tidak diubah)
-===================================================================================== */
-
-/* session-section, header, tabs, session-card ... (salin dari file lama) */
-.session-section {
-  background: white;
-  padding: 22px;
-  border-radius: 16px;
-  margin-bottom: 28px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  border: 1px solid #f1dada;
-}
-
-.session-header {
+.ke-header-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #f3f4f6;
+  padding-bottom: 10px;
 }
 
-.session-header h2 {
-  font-size: 22px;
+.ke-section-title {
+  font-size: 18px;
   font-weight: 700;
+  color: #374151;
+  margin: 0;
 }
 
-.tabs {
+/* Indikator Live */
+.ke-live-indicator {
+  font-size: 12px;
+  color: #10b981;
   display: flex;
-  gap: 18px;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  background-color: #ecfdf5;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.ke-live-indicator .dot {
+  width: 8px;
+  height: 8px;
+  background-color: #10b981;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+/* --- Chat Layout --- */
+.ke-chat-container {
+  display: flex;
+  height: 550px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #fff;
+}
+
+/* Chat Sidebar (Kiri) */
+.ke-chat-list {
+  width: 320px;
+  border-right: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  display: flex;
+  flex-direction: column;
+}
+
+.ke-search-box {
+  padding: 15px;
+  border-bottom: 1px solid #e5e7eb;
+  position: relative;
+  background-color: #fff;
+}
+
+.ke-search-box input {
+  width: 100%;
+  padding: 12px 12px 12px 38px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  outline: none;
+  font-size: 14px;
+}
+
+.ke-search-box .search-icon {
+  position: absolute;
+  left: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+}
+
+.ke-chat-items {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.ke-chat-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.ke-chat-item:hover {
+  background-color: #fff;
+}
+
+.ke-chat-item.active {
+  background-color: #eff6ff;
+  border-left: 4px solid #3b82f6;
+}
+
+.user-avatar {
+  font-size: 40px;
+  color: #d1d5db;
+}
+
+.chat-info {
+  flex: 1;
+  overflow: hidden;
+}
+
+.chat-info-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.chat-info h4 {
+  margin: 0;
+  font-size: 14px;
+  color: #1f2937;
   font-weight: 600;
 }
 
-.tabs span {
-  cursor: pointer;
-  opacity: 0.6;
+.chat-info p {
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.tabs .active {
-  color: red;
-  opacity: 1;
+.ke-empty-state {
+  text-align: center;
+  padding: 20px;
+  color: #9ca3af;
+  font-style: italic;
 }
 
-.session-card {
-  background: white;
-  border: 1px solid #eee;
-  padding: 18px;
-  margin-top: 18px;
-  border-radius: 14px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.06);
-}
-
-.session-title {
-  font-size: 17px;
-  font-weight: 700;
-  margin-bottom: 5px;
-}
-
-.session-doctor {
-  font-size: 14px;
-  opacity: 0.8;
-}
-
-.session-topic {
-  margin: 8px 0;
-  font-size: 14px;
-  opacity: 0.85;
-}
-
-.session-details {
+/* Chat Window (Kanan) */
+.ke-chat-window {
+  flex: 1;
   display: flex;
-  gap: 22px;
-  font-size: 14px;
-  margin-top: 10px;
+  flex-direction: column;
+  background-color: #fff;
 }
 
-.session-details a {
-  color: #3b82f6;
-  text-decoration: none;
+.ke-chat-header {
+  padding: 15px 25px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+}
+
+.ke-chat-header h3 { margin: 0; font-size: 16px; color: #111827; }
+
+.ke-topic-badge {
+  background-color: #f3f4f6;
+  color: #4b5563;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.ke-messages-area {
+  flex: 1;
+  padding: 25px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background-color: #f8fafc;
+}
+
+.message-bubble {
+  max-width: 70%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.message-bubble.patient {
+  align-self: flex-start;
+  background-color: #fff;
+  color: #1f2937;
+  border: 1px solid #e5e7eb;
+  border-bottom-left-radius: 2px;
+}
+
+.message-bubble.doctor {
+  align-self: flex-end;
+  background-color: #3b82f6;
+  color: white;
+  border-bottom-right-radius: 2px;
+}
+
+.ke-chat-input {
+  padding: 20px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  gap: 12px;
+  background-color: #fff;
+}
+
+.ke-chat-input input {
+  flex: 1;
+  padding: 12px 15px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  outline: none;
+  font-size: 14px;
+}
+
+.ke-chat-input input:focus { border-color: #3b82f6; }
+
+.btn-send {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  width: 48px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: background 0.2s;
+}
+
+.btn-send:hover { background-color: #2563eb; }
+.btn-send:disabled { background-color: #93c5fd; cursor: not-allowed; }
+
+.ke-no-chat, .ke-empty-chat {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+/* --- Video Sessions --- */
+.ke-grid-sessions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.ke-session-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  background-color: #fff;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.ke-session-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+}
+
+.session-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.session-top h4 {
+  margin: 0;
+  font-size: 16px;
+  color: #111827;
+  font-weight: 700;
+}
+
+.ke-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.ke-badge.green { background-color: #dcfce7; color: #166534; }
+.ke-badge.gray { background-color: #f3f4f6; color: #6b7280; }
+
+.session-patient {
+  font-size: 14px;
+  color: #4b5563;
+  margin-bottom: 15px;
+}
+
+.session-meta {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.session-meta span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .session-actions {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 18px;
+  gap: 10px;
 }
 
-.btn-start {
-  background: #ef4444;
-  border: none;
-  padding: 8px 14px;
+.btn-join {
+  flex: 1;
+  background-color: #10b981;
   color: white;
+  border: none;
+  padding: 10px;
   border-radius: 8px;
   cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
 }
 
-.btn-edit {
-  background: #ddd;
+.btn-join:hover { background-color: #059669; }
+
+.btn-icon {
+  background-color: #f3f4f6;
   border: none;
-  padding: 8px 12px;
+  padding: 10px 14px;
   border-radius: 8px;
   cursor: pointer;
+  color: #374151;
+  transition: background 0.2s;
+}
+
+.btn-icon.delete { color: #ef4444; }
+.btn-icon:hover { background-color: #e5e7eb; }
+
+/* --- FAQ --- */
+.ke-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.ke-faq-card {
+  background-color: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  transition: border-color 0.2s;
+}
+
+.ke-faq-card:hover { border-color: #d1d5db; }
+
+.faq-question {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.faq-question strong { color: #111827; font-size: 15px; }
+
+.faq-actions { display: flex; gap: 8px; }
+
+.btn-icon-small {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 4px;
+  transition: color 0.2s;
+}
+.btn-icon-small.delete:hover { color: #ef4444; }
+
+.faq-answer {
+  font-size: 14px;
+  color: #4b5563;
+  padding-left: 15px;
+  border-left: 3px solid #d1d5db;
+  line-height: 1.5;
+}
+
+.ke-btn-add-faq {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #eff6ff;
+  border: 1px dashed #3b82f6;
+  color: #3b82f6;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.ke-btn-add-faq:hover {
+  background-color: #3b82f6;
+  color: white;
+  border-style: solid;
+}
+
+/* --- Modal Styles --- */
+.ke-modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.ke-modal-box {
+  background: white;
+  width: 90%;
+  max-width: 450px;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+  animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.ke-modal-box h3 {
+  margin: 0 0 20px 0;
+  color: #111827;
+  font-size: 20px;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 15px;
+}
+
+.ke-form-group {
+  margin-bottom: 15px;
+}
+
+.ke-form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.ke-form-group input, 
+.ke-form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.ke-form-group input:focus, 
+.ke-form-group textarea:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.ke-modal-actions {
+  margin-top: 25px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
 }
 
 .btn-cancel {
-  background: #fee2e2;
+  background-color: #f3f4f6;
+  color: #374151;
   border: none;
-  padding: 8px 14px;
+  padding: 10px 20px;
   border-radius: 8px;
-  color: #b91c1c;
-  cursor: pointer;
-}
-
-.session-status {
-  margin-left: auto;
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-size: 13px;
   font-weight: 600;
-}
-
-.session-status.green {
-  background: #d1fae5;
-  color: #047857;
-}
-
-.session-status.yellow {
-  background: #fef3c7;
-  color: #b45309;
-}
-
-/* =====================================================================================
-   ███ 3. FAQ MANAGEMENT (tidak diubah)
-===================================================================================== */
-
-.faq-section {
-  background: white;
-  padding: 22px;
-  border-radius: 16px;
-  margin-bottom: 28px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  border: 1px solid #f1dada;
-}
-
-.faq-filter {
-  display: flex;
-  gap: 14px;
-  margin-bottom: 20px;
-}
-
-.faq-filter select,
-.faq-filter input {
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-
-.faq-card {
-  background: white;
-  border: 1px solid #eee;
-  padding: 18px;
-  border-radius: 14px;
-  margin-bottom: 14px;
-}
-
-.faq-q {
-  display: flex;
-  justify-content: space-between;
-}
-
-.faq-actions button {
-  background: #ddd;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 8px;
   cursor: pointer;
 }
 
-.faq-actions .delete {
-  background: #fee2e2;
-  color: #b91c1c;
+.btn-save {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
 }
 
-.faq-a {
-  margin-top: 8px;
-  opacity: 0.8;
-  font-size: 14px;
+.btn-save:hover { background-color: #2563eb; }
+
+/* --- Popup Styles --- */
+.ke-modal-box.popup {
+  max-width: 350px;
+  text-align: center;
+  padding: 30px;
 }
 
-/* responsive tweak */
-@media (max-width: 900px) {
-  .chat-section { grid-template-columns: 1fr; }
-  .chat-left { border-right: none; padding-right: 0; border-bottom: 1px solid #eee; margin-bottom: 12px; }
-  .reply-textarea { min-height: 48px; }
-  .chat-window { max-height: 300px; }
+.popup-icon { font-size: 48px; margin-bottom: 15px; }
+.popup-icon.success { color: #10b981; }
+.popup-icon.error { color: #ef4444; }
+.popup-icon.confirm { color: #f59e0b; }
+
+.popup-title { font-size: 20px; margin-bottom: 10px; color: #111827; }
+.popup-message { font-size: 14px; color: #6b7280; margin-bottom: 25px; }
+
+.ke-modal-actions.centered {
+  justify-content: center;
 }
+
+.btn-save.delete-confirm {
+  background-color: #ef4444;
+}
+.btn-save.delete-confirm:hover {
+  background-color: #dc2626;
+}
+
+.btn-save.full-width {
+  width: 100%;
+}
+
+/* Animations */
+@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+@keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }

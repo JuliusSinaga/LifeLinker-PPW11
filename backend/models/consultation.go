@@ -1,35 +1,29 @@
 package models
 
-import (
-	"gorm.io/gorm"
-	"time"
-)
+import "gorm.io/gorm"
 
 type Consultation struct {
 	gorm.Model
 	
-	// --- RELASI ---
-
-	// Pasien (User) - Wajib ada
-	UserID uint `gorm:"not null" json:"user_id"`
-	User   User `gorm:"foreignKey:UserID" json:"user"`
-
-	// Dokter - Wajib ada
-	DoctorID uint `gorm:"not null" json:"doctor_id"`
-	Doctor   User `gorm:"foreignKey:DoctorID" json:"doctor"`
-
-	// --- DATA KONSULTASI ---
-
-	ConsultationDate time.Time `gorm:"not null" json:"consultation_date"`
+	// --- Data Utama Konsultasi ---
+	Topic            string `json:"topic"`
+	ConsultationDate string `json:"consultation_date"` // Format: YYYY-MM-DD
+	ConsultationTime string `json:"consultation_time"` // Format: HH:MM
+	Status           string `json:"status" gorm:"default:'Scheduled'"` // Scheduled, Active, Completed, Cancelled
 	
-	// Keluhan Pasien: Gunakan tipe TEXT agar bisa panjang
-	Issue string `gorm:"type:text;not null" json:"issue"` 
-	
-	// Saran Dokter: Gunakan tipe TEXT. 
-	// Tidak pakai 'not null' karena saat baru dibuat (Scheduled), rekomendasi masih kosong.
-	Recommendation string `gorm:"type:text" json:"recommendation"` 
-	
-	// Status: "Scheduled", "In Progress", "Completed", "Cancelled"
-	// Default: "Scheduled"
-	Status string `gorm:"default:'Scheduled';size:20" json:"status"`
+	// --- Data Tambahan (Opsional) ---
+	MeetingLink    string `json:"meeting_link"`    // Link Zoom/GMeet
+	Recommendation string `json:"recommendation"`  // Kesimpulan/Saran Dokter
+
+	// --- Relasi ke Pasien (User) ---
+	UserID uint `json:"user_id"`
+	User   User `gorm:"foreignKey:UserID" json:"user,omitempty"`
+
+	// --- Relasi ke Dokter (User) ---
+	DoctorID uint `json:"doctor_id"`
+	Doctor   User `gorm:"foreignKey:DoctorID" json:"doctor,omitempty"`
+
+	// --- Relasi Chat (One-to-Many) ---
+	// Satu konsultasi memiliki banyak pesan chat
+	Messages []Message `gorm:"foreignKey:ConsultationID" json:"messages,omitempty"`
 }

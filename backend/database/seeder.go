@@ -12,14 +12,15 @@ import (
 // Fungsi utama untuk menjalankan semua seeder
 func SeedAll(db *gorm.DB) {
 	SeedLokasi(db)
-	SeedUsers(db)         // Pastikan User dibuat dulu
-	SeedStokDarah(db)     // Butuh Admin
-	SeedEvents(db)        // Butuh Lokasi & Admin
-	SeedDonations(db)     // Butuh User & Dokter
+	SeedUsers(db)        // Pastikan User dibuat dulu
+	SeedStokDarah(db)    // Butuh Admin
+	SeedEvents(db)       // Butuh Lokasi & Admin
+	SeedDonations(db)    // Butuh User & Dokter
 	SeedConsultations(db) // Butuh User & Dokter
+	SeedMessages(db)     // [BARU] Butuh Konsultasi
 }
 
-// --- SEEDER LOKASI (DATA DARI ANDA) ---
+// --- SEEDER LOKASI ---
 func SeedLokasi(db *gorm.DB) {
 	var count int64
 	db.Model(&models.Lokasi{}).Count(&count)
@@ -44,7 +45,7 @@ func SeedLokasi(db *gorm.DB) {
 			GambarLokasi:         "/images/bg beranda awal.jpg",
 		},
 		{
-			NamaLokasi:           "RS Pirngadi", // Typo fixed: Pirgandi -> Pirngadi
+			NamaLokasi:           "RS Pirngadi", 
 			AlamatLokasi:         "Jl. Prof. HM. Yamin, Medan",
 			KontakLokasi:         "(061) 4158701",
 			JamOperasionalLokasi: "24 Jam",
@@ -59,13 +60,11 @@ func SeedLokasi(db *gorm.DB) {
 	}
 }
 
-// --- SEEDER USER (DATA DARI ANDA) ---
+// --- SEEDER USER ---
 func SeedUsers(db *gorm.DB) {
-	// Cek apakah user spesifik "budi@gmail.com" sudah ada?
-    // Kita tidak pakai Count > 0 lagi, karena itu kurang akurat.
 	var checkUser models.User
 	if err := db.Where("email = ?", "budi@gmail.com").First(&checkUser).Error; err == nil {
-		return // Jika Budi sudah ada, kita asumsikan user lain juga aman. Skip.
+		return 
 	}
 
 	hash := func(pwd string) string {
@@ -82,6 +81,7 @@ func SeedUsers(db *gorm.DB) {
 			Role:     "admin",
 			NoHp:     "081234567890",
 			Kota:     "Medan",
+            Status:   "active",
 		},
 		// 2. DOKTER
 		{
@@ -94,6 +94,7 @@ func SeedUsers(db *gorm.DB) {
 			Spesialisasi: "Patologi Klinik",
 			Instansi:     "RSUP H. Adam Malik",
 			Kota:         "Medan",
+            Status:       "active",
 		},
 		{
 			Nama:         "Dr. Tuti Astuni",
@@ -105,6 +106,7 @@ func SeedUsers(db *gorm.DB) {
 			Spesialisasi: "Patologi Klinik",
 			Instansi:     "RS HKBP Balige",
 			Kota:         "Toba Samosir",
+            Status:       "active",
 		},
 		// 3. USER BIASA
 		{
@@ -117,6 +119,7 @@ func SeedUsers(db *gorm.DB) {
 			Rhesus:     "+",
 			BeratBadan: 70,
 			Kota:       "Medan",
+            Status:     "active",
 		},
 		{
 			Nama:       "Aisha Feransiaka",
@@ -128,21 +131,20 @@ func SeedUsers(db *gorm.DB) {
 			Rhesus:     "+",
 			BeratBadan: 65,
 			Kota:       "Toba Samosir",
+            Status:     "active",
 		},
 	}
 
-	// Gunakan Clause(OnConflict) agar tidak error jika email duplikat sebagian
 	for _, user := range users {
 		var existing models.User
 		if err := db.Where("email = ?", user.Email).First(&existing).Error; err != nil {
-			// Jika tidak ada, buat baru
 			db.Create(&user)
 		}
 	}
-	log.Println("Seeding User Berhasil/Diperbarui!")
+	log.Println("Seeding User Berhasil!")
 }
 
-// --- SEEDER STOK DARAH (DATA DARI ANDA) ---
+// --- SEEDER STOK DARAH ---
 func SeedStokDarah(db *gorm.DB) {
 	var count int64
 	db.Model(&models.StokDarah{}).Count(&count)
@@ -175,7 +177,7 @@ func SeedStokDarah(db *gorm.DB) {
 	}
 }
 
-// --- SEEDER EVENT (TAMBAHAN BARU) ---
+// --- SEEDER EVENT ---
 func SeedEvents(db *gorm.DB) {
 	var count int64
 	db.Model(&models.Event{}).Count(&count)
@@ -183,28 +185,39 @@ func SeedEvents(db *gorm.DB) {
 		return
 	}
 
-	// Ambil Admin dan Salah Satu Lokasi
 	var admin models.User
 	var lokasi models.Lokasi
-	db.Where("role = ?", "admin").First(&admin)
-	db.First(&lokasi) // Mengambil RSUP H. Adam Malik (biasanya ID 1)
+	
+    // Ambil data pendukung
+    if err := db.Where("role = ?", "admin").First(&admin).Error; err != nil {
+        log.Println("Skip Events: Admin tidak ditemukan.")
+        return
+    }
+    
+    // Ambil lokasi pertama
+	if err := db.First(&lokasi).Error; err != nil {
+        log.Println("Skip Events: Lokasi tidak ditemukan.")
+        return
+    }
 
 	events := []models.Event{
 		{
 			NamaEvent:      "Donor Darah Serentak Medan",
-			TanggalEvent:   time.Now().AddDate(0, 0, 7), // 7 hari lagi
+			TanggalEvent:   time.Now().AddDate(0, 0, 7), 
 			DeskripsiEvent: "Ayo ikut serta dalam aksi kemanusiaan donor darah masal di pusat kota Medan.",
 			GambarEvent:    "/images/bg beranda awal.jpg",
 			LokasiID:       lokasi.ID,
 			OrganizerID:    admin.ID,
+            Status:         "approved", // Biar langsung muncul di list approved
 		},
 		{
 			NamaEvent:      "Kampanye Sehat Bersama LifeLinker",
-			TanggalEvent:   time.Now().AddDate(0, 1, 0), // 1 bulan lagi
+			TanggalEvent:   time.Now().AddDate(0, 1, 0),
 			DeskripsiEvent: "Kegiatan rutin donor darah untuk menjaga ketersediaan stok darah nasional.",
 			GambarEvent:    "/images/bg beranda awal.jpg",
 			LokasiID:       lokasi.ID,
 			OrganizerID:    admin.ID,
+            Status:         "pending", // Untuk demo approval admin
 		},
 	}
 
@@ -215,7 +228,7 @@ func SeedEvents(db *gorm.DB) {
 	}
 }
 
-// --- SEEDER RIWAYAT DONASI (TAMBAHAN BARU) ---
+// --- SEEDER DONASI ---
 func SeedDonations(db *gorm.DB) {
 	var count int64
 	db.Model(&models.DonationHistory{}).Count(&count)
@@ -223,16 +236,13 @@ func SeedDonations(db *gorm.DB) {
 		return
 	}
 
-	// Cari User & Dokter dengan Error Handling yang lebih baik
 	var user, dokter models.User
 	
-    // Cari Budi
 	if err := db.Where("email = ?", "budi@gmail.com").First(&user).Error; err != nil {
 		log.Println("Skip SeedDonations: User 'budi@gmail.com' tidak ditemukan.")
 		return
 	}
-    
-    // Cari Dokter Anastasya
+	
 	if err := db.Where("email = ?", "dokteranastasya@gmail.com").First(&dokter).Error; err != nil {
 		log.Println("Skip SeedDonations: Dokter 'dokteranastasya' tidak ditemukan.")
 		return
@@ -264,7 +274,7 @@ func SeedDonations(db *gorm.DB) {
 	}
 }
 
-// --- PERBAIKAN SEEDER KONSULTASI ---
+// --- SEEDER KONSULTASI ---
 func SeedConsultations(db *gorm.DB) {
 	var count int64
 	db.Model(&models.Consultation{}).Count(&count)
@@ -273,32 +283,27 @@ func SeedConsultations(db *gorm.DB) {
 	}
 
 	var user, dokter models.User
-    
-    // Cari User & Dokter dengan aman
-	if err := db.Where("email = ?", "budi@gmail.com").First(&user).Error; err != nil {
-        log.Println("Skip SeedConsultations: User tidak ditemukan.")
-		return
-    }
-	if err := db.Where("email = ?", "dokteranastasya@gmail.com").First(&dokter).Error; err != nil {
-        log.Println("Skip SeedConsultations: Dokter tidak ditemukan.")
-		return
-    }
+	
+	if err := db.Where("email = ?", "budi@gmail.com").First(&user).Error; err != nil { return }
+	if err := db.Where("email = ?", "dokteranastasya@gmail.com").First(&dokter).Error; err != nil { return }
 
 	consultations := []models.Consultation{
 		{
 			UserID:           user.ID,
 			DoctorID:         dokter.ID,
-			ConsultationDate: time.Now().AddDate(0, 0, -2),
-			Issue:            "Saya sering pusing setelah donor darah, apakah itu normal?",
-			Recommendation:   "Perbanyak minum air putih dan istirahat cukup setelah donor. Hindari aktivitas berat.",
+			ConsultationDate: time.Now().AddDate(0, 0, -2).Format("2006-01-02"),
+            ConsultationTime: "10:00",
+			Topic:            "Efek Samping Donor",
+            // Recommendation: "Perbanyak minum air putih...", // Diganti dengan model Message
 			Status:           "Completed",
 		},
 		{
 			UserID:           user.ID,
 			DoctorID:         dokter.ID,
-			ConsultationDate: time.Now(),
-			Issue:            "Apakah boleh donor saat sedang flu ringan?",
-			Recommendation:   "",
+			ConsultationDate: time.Now().Format("2006-01-02"),
+            ConsultationTime: "14:00",
+			Topic:            "Syarat Donor Flu Ringan",
+            // Recommendation: "", 
 			Status:           "Scheduled",
 		},
 	}
@@ -308,4 +313,47 @@ func SeedConsultations(db *gorm.DB) {
 	} else {
 		log.Println("Seeding Konsultasi Berhasil!")
 	}
+}
+
+// --- [BARU] SEEDER PESAN CHAT ---
+func SeedMessages(db *gorm.DB) {
+    var count int64
+    db.Model(&models.Message{}).Count(&count)
+    if count > 0 { return }
+
+    // Ambil Konsultasi Pertama (Efek Samping Donor)
+    var consult models.Consultation
+    if err := db.First(&consult).Error; err != nil {
+        log.Println("Skip SeedMessages: Konsultasi tidak ditemukan.")
+        return
+    }
+
+    messages := []models.Message{
+        {
+            ConsultationID: consult.ID,
+            SenderRole:     "patient",
+            Text:           "Halo Dok, saya sering merasa pusing setelah donor darah. Apakah itu normal?",
+        },
+        {
+            ConsultationID: consult.ID,
+            SenderRole:     "doctor",
+            Text:           "Halo Pak Budi. Itu hal yang wajar jika tubuh belum terbiasa atau kurang istirahat.",
+        },
+        {
+            ConsultationID: consult.ID,
+            SenderRole:     "doctor",
+            Text:           "Pastikan Anda minum banyak air putih sebelum dan sesudah donor, serta hindari aktivitas berat selama 24 jam.",
+        },
+        {
+            ConsultationID: consult.ID,
+            SenderRole:     "patient",
+            Text:           "Baik Dok, terima kasih sarannya.",
+        },
+    }
+
+    if err := db.Create(&messages).Error; err != nil {
+        log.Printf("Gagal seeding pesan: %v", err)
+    } else {
+        log.Println("Seeding Pesan Chat Berhasil!")
+    }
 }

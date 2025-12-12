@@ -34,6 +34,7 @@ func main() {
 		&models.Event{},
 		&models.DonationHistory{},
 		&models.Consultation{},
+		&models.Message{},
 	)
 	if err != nil {
 		log.Fatal("Gagal melakukan migrasi database:", err)

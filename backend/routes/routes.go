@@ -46,9 +46,9 @@ func SetupRoutes(router *gin.Engine) {
 
 	// Konsultasi
 	router.GET("/consultations", controllers.GetConsultations)
-	router.GET("/consultations/:id", controllers.GetConsultationByID) // <-- Tambahkan ini
 	router.POST("/consultations", controllers.CreateConsultation)
-	router.PUT("/consultations/:id", controllers.UpdateConsultation)
+	router.POST("/consultations/:id/reply", controllers.ReplyConsultation)
+	router.PUT("/consultations/:id/status", controllers.UpdateConsultationStatus)
 	
 		// --- TESTING (Opsional) ---
 	router.GET("/users", controllers.GetUsers) // Cek data user
