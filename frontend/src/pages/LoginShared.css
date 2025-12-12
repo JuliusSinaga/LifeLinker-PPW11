@@ -238,6 +238,66 @@
   text-decoration: underline;
 }
 
+/* --- Style Notifikasi Error --- */
+.login-alert {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 14px;
+  border: 1px solid #fecaca;
+}
+
+/* --- Style Link Lupa Password --- */
+.forgot-password-link {
+  display: block;
+  text-align: right;
+  margin-top: 8px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: #6b7280;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.forgot-password-link:hover {
+  color: #ef4444; /* Merah Brand */
+  text-decoration: underline;
+}
+
+/* --- Style Notifikasi Error (Shared) --- */
+.login-alert {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 14px;
+  border: 1px solid #fecaca;
+}
+
+/* --- Style Link Lupa Password (Shared) --- */
+.forgot-password-link {
+  display: block;
+  text-align: right;
+  margin-top: 8px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: #6b7280;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.forgot-password-link:hover {
+  color: #ef4444; /* Merah Brand */
+  text-decoration: underline;
+}
+
 /* Animations */
 @keyframes scaleIn {
   from {

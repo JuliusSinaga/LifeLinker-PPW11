@@ -54,8 +54,8 @@ export default function SidebarAdmin() {
 
           {/* 🔥 ROUTE DIBENARKAN SESUAI PERMINTAAN */}
           <Link
-            to="/manajement-event"
-            className={active("/manajement-event-admin")}
+            to="/manajemen-event-admin"
+            className={active("/manajemen-event-admin")}
           >
             Manajemen Event
           </Link>
@@ -71,7 +71,7 @@ export default function SidebarAdmin() {
             Laporan
           </Link>
 
-          <Link to="/profil-admin" className={active("/profile-admin")}>
+          <Link to="/profile-admin" className={active("/profile-admin")}>
             Profil Saya
           </Link>
         </nav>

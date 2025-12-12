@@ -14,6 +14,8 @@ func SetupRoutes(router *gin.Engine) {
 
 	// --- DASHBOARD ADMIN ---
 	router.GET("/dashboard/admin", controllers.DashboardAdmin)
+	// Khusus Admin
+    router.PUT("/users/:id/verify", controllers.VerifyDoctor)
 
 	// --- FITUR PUBLIK (User & Dokter) ---
 	
@@ -50,4 +52,7 @@ func SetupRoutes(router *gin.Engine) {
 	
 		// --- TESTING (Opsional) ---
 	router.GET("/users", controllers.GetUsers) // Cek data user
+
+	router.POST("/forgot-password", controllers.ForgotPassword)
+    router.POST("/reset-password", controllers.ResetPassword)
 }

@@ -1,6 +1,9 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm" 
+	"time"
+)
 
 type User struct {
 	gorm.Model
@@ -9,6 +12,12 @@ type User struct {
 	Email        string `gorm:"unique" json:"email"`
 	Password     string `json:"password"` // Note: Controller harus hati-hati agar tidak mengembalikan ini ke frontend
 	Role         string `json:"role"`     // "user", "dokter", "admin"
+	
+	// --- TAMBAHAN FIELD STATUS (PENTING) ---
+	// Values: "active", "pending", "rejected"
+	// Default: "active" (agar user biasa langsung bisa login)
+	Status       string `json:"status" gorm:"default:'active'"` 
+
 	NoHp         string `json:"phone"`
 	Kota         string `json:"city"`
 	TanggalLahir string `json:"birth_date"` // Format: YYYY-MM-DD
@@ -24,6 +33,9 @@ type User struct {
 	Spesialisasi string `json:"specialization"`
 	Instansi     string `json:"hospital"`
 
+	// --- TAMBAHAN UNTUK RESET PASSWORD ---
+	ResetToken       string    `json:"-"`
+	ResetTokenExpiry time.Time `json:"-"`
 	// ================= RELASI (UPDATED) =================
 
 	// 1. Relasi sebagai PENDONOR (Pasien)

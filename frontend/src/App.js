@@ -23,7 +23,7 @@ import DaftarDokter from "./pages/DaftarDokter";
 import DashboardAdmin from "./pages/DashboardAdmin";
 import ManajemenDokter from "./pages/ManajemenDokter";
 import ManajemenUser from "./pages/ManajemenUser";
-import ManajemenEvent from "./pages/ManajemenEvent";
+import ManajemenEventAdmin from "./pages/ManajementEventAdmin";
 import ManajemenPendonor from "./pages/ManajemenPendonor";
 import Laporan from "./pages/Laporan";
 import ProfilAdmin from "./pages/ProfilAdmin";
@@ -32,6 +32,7 @@ import Logout from "./pages/Logout";
 // === Dokter Dashboard Pages ===
 import DashboardDokter from "./pages/DashboardDokter";
 import ManajemenStok from "./pages/ManajemenStok";
+import ManajemenEvent from "./pages/ManajemenEvent";
 import KonsultasiEdukasi from "./pages/KonsultasiEdukasi";
 import ProfilDokter from "./pages/ProfilDokter";
 
@@ -39,10 +40,14 @@ import ProfilDokter from "./pages/ProfilDokter";
 import Footer from "./components/Footer";
 
 // === Fallback Pages ===
-import Home from "./pages/Home";
+// import Home from "./pages/Home";
 
 // === Not Found Page ===
 import NotFoundPage from "./pages/public/NotFoundPage";
+
+import LupaPassword from "./pages/LupaPassword";
+import ResetPassword from "./pages/ResetPassword";
+
 
 function AppContent() {
   const location = useLocation();
@@ -50,8 +55,8 @@ function AppContent() {
     "/pilih-role", "/role-selection", 
     "/login-admin", "/login-user", "/login-dokter", "/login-pengguna", 
     "/dashboard-admin", "/manajemen-dokter", "/manajemen-user", 
-    "/manajemen-event", "/manajemen-pendonor", "/laporan", "/profil-admin", 
-    "/logout", "/dashboard", "/manajemen-stok", "/konsultasi-edukasi", "/error", "/forbidden"
+    "/manajemen-event", "/manajemen-pendonor", "/laporan", "/profile-admin", 
+    "/logout", "/dashboard", "/manajemen-stok", "/konsultasi-edukasi", "/error", "/forbidden", "lupa-password", "manajemen-event-admin"
   ];
 
   return (
@@ -88,15 +93,16 @@ function AppContent() {
           <Route path="/dashboard-admin" element={<DashboardAdmin />} />
           <Route path="/manajemen-dokter" element={<ManajemenDokter />} />
           <Route path="/manajemen-user" element={<ManajemenUser />} />
-          <Route path="/manajemen-event" element={<ManajemenEvent />} />
+          <Route path="/manajemen-event-admin" element={<ManajemenEventAdmin />} />
           <Route path="/manajemen-pendonor" element={<ManajemenPendonor />} />
           <Route path="/laporan" element={<Laporan />} />
-          <Route path="/profil-admin" element={<ProfilAdmin />} />
+          <Route path="/profile-admin" element={<ProfilAdmin />} />
           <Route path="/logout" element={<Logout />} />
 
           {/* === Dokter Dashboard === */}
           <Route path="/dashboard-dokter" element={<DashboardDokter />} />
           <Route path="/manajemen-stok" element={<ManajemenStok />} />
+          <Route path="/manajemen-event" element={<ManajemenEvent />} />
           <Route path="/konsultasi-edukasi" element={<KonsultasiEdukasi />} />
           <Route path="/profile-dokter" element={<ProfilDokter />} />
           {/* === Fallback Pages === */}
@@ -111,6 +117,9 @@ function AppContent() {
 
           {/* Route Catch-All untuk 404 (WAJIB PALING BAWAH) */}
           <Route path="*" element={<NotFoundPage type="404" />} />
+          {/* === Lupa Password === */}
+          <Route path="/lupa-password" element={<LupaPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
             
         </Routes>
       </div>

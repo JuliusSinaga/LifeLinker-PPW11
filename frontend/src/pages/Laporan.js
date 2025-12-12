@@ -82,7 +82,7 @@ export default function Laporan() {
 
         {/* Header */}
         <header className="content-header">
-          <h1 className="page-title">Dashboard Administrasi</h1>
+          <h1 className="page-title">Dashboard Administrasi - Laporan</h1>
         </header>
 
         {/* Metrics */}

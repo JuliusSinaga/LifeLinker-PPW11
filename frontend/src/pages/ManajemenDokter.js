@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './ManajemenDokter.css';
 import SidebarAdmin from "../components/SidebarAdmin";
+import axiosClient from "../service/axiosClient";
 
 // MetricCard component
 function MetricCard({ value, title, subtitle, icon, iconColor }) {
@@ -13,6 +14,7 @@ function MetricCard({ value, title, subtitle, icon, iconColor }) {
           <div className="metric-title">{title}</div>
           <div className="metric-subtitle">{subtitle}</div>
         </div>
+        {/* Style color untuk icon tetap inline karena datanya dinamis dari props */}
         <div className="metric-icon" style={{ color: iconColor }}>{icon}</div>
       </div>
     </div>
@@ -20,31 +22,34 @@ function MetricCard({ value, title, subtitle, icon, iconColor }) {
 }
 
 // DoctorRow component
-function DoctorRow({ doctor, openModal }) {
-  const isWaiting = doctor.status === "Menunggu Verifikasi";
+function DoctorRow({ doctor, openModal, onVerify }) {
+  const isWaiting = doctor.status === "pending";
 
-  const getStatusBadge = (status) => {
-    if (status === 'Terverifikasi') {
-      return <span className="status-badge status-verified">Terverifikasi</span>;
-    } else if (status === 'Menunggu Verifikasi') {
-      return <span className="status-badge status-pending">Menunggu Verifikasi</span>;
-    } else {
-      return <span className="status-badge status-rejected">Ditolak</span>;
-    }
+  const getStatusLabel = (status) => {
+    if (status === 'active') return 'Terverifikasi';
+    if (status === 'pending') return 'Menunggu Verifikasi';
+    return 'Ditolak';
+  };
+
+  const getStatusClass = (status) => {
+    if (status === 'active') return 'status-verified';
+    if (status === 'pending') return 'status-pending';
+    return 'status-rejected';
   };
 
   return (
     <tr className="doctor-row">
       <td>{doctor.name}</td>
-      <td>{doctor.hospital}</td>
-      <td>{doctor.specialization}</td>
-      <td>{getStatusBadge(doctor.status)}</td>
+      <td>{doctor.hospital || "-"}</td>
+      <td>{doctor.specialization || "Umum"}</td>
+      <td>
+        <span className={`status-badge ${getStatusClass(doctor.status)}`}>
+          {getStatusLabel(doctor.status)}
+        </span>
+      </td>
 
-      {/* Aksi dengan animasi */}
       <td className="action-cell">
         <div className="action-buttons action-hover-area">
-
-          {/* Tombol Lihat Info */}
           <button
             className="action-button view-button"
             onClick={() => openModal(doctor)}
@@ -52,11 +57,12 @@ function DoctorRow({ doctor, openModal }) {
             Lihat Info
           </button>
 
-          {/* Tombol animasi muncul saat hover */}
           <div className="action-animate-wrapper">
             <button
               className={`action-button verify-button ${!isWaiting ? "disabled-btn" : ""}`}
               disabled={!isWaiting}
+              onClick={() => onVerify(doctor.id)}
+              title="Verifikasi Dokter"
             >
               ✓
             </button>
@@ -64,11 +70,11 @@ function DoctorRow({ doctor, openModal }) {
             <button
               className={`action-button reject-button ${!isWaiting ? "disabled-btn" : ""}`}
               disabled={!isWaiting}
+              title="Tolak"
             >
               ✗
             </button>
           </div>
-
         </div>
       </td>
     </tr>
@@ -76,30 +82,66 @@ function DoctorRow({ doctor, openModal }) {
 }
 
 export default function ManajemenDokter() {
+  const [doctors, setDoctors] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
+  
   const [nameFilter, setNameFilter] = useState('');
   const [strNumberFilter, setStrNumberFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('Semua Status');
 
-  const metrics = [
-    { value: '20,847', title: 'User Terdaftar', subtitle: 'Seluruh Sumatera Utara', icon: '👥', iconColor: '#dc2626' },
-    { value: '342', title: 'Dokter Terverifikasi', subtitle: '30 Rumah Sakit', icon: '👨‍⚕️', iconColor: '#dc2626' },
-    { value: '10,275', title: 'Pendonor Aktif', subtitle: 'Seluruh Provinsi', icon: '🩸', iconColor: '#dc2626' },
-    { value: '47', title: 'Event', subtitle: 'Di berbagai RS', icon: '📅', iconColor: '#dc2626' },
-    { value: '20,234', title: 'Stok Darah (kantong)', subtitle: '30 Rumah Sakit', icon: '🧪', iconColor: '#dc2626' },
-    { value: '587', title: 'Event Terlaksana', subtitle: 'Seluruh Provinsi', icon: '✅', iconColor: '#dc2626' }
-  ];
+  const fetchDoctors = async () => {
+    setLoading(true);
+    try {
+      const response = await axiosClient.get('/users'); 
+      const allUsers = response.data.data || [];
+      const doctorList = allUsers.filter(user => user.role === 'dokter');
+      setDoctors(doctorList);
+    } catch (error) {
+      console.error("Gagal mengambil data dokter:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const doctors = [
-    { id: 1, name: 'Dr. Amanda Sari, Sp.A', hospital: 'RSUP H. Adam Malik', specialization: 'Spesialis Anak', status: 'Terverifikasi' },
-    { id: 2, name: 'Dr. Eko Prasetyo', hospital: 'RS HKBP Balige', specialization: 'Dokter Umum', status: 'Menunggu Verifikasi' },
-    { id: 3, name: 'Dr. Siti Nurhaliza, Sp.JP', hospital: 'RSU Pirgandi', specialization: 'Spesialis Jantung', status: 'Terverifikasi' }
+  useEffect(() => {
+    fetchDoctors();
+  }, []);
+
+  const handleVerify = async (id) => {
+    if(!window.confirm("Yakin ingin memverifikasi dokter ini? Email notifikasi akan dikirim.")) return;
+
+    try {
+        await axiosClient.put(`/users/${id}/verify`);
+        alert("Dokter berhasil diverifikasi!");
+        fetchDoctors();
+        setSelectedDoctor(null); // Tutup modal jika terbuka
+    } catch (error) {
+        console.error("Gagal verifikasi:", error);
+        alert("Terjadi kesalahan saat verifikasi.");
+    }
+  };
+
+  const totalDoctors = doctors.length;
+  const verifiedDoctors = doctors.filter(d => d.status === 'active').length;
+  const pendingDoctors = doctors.filter(d => d.status === 'pending').length;
+
+  const metrics = [
+    { value: totalDoctors, title: 'Total Dokter', subtitle: 'Terdaftar di Sistem', icon: '👨‍⚕️', iconColor: '#3b82f6' },
+    { value: verifiedDoctors, title: 'Terverifikasi', subtitle: 'Siap Bertugas', icon: '✅', iconColor: '#10b981' },
+    { value: pendingDoctors, title: 'Menunggu', subtitle: 'Perlu Verifikasi', icon: '⏳', iconColor: '#f59e0b' },
+    { value: '30', title: 'Rumah Sakit', subtitle: 'Mitra LifeLinker', icon: '🏥', iconColor: '#dc2626' },
   ];
 
   const filteredDoctors = doctors.filter((doctor) => {
-    const nameMatch = nameFilter === '' || doctor.name.toLowerCase().includes(nameFilter.toLowerCase());
-    const statusMatch = statusFilter === 'Semua Status' || doctor.status === statusFilter;
-    return nameMatch && statusMatch;
+    const nameMatch = nameFilter === '' || (doctor.name && doctor.name.toLowerCase().includes(nameFilter.toLowerCase()));
+    const strMatch = strNumberFilter === '' || (doctor.str_number && doctor.str_number.toLowerCase().includes(strNumberFilter.toLowerCase()));
+    
+    let statusMatch = true;
+    if (statusFilter === 'Terverifikasi') statusMatch = doctor.status === 'active';
+    if (statusFilter === 'Menunggu Verifikasi') statusMatch = doctor.status === 'pending';
+
+    return nameMatch && strMatch && statusMatch;
   });
 
   return (
@@ -108,22 +150,18 @@ export default function ManajemenDokter() {
 
       <main className="main-content">
         <header className="content-header">
-          <h1 className="page-title">Dashboard Administrasi</h1>
+          <h1 className="page-title">Dashboard Administrasi - Dokter</h1>
         </header>
 
-        {/* Metrics */}
         <div className="metrics-grid">
           {metrics.map((metric, i) => <MetricCard key={i} {...metric} />)}
         </div>
 
-        {/* Doctors Table */}
         <div className="doctors-table-container">
           <h3 className="table-title">Daftar Dokter</h3>
 
-          {/* Filters */}
           <div className="filters-section">
             <div className="filters-grid">
-
               <div className="filter-group">
                 <label className="filter-label">Filter Nama Dokter:</label>
                 <input
@@ -158,56 +196,82 @@ export default function ManajemenDokter() {
                   <option value="Menunggu Verifikasi">Menunggu Verifikasi</option>
                 </select>
               </div>
-
-              <div className="filter-group">
-                <button className="filter-button">Filter</button>
-              </div>
-
             </div>
           </div>
 
-          {/* Table */}
           <div className="table-container">
-            <table className="doctor-table">
-              <thead>
-                <tr>
-                  <th>Nama</th>
-                  <th>Rumah Sakit</th>
-                  <th>Spesialis</th>
-                  <th>Status</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
+            {loading ? (
+                <p className="loading-text">Memuat data dokter...</p>
+            ) : (
+                <table className="doctor-table">
+                <thead>
+                    <tr>
+                    <th>Nama</th>
+                    <th>Rumah Sakit</th>
+                    <th>Spesialis</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                    </tr>
+                </thead>
 
-              <tbody>
-                {filteredDoctors.map((doctor) => (
-                  <DoctorRow
-                    key={doctor.id}
-                    doctor={doctor}
-                    openModal={setSelectedDoctor}
-                  />
-                ))}
-              </tbody>
-            </table>
+                <tbody>
+                    {filteredDoctors.length > 0 ? (
+                        filteredDoctors.map((doctor) => (
+                        <DoctorRow
+                            key={doctor.id}
+                            doctor={doctor}
+                            openModal={setSelectedDoctor}
+                            onVerify={handleVerify}
+                        />
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="5" className="empty-state-cell">Tidak ada data dokter ditemukan.</td>
+                        </tr>
+                    )}
+                </tbody>
+                </table>
+            )}
           </div>
         </div>
 
-        {/* Modal Detail */}
         {selectedDoctor && (
           <div className="modal-overlay" onClick={() => setSelectedDoctor(null)}>
             <div className="modal-card" onClick={(e) => e.stopPropagation()}>
               <h2 className="modal-title">Detail Dokter</h2>
 
               <div className="modal-content">
-                <p><strong>Nama:</strong> {selectedDoctor.name}</p>
-                <p><strong>Rumah Sakit:</strong> {selectedDoctor.hospital}</p>
-                <p><strong>Spesialis:</strong> {selectedDoctor.specialization}</p>
-                <p><strong>Status:</strong> {selectedDoctor.status}</p>
+                <div className="detail-row"><strong>Nama:</strong> {selectedDoctor.name}</div>
+                <div className="detail-row"><strong>Email:</strong> {selectedDoctor.email}</div>
+                <div className="detail-row"><strong>Nomor HP:</strong> {selectedDoctor.phone}</div>
+                <div className="detail-row"><strong>Kota:</strong> {selectedDoctor.city}</div>
+                
+                <hr className="modal-separator"/>
+                
+                <div className="detail-row"><strong>Nomor STR:</strong> {selectedDoctor.str_number}</div>
+                <div className="detail-row"><strong>Spesialisasi:</strong> {selectedDoctor.specialization}</div>
+                <div className="detail-row"><strong>Instansi/RS:</strong> {selectedDoctor.hospital}</div>
+                <div className="detail-row">
+                    <strong>Status:</strong> 
+                    <span className={`modal-status-badge ${selectedDoctor.status === 'active' ? 'verified' : 'pending'}`}>
+                        {selectedDoctor.status === 'active' ? 'Terverifikasi' : 'Menunggu Verifikasi'}
+                    </span>
+                </div>
               </div>
 
-              <button className="modal-close" onClick={() => setSelectedDoctor(null)}>
-                Tutup
-              </button>
+              <div className="modal-actions">
+                {selectedDoctor.status === 'pending' && (
+                    <button 
+                        className="action-button verify-button modal-verify-btn" 
+                        onClick={() => handleVerify(selectedDoctor.id)}
+                    >
+                        Verifikasi Sekarang
+                    </button>
+                )}
+                <button className="modal-close" onClick={() => setSelectedDoctor(null)}>
+                  Tutup
+                </button>
+              </div>
             </div>
           </div>
         )}

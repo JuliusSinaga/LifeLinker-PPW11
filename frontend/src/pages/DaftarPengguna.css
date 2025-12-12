@@ -237,6 +237,48 @@
   transform: translateX(0);
 }
 
+/* --- Style Tombol Kembali --- */
+.back-button-register {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  margin-bottom: 15px;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 0;
+  transition: all 0.2s ease;
+  align-self: flex-start;
+}
+
+.back-button-register:hover {
+  color: #374151;
+  transform: translateX(-3px);
+}
+
+/* --- Style Divider (Garis ATAU) --- */
+.dp-divider {
+  display: flex;
+  align-items: center;
+  margin: 25px 0 15px;
+  width: 100%;
+}
+
+.dp-divider-line {
+  flex: 1;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.dp-divider-text {
+  padding: 0 10px;
+  color: #9ca3af;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
 
 
 @keyframes slideDown {

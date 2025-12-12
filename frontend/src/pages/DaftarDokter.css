@@ -301,3 +301,51 @@ body{
   color: #111827;
   transform: translateX(0);
 }
+
+/* --- Style Notifikasi --- */
+.dd-notification {
+  padding: 12px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.dd-notification.success {
+  background-color: #d1ecf1;
+  color: #0c5460;
+  border: 1px solid #bee5eb;
+}
+
+.dd-notification.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* --- Style Divider (Garis ATAU) --- */
+.dd-divider {
+  display: flex;
+  align-items: center;
+  margin: 25px 0 15px;
+}
+
+.dd-divider-line {
+  flex: 1;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.dd-divider-text {
+  padding: 0 10px;
+  color: #9ca3af;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* --- Style State Disabled pada Tombol Submit --- */
+.dd-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: #9ca3af; /* Opsional: warna abu-abu saat mati */
+}

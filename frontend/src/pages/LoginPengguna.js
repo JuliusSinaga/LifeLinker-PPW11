@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import "./LoginShared.css";
+import "./LoginShared.css"; // Pastikan CSS diimport
 import { useNavigate, Link } from "react-router-dom";
 import axiosClient from "../service/axiosClient";
 import { useGoogleLogin } from "@react-oauth/google";
-import { FaArrowLeft } from "react-icons/fa"; // Import Icon
+import { FaArrowLeft } from "react-icons/fa";
 
 const LoginPengguna = () => {
   const navigate = useNavigate();
@@ -27,17 +27,11 @@ const LoginPengguna = () => {
     e.preventDefault();
     setError("");
     try {
-      // Kirim email & password ke backend
-      // Backend akan mengecek di database:
-      // 1. Apakah email ada?
-      // 2. Apakah password cocok?
-      // 3. Apa role-nya? (admin/user/dokter)
       const response = await axiosClient.post("/login", {
         email: formData.email,
         password: formData.password,
       });
       
-      // Jika sukses, backend mengembalikan token & data user (termasuk role)
       handleAuthSuccess(response.data);
     } catch (err) {
       console.error("Login Error:", err);
@@ -62,26 +56,20 @@ const LoginPengguna = () => {
     onError: () => setError("Login Google Gagal."),
   });
 
-  // --- 3. LOGIKA PENGECEKAN ROLE (INTI PERMINTAAN ANDA) ---
+  // --- 3. LOGIKA PENGECEKAN ROLE ---
   const handleAuthSuccess = (data) => {
     const { token, user } = data;
     
-    // Simpan token & user ke local storage
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(user));
     
-    // Trigger event agar Header update
     window.dispatchEvent(new Event("user-login"));
 
-    // CEK ROLE DARI RESPONS BACKEND
     if (user.role === "admin") {
-      // Jika email adalah admin@lifelinker.com (atau role-nya admin), ke Dashboard Admin
       navigate("/dashboard-admin");
     } else if (user.role === "user" || user.role === "pengguna") {
-      // Jika user biasa, ke Beranda
       navigate("/beranda");
     } else if (user.role === "dokter") {
-      // Jika dokter nyasar login disini, tetap arahkan ke dashboard dokter
       navigate("/dashboard-dokter");
     } else {
       setError("Role akun tidak dikenali.");
@@ -92,7 +80,7 @@ const LoginPengguna = () => {
     <div className="login-container">
       <div className="login-card">
         
-        {/* TOMBOL KEMBALI (Menggunakan Class CSS) */}
+        {/* TOMBOL KEMBALI */}
         <button className="back-button" onClick={() => navigate("/")}>
             <FaArrowLeft /> Kembali
         </button>
@@ -131,12 +119,9 @@ const LoginPengguna = () => {
           </button>
         </div>
 
-        {/* Error Message */}
+        {/* Error Message (Menggunakan Class CSS) */}
         {error && (
-          <div style={{
-            backgroundColor: "#fee2e2", color: "#dc2626", padding: "10px", 
-            borderRadius: "8px", marginBottom: "15px", textAlign: "center", fontSize: "14px"
-          }}>
+          <div className="login-alert">
             {error}
           </div>
         )}
@@ -161,6 +146,12 @@ const LoginPengguna = () => {
             onChange={handleChange}
             required
           />
+          
+          {/* LINK LUPA PASSWORD DITAMBAHKAN DI SINI */}
+          <Link to="/lupa-password" className="forgot-password-link">
+            Lupa Kata Sandi?
+          </Link>
+
           <button type="submit" className="btn-login">
             Masuk
           </button>

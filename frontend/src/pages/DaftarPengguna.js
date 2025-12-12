@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import "./DaftarPengguna.css";
 import axiosClient from "../service/axiosClient";
 import { useGoogleLogin } from "@react-oauth/google"; 
-// Import Icon
 import { FaArrowLeft } from "react-icons/fa"; 
 
 export default function DaftarPengguna() {
@@ -37,7 +36,7 @@ export default function DaftarPengguna() {
       // PERBAIKAN: Konversi weight ke Integer sebelum dikirim
       const payload = {
         ...formData,
-        weight: parseInt(formData.weight) || 0, // Pastikan jadi angka
+        weight: parseInt(formData.weight) || 0, 
       };
 
       await axiosClient.post("/users", payload);
@@ -73,7 +72,6 @@ export default function DaftarPengguna() {
   const googleRegister = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
-        // Kirim Access Token ke Backend (/login/google akan auto-register jika user belum ada)
         const res = await axiosClient.post("/login/google", {
           id_token: tokenResponse.access_token, 
         });
@@ -90,7 +88,6 @@ export default function DaftarPengguna() {
             return;
         }
 
-        // Simpan sesi (Login otomatis)
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(user));
         window.dispatchEvent(new Event("user-login"));
@@ -102,7 +99,7 @@ export default function DaftarPengguna() {
         });
 
         setTimeout(() => {
-            navigate("/beranda"); // Langsung ke beranda user
+            navigate("/beranda"); 
         }, 1500);
 
       } catch (err) {
@@ -285,12 +282,11 @@ export default function DaftarPengguna() {
             Buat Akun
           </button>
 
-          <div style={{ display: "flex", alignItems: "center", margin: "25px 0 15px" }}>
-            <div style={{ flex: 1, borderBottom: "1px solid #e5e7eb" }}></div>
-            <span style={{ padding: "0 10px", color: "#9ca3af", fontSize: "13px", fontWeight: "600" }}>
-              ATAU
-            </span>
-            <div style={{ flex: 1, borderBottom: "1px solid #e5e7eb" }}></div>
+          {/* DIVIDER MENGGUNAKAN CLASS CSS */}
+          <div className="dp-divider">
+            <div className="dp-divider-line"></div>
+            <span className="dp-divider-text">ATAU</span>
+            <div className="dp-divider-line"></div>
           </div>
 
           <div className="google-login-wrapper">

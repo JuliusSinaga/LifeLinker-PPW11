@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import "./LoginShared.css";
+import "./LoginShared.css"; // Menggunakan CSS Shared
+import "./LoginDokter.css"; // Jika ada style khusus dokter
 import { useNavigate, Link } from "react-router-dom";
 import axiosClient from "../service/axiosClient";
-import { useGoogleLogin } from "@react-oauth/google"; // 1. Import useGoogleLogin
+import { useGoogleLogin } from "@react-oauth/google";
 import { FaArrowLeft } from "react-icons/fa"; 
 
 const LoginDokter = () => {
@@ -43,12 +44,17 @@ const LoginDokter = () => {
 
     } catch (err) {
       console.error("Login Error:", err);
-      const msg = err.response?.data?.error || "Email atau password salah.";
-      setError(msg);
+      // Cek pesan error dari backend, jika 403 Forbidden (Pending) tampilkan pesan spesifik
+      if (err.response?.status === 403) {
+          setError(err.response.data.error); // "Akun Anda masih dalam proses verifikasi..."
+      } else {
+          const msg = err.response?.data?.error || "Email atau password salah.";
+          setError(msg);
+      }
     }
   };
 
-  // --- LOGIC GOOGLE LOGIN (Jika Dokter diizinkan login via Google) ---
+  // --- LOGIC GOOGLE LOGIN ---
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
@@ -58,9 +64,15 @@ const LoginDokter = () => {
         
         const { token, user } = response.data;
         
-        // Cek Role lagi setelah login Google
+        // 1. Cek Role
         if (user.role !== "dokter") {
             setError("Akun Google ini tidak terdaftar sebagai Dokter.");
+            return;
+        }
+
+        // 2. Cek Status Pending (Untuk Dokter via Google)
+        if (user.status === "pending") {
+            setError("Akun Anda masih menunggu verifikasi Admin. Mohon cek email Anda.");
             return;
         }
 
@@ -86,9 +98,7 @@ const LoginDokter = () => {
         <div className="login-card">
 
           {/* TOMBOL KEMBALI */}
-          <button className="back-button"
-              onClick={() => navigate("/")} 
-          >
+          <button className="back-button" onClick={() => navigate("/")}>
               <FaArrowLeft /> Kembali
           </button>
           
@@ -128,17 +138,9 @@ const LoginDokter = () => {
             </button>
           </div>
 
-          {/* Pesan Error */}
+          {/* Pesan Error (Style dari CSS) */}
           {error && (
-            <div style={{
-              backgroundColor: "#fee2e2", 
-              color: "#dc2626", 
-              padding: "10px", 
-              borderRadius: "8px", 
-              marginBottom: "15px",
-              textAlign: "center",
-              fontSize: "14px"
-            }}>
+            <div className="login-alert">
               {error}
             </div>
           )}
@@ -163,6 +165,12 @@ const LoginDokter = () => {
               onChange={handleChange}
               required
             />
+            
+            {/* LINK LUPA PASSWORD DITAMBAHKAN DI SINI */}
+            <Link to="/lupa-password" className="forgot-password-link">
+                Lupa Kata Sandi?
+            </Link>
+
             <button type="submit" className="btn-login">
               Masuk Sebagai Dokter
             </button>

@@ -27,11 +27,18 @@ export default function DaftarDokter() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Cek Semua Field agar tombol aktif hanya jika semua terisi
   const isValid =
     form.email.trim() !== "" &&
     form.password.trim() !== "" &&
     form.name.trim() !== "" &&
-    form.str_number.trim() !== "";
+    form.str_number.trim() !== "" &&
+    form.specialization.trim() !== "" &&
+    form.hospital.trim() !== "" &&
+    form.birth_date.trim() !== "" &&
+    form.gender.trim() !== "" &&
+    form.phone.trim() !== "" &&
+    form.city.trim() !== "";
 
   // --- LOGIC DAFTAR MANUAL ---
   const handleSubmit = async (e) => {
@@ -41,7 +48,7 @@ export default function DaftarDokter() {
       setNotif({
         show: true,
         type: "error",
-        message: "Lengkapi field wajib: Email, Password, Nama Lengkap, Nomor STR.",
+        message: "Mohon lengkapi semua field yang tersedia.",
       });
       setTimeout(() => setNotif({ show: false, type: "", message: "" }), 3000);
       return;
@@ -49,7 +56,7 @@ export default function DaftarDokter() {
 
     const payload = {
       ...form,
-      role: "dokter", // Set role sebagai dokter
+      role: "dokter", 
     };
 
     try {
@@ -58,12 +65,12 @@ export default function DaftarDokter() {
       setNotif({
         show: true,
         type: "success",
-        message: "Pendaftaran berhasil! Silakan Login.",
+        message: "Pendaftaran Berhasil! Data Anda sedang diverifikasi Admin (1x24 Jam). Cek email Anda secara berkala.",
       });
 
       setTimeout(() => {
         navigate("/login-dokter"); 
-      }, 2000);
+      }, 4000);
 
     } catch (error) {
       console.error("Error Register:", error);
@@ -77,18 +84,41 @@ export default function DaftarDokter() {
   const googleRegister = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
-        // Kirim Access Token ke Backend (/login/google akan auto-register jika belum ada)
         const res = await axiosClient.post("/login/google", {
           id_token: tokenResponse.access_token, 
         });
 
-        // Simpan sesi (Login otomatis setelah daftar)
         const { token, user } = res.data;
+
+        // CEK STATUS: Apakah Pending?
+        if (user.status === 'pending') {
+            setNotif({ 
+                show: true, 
+                type: "success", 
+                message: "Akun Google terhubung, namun masih MENUNGGU VERIFIKASI Admin. Silakan tunggu email konfirmasi." 
+            });
+            
+            localStorage.clear();
+            
+            setTimeout(() => {
+                navigate("/login-dokter");
+            }, 4000);
+            return;
+        }
+
+        if (user.role !== 'dokter') {
+             setNotif({ 
+                show: true, 
+                type: "error", 
+                message: "Akun ini bukan akun Dokter." 
+            });
+            return;
+        }
+
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(user));
         window.dispatchEvent(new Event("user-login"));
 
-        // Redirect ke Dashboard Dokter (atau profil untuk lengkapi data STR)
         navigate("/dashboard-dokter");
 
       } catch (err) {
@@ -96,37 +126,26 @@ export default function DaftarDokter() {
         setNotif({ 
             show: true, 
             type: "error", 
-            message: "Gagal mendaftar dengan Google. Pastikan akun belum terdaftar." 
+            message: "Gagal mendaftar dengan Google. Pastikan koneksi lancar." 
         });
       }
     },
-    onError: () => console.log("Register Google Gagal"),
+    onError: (error) => {
+      alert("Registrasi dengan Google gagal. Silakan coba lagi.");
+    },
   });
 
   return (
     <div className="dd-page">
       <div className="dd-card">
         
-        {/* Notifikasi */}
+        {/* Notifikasi menggunakan Class CSS */}
         {notif.show && (
-          <div
-            style={{
-              padding: "12px",
-              marginBottom: "20px",
-              borderRadius: "8px",
-              textAlign: "center",
-              fontWeight: "600",
-              fontSize: "14px",
-              backgroundColor: notif.type === "success" ? "#d4edda" : "#f8d7da",
-              color: notif.type === "success" ? "#155724" : "#721c24",
-              border: `1px solid ${notif.type === "success" ? "#c3e6cb" : "#f5c6cb"}`
-            }}
-          >
+          <div className={`dd-notification ${notif.type}`}>
             {notif.message}
           </div>
         )}
 
-        {/* TOMBOL KEMBALI */}
         <button className="back-button-dokter" onClick={() => navigate("/")}>
             <FaArrowLeft /> Kembali
         </button>
@@ -209,6 +228,7 @@ export default function DaftarDokter() {
                 value={form.specialization}
                 onChange={handleChange}
                 placeholder="Contoh : Penyakit Dalam"
+                required
               />
             </div>
           </div>
@@ -222,10 +242,10 @@ export default function DaftarDokter() {
               value={form.hospital}
               onChange={handleChange}
               placeholder="Contoh : RSUP Porsea"
+              required
             />
           </div>
 
-          {/* Sisa input form lainnya (Tgl Lahir, Gender, Phone, City) sama seperti sebelumnya */}
           <div className="dd-row">
             <div className="dd-field">
               <label htmlFor="birth_date">Tanggal Lahir</label>
@@ -235,11 +255,18 @@ export default function DaftarDokter() {
                 type="date"
                 value={form.birth_date}
                 onChange={handleChange}
+                required
               />
             </div>
             <div className="dd-field">
               <label htmlFor="gender">Jenis Kelamin</label>
-              <select id="gender" name="gender" value={form.gender} onChange={handleChange}>
+              <select 
+                id="gender" 
+                name="gender" 
+                value={form.gender} 
+                onChange={handleChange}
+                required
+              >
                 <option value="">Pilih Jenis Kelamin</option>
                 <option value="male">Laki-laki</option>
                 <option value="female">Perempuan</option>
@@ -256,7 +283,8 @@ export default function DaftarDokter() {
                 type="tel"
                 value={form.phone}
                 onChange={handleChange}
-                placeholder="+62 8123xxxx"
+                placeholder="08123xxxx"
+                required
               />
             </div>
             <div className="dd-field">
@@ -268,26 +296,28 @@ export default function DaftarDokter() {
                 value={form.city}
                 onChange={handleChange}
                 placeholder="Contoh : Laguboti"
+                required
               />
             </div>
           </div>
 
           <div className="dd-submit-wrap">
-            <button type="submit" className="dd-submit" disabled={!isValid}>
+            <button 
+                type="submit" 
+                className="dd-submit" 
+                disabled={!isValid} 
+            >
               Daftar &amp; Kirim Verifikasi
             </button>
           </div>
 
-          {/* DIVIDER */}
-          <div style={{ display: "flex", alignItems: "center", margin: "25px 0 15px" }}>
-            <div style={{ flex: 1, borderBottom: "1px solid #e5e7eb" }}></div>
-            <span style={{ padding: "0 10px", color: "#9ca3af", fontSize: "13px", fontWeight: "600" }}>
-              ATAU
-            </span>
-            <div style={{ flex: 1, borderBottom: "1px solid #e5e7eb" }}></div>
+          {/* DIVIDER menggunakan Class CSS */}
+          <div className="dd-divider">
+            <div className="dd-divider-line"></div>
+            <span className="dd-divider-text">ATAU</span>
+            <div className="dd-divider-line"></div>
           </div>
 
-          {/* CUSTOM GOOGLE BUTTON (Sesuai Permintaan) */}
           <div className="google-login-wrapper">
             <button 
                 type="button" 

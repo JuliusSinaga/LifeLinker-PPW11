@@ -182,6 +182,8 @@
   }
 }
 
+
+
 /* --- Styles untuk Modal Logout (Sama dengan SidebarAdmin) --- */
 
 .logout-modal-overlay {
@@ -395,6 +397,8 @@
 .btn-header-confirm:hover {
   background-color: #b91c1c;
 }
+
+
 
 /* Animasi Dropdown & Modal */
 @keyframes slideDown {

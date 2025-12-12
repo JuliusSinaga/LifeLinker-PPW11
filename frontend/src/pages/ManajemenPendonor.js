@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./ManajemenPendonor.css";
 import SidebarAdmin from "../components/SidebarAdmin"; 
+import axiosClient from "../service/axiosClient";
 
 // MetricCard component
-function MetricCard({ value, title, subtitle, icon, iconColor }) {
+function MetricCard({ value, title, subtitle, icon, iconClass }) {
   return (
     <div className="metric-card">
       <div className="metric-header">
@@ -12,7 +13,8 @@ function MetricCard({ value, title, subtitle, icon, iconColor }) {
           <div className="metric-title">{title}</div>
           <div className="metric-subtitle">{subtitle}</div>
         </div>
-        <div className="metric-icon" style={{ color: iconColor }}>
+        {/* Menggunakan class CSS untuk warna icon */}
+        <div className={`metric-icon ${iconClass}`}>
           {icon}
         </div>
       </div>
@@ -21,64 +23,64 @@ function MetricCard({ value, title, subtitle, icon, iconColor }) {
 }
 
 export default function ManajemenPendonor() {
+  const [pendonors, setPendonors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  // Filter States
   const [nameFilter, setNameFilter] = useState("");
   const [bloodTypeFilter, setBloodTypeFilter] = useState("Semua Golongan");
   const [statusFilter, setStatusFilter] = useState("Semua Status");
 
-  // 📌 MODAL STATE
+  // Modal State
   const [selectedPendonor, setSelectedPendonor] = useState(null);
 
-  const metrics = [
-    { value: "20,847", title: "User Terdaftar", subtitle: "Seluruh Sumatera Utara", icon: "👥", iconColor: "#dc2626" },
-    { value: "342", title: "Dokter Terverifikasi", subtitle: "30 Rumah Sakit", icon: "👨‍⚕️", iconColor: "#dc2626" },
-    { value: "10,275", title: "Pendonor Aktif", subtitle: "Seluruh Provinsi", icon: "🩸", iconColor: "#dc2626" },
-    { value: "47", title: "Event", subtitle: "Di berbagai RS", icon: "📅", iconColor: "#dc2626" },
-    { value: "20,234", title: "Stok Darah (kantong)", subtitle: "30 Rumah Sakit", icon: "🧪", iconColor: "#dc2626" },
-    { value: "587", title: "Event Terlaksana", subtitle: "Seluruh Provinsi", icon: "✅", iconColor: "#dc2626" },
-  ];
+  // 1. Fetch Data dari Backend
+  const fetchPendonors = async () => {
+    setLoading(true);
+    try {
+      const response = await axiosClient.get("/users");
+      const allUsers = response.data.data || [];
+      
+      // Filter hanya user biasa (Pendonor)
+      const donorList = allUsers.filter(user => user.role === 'user');
+      setPendonors(donorList);
+    } catch (error) {
+      console.error("Gagal mengambil data pendonor:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const pendonors = [
-    {
-      id: 1,
-      name: "Andi Saputra",
-      bloodType: "O+",
-      hospital: "RS Harapan Kita",
-      donorDate: "28 September 2025",
-      donorCount: "3x",
-      status: "Aktif",
-      phone: "0812-3456-7890",
-      address: "Jl. Merdeka No. 12, Medan",
-    },
-    {
-      id: 2,
-      name: "Budi Santoso",
-      bloodType: "A+",
-      hospital: "RSUD Tangerang",
-      donorDate: "22 September 2025",
-      donorCount: "5x",
-      status: "Aktif",
-      phone: "0813-9876-5432",
-      address: "Jl. Mawar No. 55, Tangerang",
-    },
-    {
-      id: 3,
-      name: "Dewi Sartika",
-      bloodType: "B+",
-      hospital: "RSUD Tangerang",
-      donorDate: "20 September 2025",
-      donorCount: "3x",
-      status: "Aktif",
-      phone: "0812-7788-9911",
-      address: "Jl. Kenanga No. 21, Tangerang",
-    },
-  ];
+  useEffect(() => {
+    fetchPendonors();
+  }, []);
 
+  // 2. Logic Filter
   const filteredPendonors = pendonors.filter((p) => {
-    const nameMatch = p.name.toLowerCase().includes(nameFilter.toLowerCase());
-    const bloodMatch = bloodTypeFilter === "Semua Golongan" || p.bloodType === bloodTypeFilter;
-    const statusMatch = statusFilter === "Semua Status" || p.status === statusFilter;
+    const nameMatch = nameFilter === "" || (p.name && p.name.toLowerCase().includes(nameFilter.toLowerCase()));
+    
+    // Gabungkan Blood Type + Rhesus untuk filter (Contoh: "A" + "+" = "A+")
+    const fullBloodType = (p.blood_type && p.rhesus) ? `${p.blood_type}${p.rhesus}` : "-";
+    const bloodMatch = bloodTypeFilter === "Semua Golongan" || fullBloodType === bloodTypeFilter;
+    
+    // Mapping Status Backend ke Frontend
+    const statusLabel = p.status === "active" ? "Aktif" : "Tidak Aktif";
+    const statusMatch = statusFilter === "Semua Status" || statusLabel === statusFilter;
+
     return nameMatch && bloodMatch && statusMatch;
   });
+
+  // 3. Metrik Dinamis
+  const totalPendonor = pendonors.length;
+  // Hitungan statis untuk contoh lain (karena belum ada endpoint khusus statistik)
+  const metrics = [
+    { value: "20,847", title: "User Terdaftar", subtitle: "Seluruh Sumatera Utara", icon: "👥", iconClass: "icon-red" },
+    { value: "342", title: "Dokter Terverifikasi", subtitle: "30 Rumah Sakit", icon: "👨‍⚕️", iconClass: "icon-red" },
+    { value: totalPendonor, title: "Pendonor Aktif", subtitle: "Data Real-time", icon: "🩸", iconClass: "icon-red" },
+    { value: "47", title: "Event", subtitle: "Di berbagai RS", icon: "📅", iconClass: "icon-red" },
+    { value: "20,234", title: "Stok Darah", subtitle: "30 Rumah Sakit", icon: "🧪", iconClass: "icon-red" },
+    { value: "587", title: "Event Terlaksana", subtitle: "Seluruh Provinsi", icon: "✅", iconClass: "icon-red" },
+  ];
 
   return (
     <div className="manajemen-pendonor-container">
@@ -86,7 +88,7 @@ export default function ManajemenPendonor() {
 
       <main className="main-content">
         <header className="content-header">
-          <h1 className="page-title">Dashboard Administrasi</h1>
+          <h1 className="page-title">Dashboard Administrasi - Pendonor</h1>
         </header>
 
         {/* METRICS */}
@@ -148,57 +150,66 @@ export default function ManajemenPendonor() {
 
           {/* TABLE */}
           <div className="table-container">
-            <table className="pendonor-table">
-              <thead className="table-header">
-                <tr>
-                  <th>Nama</th>
-                  <th className="center">Gol. Darah</th>
-                  <th className="center">Rumah Sakit</th>
-                  <th className="center">Tanggal Donor</th>
-                  <th className="center">Jumlah Donor</th>
-                  <th className="center">Status</th>
-                  <th className="center">Aksi</th>
-                </tr>
-              </thead>
+            {loading ? (
+                <p className="loading-text">Memuat data pendonor...</p>
+            ) : (
+                <table className="pendonor-table">
+                <thead className="table-header">
+                    <tr>
+                    <th>Nama</th>
+                    <th className="center">Gol. Darah</th>
+                    <th className="center">Kota Domisili</th>
+                    {/* Kolom ini placeholder karena data belum tersedia di user endpoint */}
+                    <th className="center">No. HP</th> 
+                    <th className="center">Status</th>
+                    <th className="center">Aksi</th>
+                    </tr>
+                </thead>
 
-              <tbody>
-                {filteredPendonors.map((p) => (
-                  <tr key={p.id}>
-                    <td>{p.name}</td>
-                    <td className="center">
-                      <span className="blood-type-badge">{p.bloodType}</span>
-                    </td>
-                    <td className="center">{p.hospital}</td>
-                    <td className="center">{p.donorDate}</td>
-                    <td className="center">{p.donorCount}</td>
-                    <td className="center">
-                      <span className={`status-badge ${p.status === "Aktif" ? "status-active" : "status-inactive"}`}>
-                        {p.status}
-                      </span>
-                    </td>
-                    <td className="center">
-                      <button
-                        className="action-button detail-button"
-                        onClick={() => setSelectedPendonor(p)}
-                      >
-                        Detail
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            {filteredPendonors.length === 0 && (
-              <div className="empty-state">
-                <p className="empty-message">Tidak ada pendonor yang sesuai filter.</p>
-              </div>
+                <tbody>
+                    {filteredPendonors.length > 0 ? (
+                        filteredPendonors.map((p) => (
+                        <tr key={p.id}>
+                            <td>{p.name}</td>
+                            <td className="center">
+                                {(p.blood_type && p.rhesus) ? (
+                                    <span className="blood-type-badge">
+                                        {p.blood_type}{p.rhesus}
+                                    </span>
+                                ) : (
+                                    <span className="text-muted">-</span>
+                                )}
+                            </td>
+                            <td className="center">{p.city || "-"}</td>
+                            <td className="center">{p.phone || "-"}</td>
+                            <td className="center">
+                                <span className={`status-badge ${p.status === "active" ? "status-active" : "status-inactive"}`}>
+                                    {p.status === "active" ? "Aktif" : "Non-Aktif"}
+                                </span>
+                            </td>
+                            <td className="center">
+                                <button
+                                    className="action-button detail-button"
+                                    onClick={() => setSelectedPendonor(p)}
+                                >
+                                    Detail
+                                </button>
+                            </td>
+                        </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="6" className="empty-state">Tidak ada pendonor yang sesuai filter.</td>
+                        </tr>
+                    )}
+                </tbody>
+                </table>
             )}
           </div>
         </div>
 
         {/* =========================== */}
-        {/*           MODAL             */}
+        {/* MODAL             */}
         {/* =========================== */}
         {selectedPendonor && (
           <div className="modal-overlay" onClick={() => setSelectedPendonor(null)}>
@@ -206,19 +217,27 @@ export default function ManajemenPendonor() {
               <h2 className="modal-title">Detail Pendonor</h2>
 
               <div className="modal-content">
-                <p><strong>NAMA:</strong> {selectedPendonor.name}</p>
-                <p><strong>Golongan Darah:</strong> {selectedPendonor.bloodType}</p>
-                <p><strong>Rumah Sakit:</strong> {selectedPendonor.hospital}</p>
-                <p><strong>Tanggal Donor Terakhir:</strong> {selectedPendonor.donorDate}</p>
-                <p><strong>Total Donor:</strong> {selectedPendonor.donorCount}</p>
-                <p><strong>Status:</strong> {selectedPendonor.status}</p>
-                <p><strong>Nomor HP:</strong> {selectedPendonor.phone}</p>
-                <p><strong>Alamat:</strong> {selectedPendonor.address}</p>
+                <div className="detail-row"><strong>Nama:</strong> {selectedPendonor.name}</div>
+                <div className="detail-row"><strong>Email:</strong> {selectedPendonor.email}</div>
+                <div className="detail-row"><strong>Golongan Darah:</strong> {selectedPendonor.blood_type}{selectedPendonor.rhesus}</div>
+                <div className="detail-row"><strong>Kota Domisili:</strong> {selectedPendonor.city}</div>
+                <div className="detail-row"><strong>Nomor HP:</strong> {selectedPendonor.phone}</div>
+                <div className="detail-row">
+                    <strong>Status Akun:</strong> 
+                    <span className={`status-text ${selectedPendonor.status === 'active' ? 'active' : 'inactive'}`}>
+                        {selectedPendonor.status === 'active' ? ' Aktif' : ' Non-Aktif'}
+                    </span>
+                </div>
+                {/* Placeholder untuk data history jika nanti diimplementasikan */}
+                <hr className="modal-divider"/>
+                <p className="info-muted">Riwayat donasi belum tersedia.</p>
               </div>
 
-              <button className="modal-close" onClick={() => setSelectedPendonor(null)}>
-                Tutup
-              </button>
+              <div className="modal-actions">
+                <button className="modal-close" onClick={() => setSelectedPendonor(null)}>
+                    Tutup
+                </button>
+              </div>
             </div>
           </div>
         )}
