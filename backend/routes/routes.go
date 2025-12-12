@@ -16,7 +16,7 @@ func SetupRoutes(router *gin.Engine) {
 	router.GET("/dashboard/admin", controllers.DashboardAdmin)
 	// Khusus Admin
     router.PUT("/users/:id/verify", controllers.VerifyDoctor)
-
+	router.DELETE("/users/:id", controllers.DeleteUser) 
 	// --- FITUR PUBLIK (User & Dokter) ---
 	
 	// Lokasi Donor

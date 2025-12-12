@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import SidebarAdmin from "../components/SidebarAdmin"; 
 import axiosClient from "../service/axiosClient";
-import { FaSearch, FaTrash } from "react-icons/fa";
+import { FaSearch, FaTrash, FaExclamationTriangle } from "react-icons/fa"; // Tambah Icon Segitiga
 import "./ManajemenUser.css"; 
 
 export default function ManajemenUser() {
@@ -10,7 +10,9 @@ export default function ManajemenUser() {
   const [searchTerm, setSearchTerm] = useState("");
   const [error, setError] = useState("");
 
-  // Fetch Data saat load
+  // STATE BARU: Untuk Modal Konfirmasi
+  const [deleteModal, setDeleteModal] = useState({ show: false, id: null, name: "" });
+
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -20,7 +22,8 @@ export default function ManajemenUser() {
     try {
       const response = await axiosClient.get("/users");
       const dataUser = response.data.data || [];
-      setUsers(dataUser);
+      const userDokter = dataUser.filter(u => u.role === 'user' || u.role === 'dokter');
+      setUsers(userDokter);
     } catch (err) {
       console.error("Gagal ambil data user:", err);
       setError("Gagal memuat data pengguna.");
@@ -29,11 +32,33 @@ export default function ManajemenUser() {
     }
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm("Apakah Anda yakin ingin menghapus user ini?")) {
-      // Implementasi delete nanti
-      alert("Fitur hapus untuk ID " + id + " akan segera hadir.");
+  // 1. Fungsi saat tombol tong sampah diklik (Hanya buka modal)
+  const handleDeleteClick = (user) => {
+    setDeleteModal({ show: true, id: user.id, name: user.name });
+  };
+
+  // 2. Fungsi Eksekusi Hapus (Saat tombol "Hapus" di modal diklik)
+  const confirmDelete = async () => {
+    if (!deleteModal.id) return;
+
+    try {
+      await axiosClient.delete(`/users/${deleteModal.id}`);
+      
+      // Tutup modal
+      setDeleteModal({ show: false, id: null, name: "" });
+      
+      // Refresh data
+      fetchUsers(); 
+      alert("User berhasil dihapus.");
+    } catch (err) {
+      console.error("Gagal menghapus user:", err);
+      alert("Gagal menghapus user. Coba lagi nanti.");
     }
+  };
+
+  // 3. Fungsi Batal
+  const cancelDelete = () => {
+    setDeleteModal({ show: false, id: null, name: "" });
   };
 
   const filteredUsers = users.filter((user) => {
@@ -46,22 +71,19 @@ export default function ManajemenUser() {
 
   return (
     <div className="admin-layout">
-      {/* Sidebar Tetap */}
       <SidebarAdmin />
 
-      {/* Konten Utama di Sebelah Kanan */}
       <main className="admin-content">
         <div className="admin-header-content">
           <h1>Manajemen User</h1>
-          <p>Kelola data pendonor dan pengguna aplikasi LifeLinker.</p>
+          <p>Kelola data pendonor (User Biasa) aplikasi LifeLinker.</p>
         </div>
 
-        {/* Search Bar */}
         <div className="search-bar-container">
           <FaSearch className="search-icon" />
           <input
             type="text"
-            placeholder="Cari nama atau email user..."
+            placeholder="Cari nama atau email pendonor..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -69,7 +91,6 @@ export default function ManajemenUser() {
 
         {error && <div className="error-message">{error}</div>}
 
-        {/* Tabel Data */}
         <div className="table-card">
           {loading ? (
             <p className="loading-text">Memuat data...</p>
@@ -112,9 +133,10 @@ export default function ManajemenUser() {
                         <td>{user.city || "-"}</td>
                         <td>
                           <div className="action-buttons">
+                            {/* Panggil handleDeleteClick bukan langsung hapus */}
                             <button 
                               className="btn-icon delete" 
-                              onClick={() => handleDelete(user.id)}
+                              onClick={() => handleDeleteClick(user)}
                               title="Hapus User"
                             >
                               <FaTrash />
@@ -136,6 +158,32 @@ export default function ManajemenUser() {
           )}
         </div>
       </main>
+
+      {/* ================= MODAL KONFIRMASI HAPUS ================= */}
+      {deleteModal.show && (
+        <div className="modal-overlay">
+          <div className="modal-box delete-modal">
+            <div className="modal-icon-warning">
+              <FaExclamationTriangle />
+            </div>
+            <h3>Hapus Akun?</h3>
+            <p>
+              Apakah Anda yakin ingin menghapus <strong>{deleteModal.name}</strong>? 
+              <br></br>Tindakan ini tidak dapat dibatalkan.
+            </p>
+            <div className="modal-actions">
+              <button className="btn-cancel" onClick={cancelDelete}>
+                Batal
+              </button>
+              <button className="btn-confirm-delete" onClick={confirmDelete}>
+                Ya, Hapus
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* ============================================================ */}
+
     </div>
   );
 }

@@ -362,3 +362,23 @@ func ResetPassword(c *gin.Context) {
 
     c.JSON(http.StatusOK, gin.H{"message": "Password berhasil diubah. Silakan login kembali."})
 }
+
+// Endpoint: DELETE /users/:id
+func DeleteUser(c *gin.Context) {
+	id := c.Param("id")
+
+	// Cek apakah user ada
+	var user models.User
+	if err := database.DB.First(&user, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User tidak ditemukan"})
+		return
+	}
+
+	// Hapus User (Soft Delete karena menggunakan gorm.Model)
+	if err := database.DB.Delete(&user).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal menghapus user"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "User berhasil dihapus"})
+}

@@ -10,14 +10,14 @@
 .admin-content {
   /* Memberi jarak kiri selebar Sidebar agar tidak tertimpa */
   /* Sesuaikan angka 260px dengan lebar SidebarAdmin.css Anda jika berbeda */
-  margin-left: 260px; 
+  margin-left: 240px; 
   
   /* Pastikan konten mengambil sisa lebar layar */
-  width: calc(100% - 260px); 
+  width: calc(100% - 240px); 
   
-  padding: 30px;
+  padding: 25px;
   flex: 1;
-  overflow-y: auto;
+  /* overflow-y: auto; */
   transition: all 0.3s ease;
 }
 
@@ -170,6 +170,118 @@
   border-radius: 8px;
   margin-bottom: 20px;
   padding: 10px;
+}
+
+/* --- CSS Tambahan untuk Modal Hapus --- */
+
+/* Latar Belakang Gelap (Overlay) */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* Hitam transparan */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+/* Kotak Modal */
+.modal-box.delete-modal {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  transform: scale(1);
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Icon Peringatan */
+.modal-icon-warning {
+  font-size: 40px;
+  color: #f59e0b; /* Warna Kuning/Orange */
+  margin-bottom: 15px;
+}
+
+.modal-box h3 {
+  margin: 0 0 10px 0;
+  color: #1f2937;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.modal-box p {
+  color: #6b7280;
+  font-size: 14px;
+  margin-bottom: 25px;
+  line-height: 1.5;
+}
+
+/* Tombol Aksi */
+/* Pastikan block sebelumnya ditutup dengan kurung kurawal '}' yang benar */
+
+.modal-actions {
+  display: flex !important;       /* Paksa aktifkan Flexbox */
+  justify-content: center;        /* Tengahkan secara horizontal */
+  align-items: center;            /* Tengahkan secara vertikal */
+  gap: 20px;                      /* Jarak antar tombol */
+  width: 100%;                    /* Paksa lebar penuh */
+  margin-top: 25px;               /* Jarak dari teks di atasnya */
+  box-sizing: border-box;         /* Pastikan padding tidak merusak lebar */
+}
+
+/* Tombol Batal */
+.btn-cancel {
+  min-width: 100px;
+  text-align: center;
+  background-color: #f3f4f6;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+  background-color: #e5e7eb;
+}
+
+/* Tombol Hapus */
+.btn-confirm-delete {
+  min-width: 100px;
+  text-align: center;
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-confirm-delete:hover {
+  background-color: #b91c1c;
+  box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2);
+}
+
+/* Animasi */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 /* Responsif untuk Mobile */

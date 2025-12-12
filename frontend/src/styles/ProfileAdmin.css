@@ -1,251 +1,364 @@
-/* =============================== */
-/*          LAYOUT UTAMA          */
-/* =============================== */
-
+/* Layout Utama */
 .admin-layout {
   display: flex;
-  width: 100%;
   min-height: 100vh;
-  background: #f5f7fa;
+  background-color: #f3f4f6;
+  width: 100%;
 }
 
 .admin-main {
-  margin-left: 240px; /* Sidebar width */
-  padding: 25px;
-  width: calc(100% - 240px);
+  flex: 1;
+  padding: 30px 40px;
+  overflow-y: auto;
+  /* Margin kiri untuk kompensasi fixed sidebar jika sidebar-nya fixed */
+  margin-left: 260px; 
+  width: calc(100% - 260px);
 }
 
-/* =============================== */
-/*          HEADER PAGE           */
-/* =============================== */
-
-.profil-header h1 {
-  font-size: 28px;
-  font-weight: 800;
-  color: #1f2937;
-  margin-bottom: 20px;
+.page-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 25px;
 }
 
-/* =============================== */
-/*          METRIC CARDS          */
-/* =============================== */
-
+/* --- Metrics Grid (Optional) --- */
 .metrics-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 15px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
   margin-bottom: 30px;
 }
 
 .metric-card {
-  background: #fff;
-  padding: 18px 20px;
-  border-radius: 14px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  border-radius: 12px;
+  padding: 20px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
 }
 
-.metric-value {
-  color: #dc2626;
-  font-size: 22px;
-  font-weight: 800;
+.metric-value { font-size: 22px; font-weight: 700; color: #111827; }
+.metric-title { font-size: 13px; color: #6b7280; margin-top: 5px; font-weight: 600; }
+.metric-subtitle { font-size: 11px; color: #9ca3af; }
+.metric-icon { font-size: 24px; background-color: #fee2e2; color: #dc2626; padding: 10px; border-radius: 8px; }
+
+/* --- Wrapper Content --- */
+.profil-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
 }
 
-.metric-title {
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.metric-subtitle {
-  font-size: 12px;
-  color: #6b7280;
-}
-
-.metric-icon {
-  font-size: 28px;
-}
-
-/* =============================== */
-/*             CARD UTAMA         */
-/* =============================== */
-
+/* --- Profile Card --- */
 .profile-card {
-  background: white;
-  border-radius: 18px;
-  padding: 25px;
-  margin-bottom: 30px;
-  box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.08);
+  background-color: white;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
 }
 
 .section-title {
-  font-size: 20px;
+  font-size: 18px;
+  color: #374151;
+  margin-bottom: 25px;
+  border-bottom: 1px solid #f3f4f6;
+  padding-bottom: 15px;
   font-weight: 700;
-  margin-bottom: 20px;
-  color: #1f2937;
 }
 
-/* =============================== */
-/*           PROFILE FORM         */
-/* =============================== */
-
+/* --- Profile Grid (Kiri & Kanan) --- */
 .profile-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: 25px;
+  gap: 40px;
 }
 
-/* LEFT SIDE FORM */
+/* Mobile Responsive */
+@media (max-width: 900px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+  .profile-right {
+    order: -1;
+    border-left: none !important;
+    padding-left: 0 !important;
+    border-bottom: 1px dashed #e5e7eb;
+    padding-bottom: 30px;
+    margin-bottom: 20px;
+  }
+}
 
-.profile-left .form-group {
+/* --- Form Styles --- */
+.form-group {
   margin-bottom: 18px;
 }
 
 .form-group label {
   display: block;
-  font-size: 14px;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 6px;
-}
-
-.form-group input {
-  width: 100%;
-  height: 38px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  font-size: 14px;
-  background: #f9fafb;
-}
-
-.status-active {
-  display: inline-block;
-  padding: 6px 12px;
-  background: #d1fae5;
-  color: #059669;
-  border-radius: 8px;
   font-size: 13px;
-  font-weight: 700;
-  margin-top: 5px;
+  font-weight: 600;
+  color: #4b5563;
+  margin-bottom: 8px;
 }
 
-/* =============================== */
-/*           PROFILE PHOTO        */
-/* =============================== */
+.pa-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border 0.2s;
+  background-color: #fff;
+}
 
+.pa-input:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.input-readonly {
+  background-color: #f9fafb;
+  cursor: not-allowed;
+  color: #6b7280;
+}
+
+.status-badge-active {
+  display: inline-block;
+  background-color: #dcfce7;
+  color: #166534;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* --- Profile Right (Foto) --- */
 .profile-right {
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* justify-content: center; */
+  border-left: 1px solid #f3f4f6;
+  padding-left: 30px;
 }
 
 .profile-right h3 {
   font-size: 16px;
-  font-weight: 700;
-  margin-bottom: 10px;
-  color: #1f2937;
+  color: #374151;
+  margin-bottom: 20px;
 }
 
-.profile-photo {
-  width: 135px;
-  height: 135px;
+/* Avatar Preview */
+.avatar-preview-container {
+  width: 140px;
+  height: 140px;
+  margin-bottom: 15px;
   border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  border: 4px solid #fff;
+  background-color: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-image {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border: 4px solid #e5e7eb;
-  margin-bottom: 12px;
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  background-color: #dc2626;
+  color: white;
+  font-size: 54px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .photo-name {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
-  margin-bottom: 3px;
+  color: #111827;
+  margin: 0;
 }
 
 .photo-role {
   font-size: 13px;
   color: #6b7280;
-  margin-bottom: 12px;
+  margin-top: 4px;
+  margin-bottom: 25px;
 }
-
-/* FOTO ACTION BUTTONS */
 
 .photo-actions {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
-.btn-upload,
-.btn-delete {
-  padding: 8px 14px;
-  border-radius: 8px;
+/* --- Buttons --- */
+.pa-btn-save, .pa-btn-save-password {
+  background-color: #dc2626;
+  color: white;
+  padding: 12px 24px;
   border: none;
-  cursor: pointer;
+  border-radius: 8px;
   font-weight: 600;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: background 0.2s;
+  font-size: 14px;
+}
+
+.pa-btn-save:hover, .pa-btn-save-password:hover {
+  background-color: #b91c1c;
+}
+
+.pa-btn-save:disabled, .pa-btn-save-password:disabled {
+  background-color: #fca5a5;
+  cursor: not-allowed;
+}
+
+.pa-btn-upload {
+  background-color: #eff6ff;
+  color: #1d4ed8;
+  padding: 8px 16px;
+  border: 1px solid #dbeafe;
+  border-radius: 6px;
   font-size: 13px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
 }
 
-.btn-upload {
-  background: #e5e7eb;
-}
-
-.btn-upload:hover {
-  background: #d1d5db;
-}
-
-.btn-delete {
-  background: #ef4444;
+.pa-btn-upload:hover {
+  background-color: #2563eb;
   color: white;
 }
 
-.btn-delete:hover {
-  background: #dc2626;
+.pa-btn-delete {
+  background-color: #fff;
+  color: #ef4444;
+  border: 1px solid #fee2e2;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
 }
 
-/* =============================== */
-/*         PASSWORD SECTION       */
-/* =============================== */
+.pa-btn-delete:hover {
+  background-color: #fef2f2;
+  border-color: #ef4444;
+}
 
+/* --- Password Grid --- */
 .password-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
 }
 
-.btn-save {
-  margin-top: 18px;
-  padding: 10px 20px;
-  background: #2563eb;
-  color: white;
+/* ... CSS yang sudah ada sebelumnya ... */
+
+/* --- POPUP MODAL STYLING --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* Overlay gelap */
+  backdrop-filter: blur(3px); /* Efek blur */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-content-popup {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 350px;
+  text-align: center;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  transform: scale(1);
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.popup-icon {
+  font-size: 50px;
+  margin-bottom: 15px;
+}
+
+.popup-icon.success {
+  color: #10b981; /* Hijau */
+}
+
+.popup-icon.error {
+  color: #ef4444; /* Merah */
+}
+
+.popup-title {
+  font-size: 20px;
   font-weight: 700;
-  border-radius: 10px;
+  color: #111827;
+  margin-bottom: 10px;
+}
+
+.popup-message {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 25px;
+  line-height: 1.5;
+}
+
+.popup-btn {
+  background-color: #374151;
+  color: white;
   border: none;
+  padding: 10px 30px;
+  border-radius: 8px;
+  font-weight: 600;
   cursor: pointer;
+  transition: background 0.2s;
+  width: 100%;
 }
 
-.btn-save:hover {
-  background: #1d4ed8;
+.popup-btn:hover {
+  background-color: #1f2937;
 }
 
-/* =============================== */
-/*          RESPONSIVE FIX        */
-/* =============================== */
+/* Animasi */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
-@media (max-width: 992px) {
-  .metrics-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
 
-  .profile-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .password-grid {
-    grid-template-columns: 1fr;
-  }
-
+/* Responsif Mobile */
+@media (max-width: 768px) {
   .admin-main {
     margin-left: 0;
     width: 100%;
+    padding: 20px;
   }
 }

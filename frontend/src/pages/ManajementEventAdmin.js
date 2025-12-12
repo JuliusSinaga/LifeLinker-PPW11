@@ -6,12 +6,14 @@ import axiosClient from "../service/axiosClient";
 function MetricCard({ value, title, subtitle, icon, colorClass }) {
   return (
     <div className="metric-card">
-      <div className="metric-content">
-        <div className="metric-value">{value}</div>
-        <div className="metric-title">{title}</div>
-        <div className="metric-subtitle">{subtitle}</div>
+      <div className="metric-header">
+        <div className="metric-content">
+          <div className="metric-value">{value}</div>
+          <div className="metric-title">{title}</div>
+          <div className="metric-subtitle">{subtitle}</div>
+        </div>
+        <div className={`metric-icon ${colorClass}`}>{icon}</div>
       </div>
-      <div className={`metric-icon ${colorClass}`}>{icon}</div>
     </div>
   );
 }
@@ -33,9 +35,7 @@ export default function ManajementEventAdmin() {
     setLoading(true);
     try {
       const response = await axiosClient.get("/events");
-      // Asumsi backend mengembalikan { data: [...] }
       const data = response.data.data || [];
-      // Urutkan dari yang terbaru (opsional)
       const sortedData = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
       setEvents(sortedData);
     } catch (error) {
@@ -49,26 +49,22 @@ export default function ManajementEventAdmin() {
     fetchEvents();
   }, []);
 
-  // 2. Fungsi Update Status (Approve/Reject)
+  // 2. Fungsi Update Status
   const handleUpdateStatus = async (id, newStatus) => {
     const action = newStatus === 'approved' ? 'menyetujui' : 'menolak';
     if (!window.confirm(`Apakah Anda yakin ingin ${action} event ini?`)) return;
 
     try {
-      // Asumsi endpoint update status: PUT /events/:id/status
-      // Atau PUT /events/:id dengan body { status: ... }
       await axiosClient.put(`/events/${id}`, { status: newStatus });
-      
       alert(`Event berhasil ${newStatus === 'approved' ? 'disetujui' : 'ditolak'}!`);
-      fetchEvents(); // Refresh data
-      setSelectedEvent(null); // Tutup modal jika sedang terbuka
+      fetchEvents(); 
+      setSelectedEvent(null);
     } catch (error) {
       console.error("Gagal update status:", error);
       alert("Terjadi kesalahan saat memperbarui status.");
     }
   };
 
-  // Helper: Format Tanggal
   const formatDate = (dateString) => {
     if (!dateString) return "-";
     return new Date(dateString).toLocaleDateString("id-ID", {
@@ -76,13 +72,12 @@ export default function ManajementEventAdmin() {
     });
   };
 
-  // Helper: Get Month Name untuk Filter
   const getMonthName = (dateString) => {
     if (!dateString) return "";
     return new Date(dateString).toLocaleDateString("id-ID", { month: "short" });
   };
 
-  // 3. Hitung Metrik Dinamis
+  // 3. Hitung Metrik
   const totalEvents = events.length;
   const pendingEvents = events.filter(e => e.status === 'pending').length;
   const approvedEvents = events.filter(e => e.status === 'approved').length;
@@ -91,62 +86,63 @@ export default function ManajementEventAdmin() {
   const metrics = [
     { value: totalEvents, title: "Total Event", subtitle: "Semua Pengajuan", icon: "📅", colorClass: "blue" },
     { value: pendingEvents, title: "Menunggu", subtitle: "Perlu Persetujuan", icon: "⏳", colorClass: "yellow" },
-    { value: approvedEvents, title: "Disetujui", subtitle: "Event Akan Datang", icon: "✅", colorClass: "green" },
-    { value: completedEvents, title: "Terlaksana", subtitle: "Event Selesai", icon: "🎉", colorClass: "purple" },
+    { value: approvedEvents, title: "Disetujui", subtitle: "Akan Datang", icon: "✅", colorClass: "green" },
+    { value: completedEvents, title: "Selesai", subtitle: "Terlaksana", icon: "🎉", colorClass: "purple" },
   ];
 
-  // 4. Filtering Logic
+  // 4. Filtering
   const filteredEvents = events.filter((e) => {
-    // Filter Nama
     const nameMatch = search === "" || e.title.toLowerCase().includes(search.toLowerCase());
     
-    // Filter Status (Mapping Frontend -> Backend values)
     let statusMatch = true;
     if (statusFilter === "Disetujui") statusMatch = e.status === "approved";
     if (statusFilter === "Menunggu") statusMatch = e.status === "pending";
     if (statusFilter === "Ditolak") statusMatch = e.status === "rejected";
     if (statusFilter === "Selesai") statusMatch = e.status === "completed";
 
-    // Filter Bulan
-    const eventMonth = getMonthName(e.start_date); // Misal: "Apr", "Nov"
+    const eventMonth = getMonthName(e.start_date);
     const matchMonth = monthFilter === "Semua Bulan" || eventMonth.includes(monthFilter);
 
     return nameMatch && statusMatch && matchMonth;
   });
 
-  // Badge Status UI
   const getStatusBadge = (status) => {
     switch(status) {
-      case 'approved': return <span className="badge badge-green">Disetujui</span>;
-      case 'pending': return <span className="badge badge-yellow">Menunggu</span>;
-      case 'rejected': return <span className="badge badge-red">Ditolak</span>;
-      case 'completed': return <span className="badge badge-blue">Selesai</span>;
-      default: return <span className="badge badge-gray">{status}</span>;
+      case 'approved': return <span className="mea-badge approved">Disetujui</span>;
+      case 'pending': return <span className="mea-badge pending">Menunggu</span>;
+      case 'rejected': return <span className="mea-badge rejected">Ditolak</span>;
+      case 'completed': return <span className="mea-badge completed">Selesai</span>;
+      default: return <span className="mea-badge gray">{status}</span>;
     }
   };
 
   return (
-    <div className="event-admin-page">
+    <div className="mea-container">
       <SidebarAdmin />
 
-      <main className="main-content">
-        <h1 className="page-title">Dashboard Administrasi - Event</h1>
+      <main className="mea-content">
+        <h1 className="mea-title">Dashboard Administrasi - Event</h1>
 
-        {/* METRICS */}
         <div className="metrics-grid">
-          {metrics.map((m, i) => (
-            <MetricCard key={i} {...m} />
+          {metrics.map((m, idx) => (
+            <div className="metric-card" key={idx}>
+              <div className="metric-content">
+                <div className="metric-value">{m.value}</div>
+                <div className="metric-title">{m.title}</div>
+                <div className="metric-subtitle">{m.subtitle}</div>
+              </div>
+              <div className="metric-icon">{m.icon}</div>
+            </div>
           ))}
-        </div>
+        </div> 
 
-        {/* EVENT SECTION */}
-        <div className="event-section">
-          <h2>Manajemen Event</h2>
+        <div className="mea-table-section">
+          <h3 className="mea-section-title">Manajemen Event</h3>
 
           {/* FILTERS */}
-          <div className="event-filters">
-            <div className="filter-group">
-              <label>Filter Nama Event:</label>
+          <div className="mea-filters">
+            <div className="mea-filter-group">
+              <label>Filter Nama Event</label>
               <input
                 type="text"
                 placeholder="Cari nama event..."
@@ -155,8 +151,8 @@ export default function ManajementEventAdmin() {
               />
             </div>
 
-            <div className="filter-group">
-              <label>Filter Status:</label>
+            <div className="mea-filter-group">
+              <label>Status</label>
               <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
                 <option>Semua Status</option>
                 <option>Disetujui</option>
@@ -166,11 +162,10 @@ export default function ManajementEventAdmin() {
               </select>
             </div>
 
-            <div className="filter-group">
-              <label>Filter Bulan:</label>
+            <div className="mea-filter-group">
+              <label>Bulan</label>
               <select value={monthFilter} onChange={(e) => setMonthFilter(e.target.value)}>
                 <option>Semua Bulan</option>
-                {/* Daftar bulan hardcoded atau digenerate */}
                 {['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'].map(m => (
                     <option key={m} value={m}>{m}</option>
                 ))}
@@ -178,12 +173,12 @@ export default function ManajementEventAdmin() {
             </div>
           </div>
 
-          {/* EVENT TABLE */}
-          <div className="table-wrapper">
+          {/* TABLE */}
+          <div className="table-responsive">
             {loading ? (
                 <p className="loading-text">Memuat data event...</p>
             ) : (
-                <table className="event-table">
+                <table className="mea-table">
                 <thead>
                     <tr>
                     <th>Nama Event</th>
@@ -198,43 +193,41 @@ export default function ManajementEventAdmin() {
                     {filteredEvents.length > 0 ? (
                         filteredEvents.map((e) => (
                         <tr key={e.id}>
-                            <td>{e.title}</td>
+                            <td><strong>{e.title}</strong></td>
                             <td>{e.location}</td>
                             <td>{formatDate(e.start_date)}</td>
                             <td>{getStatusBadge(e.status)}</td>
 
-                            <td className="actions-col">
-                            <div className="action-hover-area">
-                                {/* VIEW BUTTON */}
-                                <button
-                                    className="action-btn view"
-                                    onClick={() => setSelectedEvent(e)}
-                                    title="Lihat Detail"
-                                >
-                                👁
-                                </button>
+                            <td className="mea-action-cell">
+                                <div className="mea-action-wrapper">
+                                    <button
+                                        className="mea-btn view"
+                                        onClick={() => setSelectedEvent(e)}
+                                        title="Lihat Detail"
+                                    >
+                                    👁
+                                    </button>
 
-                                {/* ACTION BUTTONS (Only for pending) */}
-                                <div className="action-animate-wrapper">
-                                <button
-                                    className={`action-btn approve ${e.status !== "pending" ? "disabled-btn" : ""}`}
-                                    disabled={e.status !== "pending"}
-                                    onClick={() => handleUpdateStatus(e.id, 'approved')}
-                                    title="Setujui"
-                                >
-                                    ✔
-                                </button>
+                                    <div className="mea-action-hover">
+                                        <button
+                                            className={`mea-btn approve ${e.status !== "pending" ? "disabled" : ""}`}
+                                            disabled={e.status !== "pending"}
+                                            onClick={() => handleUpdateStatus(e.id, 'approved')}
+                                            title="Setujui"
+                                        >
+                                            ✔
+                                        </button>
 
-                                <button
-                                    className={`action-btn reject ${e.status !== "pending" ? "disabled-btn" : ""}`}
-                                    disabled={e.status !== "pending"}
-                                    onClick={() => handleUpdateStatus(e.id, 'rejected')}
-                                    title="Tolak"
-                                >
-                                    ✘
-                                </button>
+                                        <button
+                                            className={`mea-btn reject ${e.status !== "pending" ? "disabled" : ""}`}
+                                            disabled={e.status !== "pending"}
+                                            onClick={() => handleUpdateStatus(e.id, 'rejected')}
+                                            title="Tolak"
+                                        >
+                                            ✘
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
                             </td>
                         </tr>
                         ))
@@ -249,7 +242,7 @@ export default function ManajementEventAdmin() {
           </div>
         </div>
 
-        {/* MODAL DETAIL */}
+        {/* MODAL */}
         {selectedEvent && (
           <div className="modal-overlay" onClick={() => setSelectedEvent(null)}>
             <div className="modal-card" onClick={(e) => e.stopPropagation()}>
@@ -257,7 +250,6 @@ export default function ManajementEventAdmin() {
 
               <div className="modal-content">
                 <div className="detail-row"><strong>Nama Event:</strong> {selectedEvent.title}</div>
-                {/* Jika backend menyediakan data organizer (user), tampilkan di sini */}
                 <div className="detail-row"><strong>Lokasi:</strong> {selectedEvent.location}</div>
                 <div className="detail-row">
                     <strong>Waktu:</strong> {formatDate(selectedEvent.start_date)} - {formatDate(selectedEvent.end_date)}
@@ -265,22 +257,24 @@ export default function ManajementEventAdmin() {
                 <div className="detail-row">
                     <strong>Jam:</strong> {selectedEvent.start_time || "-"} s/d {selectedEvent.end_time || "-"}
                 </div>
-                <div className="detail-row"><strong>Target Kantong:</strong> {selectedEvent.target_bags}</div>
+                <div className="detail-row"><strong>Target:</strong> {selectedEvent.target_bags} Kantong</div>
                 <div className="detail-row">
                     <strong>Status:</strong> {getStatusBadge(selectedEvent.status)}
                 </div>
-                <hr className="modal-divider"/>
-                <div className="detail-row"><strong>Deskripsi:</strong></div>
-                <p className="detail-desc">{selectedEvent.description || "Tidak ada deskripsi."}</p>
+                
+                <div className="modal-desc-box">
+                    <strong>Deskripsi:</strong><br/>
+                    {selectedEvent.description || "Tidak ada deskripsi."}
+                </div>
               </div>
 
               <div className="modal-actions">
                 {selectedEvent.status === 'pending' && (
                     <>
-                        <button className="btn-modal approve" onClick={() => handleUpdateStatus(selectedEvent.id, 'approved')}>
+                        <button className="mea-btn-modal approve" onClick={() => handleUpdateStatus(selectedEvent.id, 'approved')}>
                             Setujui
                         </button>
-                        <button className="btn-modal reject" onClick={() => handleUpdateStatus(selectedEvent.id, 'rejected')}>
+                        <button className="mea-btn-modal reject" onClick={() => handleUpdateStatus(selectedEvent.id, 'rejected')}>
                             Tolak
                         </button>
                     </>

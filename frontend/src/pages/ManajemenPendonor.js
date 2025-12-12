@@ -3,7 +3,6 @@ import "./ManajemenPendonor.css";
 import SidebarAdmin from "../components/SidebarAdmin"; 
 import axiosClient from "../service/axiosClient";
 
-// MetricCard component
 function MetricCard({ value, title, subtitle, icon, iconClass }) {
   return (
     <div className="metric-card">
@@ -13,7 +12,6 @@ function MetricCard({ value, title, subtitle, icon, iconClass }) {
           <div className="metric-title">{title}</div>
           <div className="metric-subtitle">{subtitle}</div>
         </div>
-        {/* Menggunakan class CSS untuk warna icon */}
         <div className={`metric-icon ${iconClass}`}>
           {icon}
         </div>
@@ -34,14 +32,12 @@ export default function ManajemenPendonor() {
   // Modal State
   const [selectedPendonor, setSelectedPendonor] = useState(null);
 
-  // 1. Fetch Data dari Backend
+  // 1. Fetch Data
   const fetchPendonors = async () => {
     setLoading(true);
     try {
       const response = await axiosClient.get("/users");
       const allUsers = response.data.data || [];
-      
-      // Filter hanya user biasa (Pendonor)
       const donorList = allUsers.filter(user => user.role === 'user');
       setPendonors(donorList);
     } catch (error) {
@@ -59,68 +55,67 @@ export default function ManajemenPendonor() {
   const filteredPendonors = pendonors.filter((p) => {
     const nameMatch = nameFilter === "" || (p.name && p.name.toLowerCase().includes(nameFilter.toLowerCase()));
     
-    // Gabungkan Blood Type + Rhesus untuk filter (Contoh: "A" + "+" = "A+")
     const fullBloodType = (p.blood_type && p.rhesus) ? `${p.blood_type}${p.rhesus}` : "-";
     const bloodMatch = bloodTypeFilter === "Semua Golongan" || fullBloodType === bloodTypeFilter;
     
-    // Mapping Status Backend ke Frontend
     const statusLabel = p.status === "active" ? "Aktif" : "Tidak Aktif";
     const statusMatch = statusFilter === "Semua Status" || statusLabel === statusFilter;
 
     return nameMatch && bloodMatch && statusMatch;
   });
 
-  // 3. Metrik Dinamis
   const totalPendonor = pendonors.length;
-  // Hitungan statis untuk contoh lain (karena belum ada endpoint khusus statistik)
   const metrics = [
-    { value: "20,847", title: "User Terdaftar", subtitle: "Seluruh Sumatera Utara", icon: "👥", iconClass: "icon-red" },
-    { value: "342", title: "Dokter Terverifikasi", subtitle: "30 Rumah Sakit", icon: "👨‍⚕️", iconClass: "icon-red" },
-    { value: totalPendonor, title: "Pendonor Aktif", subtitle: "Data Real-time", icon: "🩸", iconClass: "icon-red" },
-    { value: "47", title: "Event", subtitle: "Di berbagai RS", icon: "📅", iconClass: "icon-red" },
-    { value: "20,234", title: "Stok Darah", subtitle: "30 Rumah Sakit", icon: "🧪", iconClass: "icon-red" },
-    { value: "587", title: "Event Terlaksana", subtitle: "Seluruh Provinsi", icon: "✅", iconClass: "icon-red" },
+    { value: "20,847", title: "User Terdaftar", subtitle: "Seluruh Sumatera Utara", icon: "👥", iconClass: "red" },
+    { value: "342", title: "Dokter Terverifikasi", subtitle: "30 Rumah Sakit", icon: "👨‍⚕️", iconClass: "red" },
+    { value: totalPendonor, title: "Pendonor Aktif", subtitle: "Data Real-time", icon: "🩸", iconClass: "red" },
+    { value: "47", title: "Event", subtitle: "Di berbagai RS", icon: "📅", iconClass: "red" },
+    { value: "20,234", title: "Stok Darah", subtitle: "30 Rumah Sakit", icon: "🧪", iconClass: "red" },
+    { value: "587", title: "Event Terlaksana", subtitle: "Seluruh Provinsi", icon: "✅", iconClass: "red" },
   ];
 
   return (
-    <div className="manajemen-pendonor-container">
+    <div className="mp-container">
       <SidebarAdmin />
 
-      <main className="main-content">
-        <header className="content-header">
-          <h1 className="page-title">Dashboard Administrasi - Pendonor</h1>
-        </header>
+      <main className="mp-content">
+        <h1 className="mp-title">Dashboard Administrasi - Pendonor</h1>
 
-        {/* METRICS */}
+        {/* METRICS CARDS */}
         <div className="metrics-grid">
-          {metrics.map((metric, i) => (
-            <MetricCard key={i} {...metric} />
+          {metrics.map((m, idx) => (
+            <div className="metric-card" key={idx}>
+              <div className="metric-content">
+                <div className="metric-value">{m.value}</div>
+                <div className="metric-title">{m.title}</div>
+                <div className="metric-subtitle">{m.subtitle}</div>
+              </div>
+              <div className="metric-icon">{m.icon}</div>
+            </div>
           ))}
         </div>
 
-        {/* PENDONOR SECTION */}
-        <div className="pendonor-management-section">
-          <h3 className="section-title">Manajemen Pendonor</h3>
+        {/* SECTION TABLE */}
+        <div className="mp-table-section">
+          <h3 className="mp-section-title">Manajemen Pendonor</h3>
 
           {/* FILTERS */}
-          <div className="filter-section">
-            <div className="filter-group">
-              <label className="filter-label">Filter Nama Pendonor:</label>
+          <div className="mp-filters">
+            <div className="mp-filter-group">
+              <label>Filter Nama Pendonor</label>
               <input
                 type="text"
                 placeholder="Cari nama pendonor..."
                 value={nameFilter}
                 onChange={(e) => setNameFilter(e.target.value)}
-                className="filter-input"
               />
             </div>
 
-            <div className="filter-group">
-              <label className="filter-label">Golongan Darah:</label>
+            <div className="mp-filter-group">
+              <label>Golongan Darah</label>
               <select
                 value={bloodTypeFilter}
                 onChange={(e) => setBloodTypeFilter(e.target.value)}
-                className="filter-select"
               >
                 <option value="Semua Golongan">Semua Golongan</option>
                 <option value="A+">A+</option>
@@ -134,12 +129,11 @@ export default function ManajemenPendonor() {
               </select>
             </div>
 
-            <div className="filter-group">
-              <label className="filter-label">Status:</label>
+            <div className="mp-filter-group">
+              <label>Status</label>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="filter-select"
               >
                 <option value="Semua Status">Semua Status</option>
                 <option value="Aktif">Aktif</option>
@@ -149,17 +143,16 @@ export default function ManajemenPendonor() {
           </div>
 
           {/* TABLE */}
-          <div className="table-container">
+          <div className="table-responsive">
             {loading ? (
                 <p className="loading-text">Memuat data pendonor...</p>
             ) : (
-                <table className="pendonor-table">
-                <thead className="table-header">
+                <table className="mp-table">
+                <thead>
                     <tr>
                     <th>Nama</th>
                     <th className="center">Gol. Darah</th>
                     <th className="center">Kota Domisili</th>
-                    {/* Kolom ini placeholder karena data belum tersedia di user endpoint */}
                     <th className="center">No. HP</th> 
                     <th className="center">Status</th>
                     <th className="center">Aksi</th>
@@ -170,10 +163,10 @@ export default function ManajemenPendonor() {
                     {filteredPendonors.length > 0 ? (
                         filteredPendonors.map((p) => (
                         <tr key={p.id}>
-                            <td>{p.name}</td>
+                            <td><strong>{p.name}</strong></td>
                             <td className="center">
                                 {(p.blood_type && p.rhesus) ? (
-                                    <span className="blood-type-badge">
+                                    <span className="mp-badge blood">
                                         {p.blood_type}{p.rhesus}
                                     </span>
                                 ) : (
@@ -183,13 +176,13 @@ export default function ManajemenPendonor() {
                             <td className="center">{p.city || "-"}</td>
                             <td className="center">{p.phone || "-"}</td>
                             <td className="center">
-                                <span className={`status-badge ${p.status === "active" ? "status-active" : "status-inactive"}`}>
+                                <span className={`mp-badge ${p.status === "active" ? "active" : "inactive"}`}>
                                     {p.status === "active" ? "Aktif" : "Non-Aktif"}
                                 </span>
                             </td>
                             <td className="center">
                                 <button
-                                    className="action-button detail-button"
+                                    className="mp-btn view"
                                     onClick={() => setSelectedPendonor(p)}
                                 >
                                     Detail
@@ -208,9 +201,7 @@ export default function ManajemenPendonor() {
           </div>
         </div>
 
-        {/* =========================== */}
-        {/* MODAL             */}
-        {/* =========================== */}
+        {/* MODAL */}
         {selectedPendonor && (
           <div className="modal-overlay" onClick={() => setSelectedPendonor(null)}>
             <div className="modal-card" onClick={(e) => e.stopPropagation()}>
@@ -224,13 +215,13 @@ export default function ManajemenPendonor() {
                 <div className="detail-row"><strong>Nomor HP:</strong> {selectedPendonor.phone}</div>
                 <div className="detail-row">
                     <strong>Status Akun:</strong> 
-                    <span className={`status-text ${selectedPendonor.status === 'active' ? 'active' : 'inactive'}`}>
+                    <span className={`mp-status-text ${selectedPendonor.status === 'active' ? 'active' : 'inactive'}`}>
                         {selectedPendonor.status === 'active' ? ' Aktif' : ' Non-Aktif'}
                     </span>
                 </div>
-                {/* Placeholder untuk data history jika nanti diimplementasikan */}
+                
                 <hr className="modal-divider"/>
-                <p className="info-muted">Riwayat donasi belum tersedia.</p>
+                <p className="mp-info-muted">Riwayat donasi belum tersedia.</p>
               </div>
 
               <div className="modal-actions">

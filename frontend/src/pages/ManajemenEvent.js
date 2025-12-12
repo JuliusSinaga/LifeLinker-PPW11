@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import DokterSidebar from "../components/SidebarDokter";
-import "../styles/ManajemenEvent.css"; // Pastikan path CSS benar
+import "../styles/ManajemenEvent.css"; 
 import axiosClient from "../service/axiosClient";
 
 export default function ManajemenEvent() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // State Form (Sesuai dengan Model Event di Backend)
+  // State Form
   const [form, setForm] = useState({
     title: "",
     location: "",
@@ -17,21 +17,19 @@ export default function ManajemenEvent() {
     start_time: "",
     end_time: "",
     target_bags: "",
-    // partner: "", // Opsional: bisa dimasukkan ke deskripsi jika di backend tidak ada field khusus
   });
 
-  // State Modal
   const [selected, setSelected] = useState(null);
-  const [editing, setEditing] = useState(null);
 
-  // 1. Fetch Data Event dari Backend
+  // 1. Fetch Data
   const fetchEvents = async () => {
     setLoading(true);
     try {
       const response = await axiosClient.get("/events");
-      // Backend mungkin mengembalikan { data: [...] }
       const data = response.data.data || [];
-      setEvents(data);
+      // Urutkan event terbaru di atas
+      const sorted = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      setEvents(sorted);
     } catch (error) {
       console.error("Gagal mengambil data event:", error);
     } finally {
@@ -43,36 +41,31 @@ export default function ManajemenEvent() {
     fetchEvents();
   }, []);
 
-  // Handle Input Change
   function handleChange(e) {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   }
 
-  // 2. Submit Event Baru (Request)
+  // 2. Submit Request
   async function handleSubmit(e) {
     e.preventDefault();
     
-    // Validasi sederhana
     if (!form.title || !form.start_date || !form.location) {
       alert("Mohon lengkapi data wajib (Nama, Tanggal, Lokasi)");
       return;
     }
 
     try {
-      // Konversi target_bags ke integer
       const payload = {
         ...form,
         target_bags: parseInt(form.target_bags) || 0,
-        status: "pending" // Default status saat request
+        status: "pending"
       };
 
       await axiosClient.post("/events", payload);
-      
       alert("Permintaan Event berhasil dikirim!");
-      fetchEvents(); // Refresh data
+      fetchEvents(); 
       
-      // Reset Form
       setForm({
         title: "", location: "", description: "",
         start_date: "", end_date: "", start_time: "", end_time: "",
@@ -85,26 +78,23 @@ export default function ManajemenEvent() {
     }
   }
 
-  // Helper: Format Tanggal
   const formatDate = (dateString) => {
     if (!dateString) return "-";
     return new Date(dateString).toLocaleDateString("id-ID", {
-      day: "numeric", month: "short", year: "numeric"
+      day: "numeric", month: "long", year: "numeric"
     });
   };
 
-  // Helper: Status Badge Class
   const getStatusClass = (status) => {
     switch(status) {
-      case 'approved': return 'status-approved';
-      case 'pending': return 'status-pending';
-      case 'rejected': return 'status-rejected';
-      case 'completed': return 'status-completed';
-      default: return '';
+      case 'approved': return 'approved';
+      case 'pending': return 'pending';
+      case 'rejected': return 'rejected';
+      case 'completed': return 'completed';
+      default: return 'pending';
     }
   };
 
-  // Helper: Status Label Frontend
   const getStatusLabel = (status) => {
     switch(status) {
       case 'approved': return 'Disetujui';
@@ -115,7 +105,6 @@ export default function ManajemenEvent() {
     }
   };
 
-  // Filter Data untuk Tabel (Request Aktif) & Completed
   const activeRequests = events.filter(e => e.status !== 'completed');
   const completedEvents = events.filter(e => e.status === 'completed');
 
@@ -128,14 +117,17 @@ export default function ManajemenEvent() {
 
         <div className="event-container">
 
-          {/* FORM PENGAJUAN */}
-          <div className="card event-form-card">
-            <h3 className="card-title">📄 Formulir Pengajuan Event</h3>
+          {/* === FORM PENGAJUAN (GRID LAYOUT) === */}
+          <div className="me-card">
+            <h3 className="me-card-title">📄 Formulir Pengajuan Event</h3>
 
             <form onSubmit={handleSubmit} className="event-form">
-              <div className="form-group">
-                <label>Nama Event</label>
+              
+              {/* Baris 1: Nama Event (Full Width) */}
+              <div className="me-form-group">
+                <label className="me-label">Nama Event</label>
                 <input 
+                  className="me-input"
                   name="title"
                   placeholder="Contoh: Donor Darah Sehat Bersama"
                   value={form.title}
@@ -144,43 +136,41 @@ export default function ManajemenEvent() {
                 />
               </div>
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Tanggal Mulai</label>
-                  <input type="date" name="start_date" value={form.start_date} onChange={handleChange} required />
+              {/* Grid 2 Kolom */}
+              <div className="me-form-grid">
+                <div className="me-form-group">
+                  <label className="me-label">Tanggal Mulai</label>
+                  <input type="date" className="me-input" name="start_date" value={form.start_date} onChange={handleChange} required />
                 </div>
-                <div className="form-group">
-                  <label>Tanggal Selesai</label>
-                  <input type="date" name="end_date" value={form.end_date} onChange={handleChange} required />
+                <div className="me-form-group">
+                  <label className="me-label">Tanggal Selesai</label>
+                  <input type="date" className="me-input" name="end_date" value={form.end_date} onChange={handleChange} required />
                 </div>
-              </div>
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Jam Mulai</label>
-                  <input type="time" name="start_time" value={form.start_time} onChange={handleChange} />
+                <div className="me-form-group">
+                  <label className="me-label">Jam Mulai</label>
+                  <input type="time" className="me-input" name="start_time" value={form.start_time} onChange={handleChange} />
                 </div>
-                <div className="form-group">
-                  <label>Jam Selesai</label>
-                  <input type="time" name="end_time" value={form.end_time} onChange={handleChange} />
+                <div className="me-form-group">
+                  <label className="me-label">Jam Selesai</label>
+                  <input type="time" className="me-input" name="end_time" value={form.end_time} onChange={handleChange} />
                 </div>
-              </div>
 
-              <div className="form-group">
-                <label>Lokasi Event</label>
-                <input 
-                  name="location"
-                  placeholder="Contoh: Aula Utama RSUP H. Adam Malik"
-                  value={form.location}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Target Kantong Darah</label>
+                <div className="me-form-group">
+                  <label className="me-label">Lokasi Event</label>
                   <input 
+                    className="me-input"
+                    name="location"
+                    placeholder="Contoh: Aula Utama RSUP H. Adam Malik"
+                    value={form.location}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="me-form-group">
+                  <label className="me-label">Target Kantong Darah</label>
+                  <input 
+                    className="me-input"
                     name="target_bags"
                     type="number"
                     placeholder="Contoh: 50"
@@ -188,27 +178,27 @@ export default function ManajemenEvent() {
                     onChange={handleChange}
                   />
                 </div>
-                {/* Upload Poster bisa ditambahkan nanti jika backend support multipart/form-data */}
               </div>
 
-              <div className="form-group">
-                <label>Deskripsi & Partner</label>
+              {/* Deskripsi (Full Width) */}
+              <div className="me-form-group">
+                <label className="me-label">Deskripsi & Partner</label>
                 <textarea 
+                  className="me-textarea"
                   name="description"
                   placeholder="Jelaskan detail acara dan partner penyelenggara..."
                   value={form.description}
                   onChange={handleChange}
-                  rows="3"
                 />
               </div>
 
-              <button className="btn-submit">Kirim Request</button>
+              <button className="me-btn-submit">Kirim Pengajuan</button>
             </form>
           </div>
 
-          {/* TABLE REQUEST STATUS */}
-          <div className="card event-table-card">
-            <h3 className="card-title">📊 Status Pengajuan Event</h3>
+          {/* === TABLE REQUEST STATUS === */}
+          <div className="me-card">
+            <h3 className="me-card-title">📊 Status Pengajuan Event</h3>
 
             <div className="table-responsive">
               <table className="event-table">
@@ -217,8 +207,8 @@ export default function ManajemenEvent() {
                     <th>Nama Event</th>
                     <th>Tanggal</th>
                     <th>Lokasi</th>
-                    <th>Status</th>
-                    <th>Aksi</th>
+                    <th style={{textAlign:'center'}}>Status</th>
+                    <th style={{textAlign:'center'}}>Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -227,16 +217,18 @@ export default function ManajemenEvent() {
                   ) : activeRequests.length > 0 ? (
                     activeRequests.map((r) => (
                       <tr key={r.id}>
-                        <td>{r.title}</td>
+                        <td><strong>{r.title}</strong></td>
                         <td>{formatDate(r.start_date)}</td>
                         <td>{r.location}</td>
-                        <td>
-                          <span className={`status-badge ${getStatusClass(r.status)}`}>
+                        <td style={{textAlign:'center'}}>
+                          <span className={`me-badge ${getStatusClass(r.status)}`}>
                             {getStatusLabel(r.status)}
                           </span>
                         </td>
-                        <td className="aksi-btns">
-                          <button className="view-btn" onClick={() => setSelected(r)}>👁 Detail</button>
+                        <td style={{textAlign:'center'}}>
+                          <button className="me-action-btn" onClick={() => setSelected(r)}>
+                            Detail
+                          </button>
                         </td>
                       </tr>
                     ))
@@ -248,9 +240,9 @@ export default function ManajemenEvent() {
             </div>
           </div>
 
-          {/* EVENT SELESAI */}
-          <div className="card event-completed-card">
-            <h3 className="card-title">🎉 Event Yang Telah Selesai</h3>
+          {/* === EVENT SELESAI (GRID) === */}
+          <div className="me-card">
+            <h3 className="me-card-title">🎉 Event Yang Telah Selesai</h3>
 
             <div className="completed-grid">
               {completedEvents.length > 0 ? (
@@ -258,11 +250,14 @@ export default function ManajemenEvent() {
                   <div className="completed-card" key={e.id}>
                     <div className="completed-top">
                       <h4>{e.title}</h4>
-                      <p>{formatDate(e.start_date)}</p>
+                      <p className="completed-date">📅 {formatDate(e.start_date)}</p>
                     </div>
                     <div className="completed-bottom">
-                      <div className="big-number">{e.realization || 0}</div>
-                      <div className="label">Kantong Terkumpul</div>
+                      <div>
+                        <div className="label">Kantong Terkumpul</div>
+                        <div className="big-number">{e.realization || 0}</div>
+                      </div>
+                      <div className="me-badge completed">Selesai</div>
                     </div>
                   </div>
                 ))
@@ -275,21 +270,49 @@ export default function ManajemenEvent() {
         </div>
       </main>
 
-      {/* MODAL DETAIL */}
+      {/* === MODAL DETAIL === */}
       {selected && (
         <div className="modal-overlay" onClick={() => setSelected(null)}>
           <div className="modal-box" onClick={(e) => e.stopPropagation()}>
-            <h3>Detail Event</h3>
-            <div className="modal-body">
-              <p><strong>Nama:</strong> {selected.title}</p>
-              <p><strong>Waktu:</strong> {formatDate(selected.start_date)} s/d {formatDate(selected.end_date)}</p>
-              <p><strong>Jam:</strong> {selected.start_time || "-"} - {selected.end_time || "-"}</p>
-              <p><strong>Lokasi:</strong> {selected.location}</p>
-              <p><strong>Target:</strong> {selected.target_bags} Kantong</p>
-              <p><strong>Status:</strong> {getStatusLabel(selected.status)}</p>
-              <p><strong>Deskripsi:</strong> {selected.description || "-"}</p>
+            <div className="modal-header">
+                <h3>Detail Event</h3>
             </div>
-            <button className="close-btn" onClick={() => setSelected(null)}>Tutup</button>
+            
+            <div className="modal-body">
+              <div className="modal-detail-row">
+                <span>Nama Event</span>
+                <strong>{selected.title}</strong>
+              </div>
+              <div className="modal-detail-row">
+                <span>Waktu</span>
+                <strong>{formatDate(selected.start_date)}</strong>
+              </div>
+              <div className="modal-detail-row">
+                <span>Jam</span>
+                <strong>{selected.start_time || "-"} s/d {selected.end_time || "-"}</strong>
+              </div>
+              <div className="modal-detail-row">
+                <span>Lokasi</span>
+                <strong>{selected.location}</strong>
+              </div>
+              <div className="modal-detail-row">
+                <span>Target</span>
+                <strong>{selected.target_bags} Kantong</strong>
+              </div>
+              <div className="modal-detail-row">
+                <span>Status</span>
+                <span className={`me-badge ${getStatusClass(selected.status)}`}>
+                    {getStatusLabel(selected.status)}
+                </span>
+              </div>
+              
+              <div className="modal-desc">
+                <strong>Deskripsi:</strong><br/>
+                {selected.description || "Tidak ada deskripsi tambahan."}
+              </div>
+            </div>
+
+            <button className="modal-close-btn" onClick={() => setSelected(null)}>Tutup</button>
           </div>
         </div>
       )}
