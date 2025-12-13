@@ -54,7 +54,7 @@
 .nav-menu-wrapper {
   display: flex;
   align-items: center;
-  gap: 30px;
+  gap: 100px;
 }
 
 .app-nav-links {

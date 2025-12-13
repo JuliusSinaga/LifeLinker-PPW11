@@ -17,8 +17,8 @@
   flex-direction: column;
   min-height: 100vh; /* Minimal tinggi layar, tapi bisa lebih untuk footer */
   width: 100%;
-  overflow-x: hidden;
-  overflow-y: auto; /* WAJIB: Mengizinkan scroll vertikal */
+  /* overflow-x: hidden;12. */
+  /* overflow-y: auto; WAJIB: Mengizinkan scroll vertikal */
   scroll-snap-type: y proximity; /* Menggunakan proximity agar footer tetap bisa diakses */
   -webkit-overflow-scrolling: touch;
 }

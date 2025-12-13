@@ -55,4 +55,5 @@ func SetupRoutes(router *gin.Engine) {
 
 	router.POST("/forgot-password", controllers.ForgotPassword)
     router.POST("/reset-password", controllers.ResetPassword)
+	router.PUT("/users/:id/password", controllers.UpdatePassword)
 }

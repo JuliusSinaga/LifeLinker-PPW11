@@ -75,8 +75,6 @@ export default function BerandaPage() {
 
   return (
     <div className="beranda-root">
-      {/* Shared Header Component */}
-      {/* Header otomatis menangani props isLoggedIn via localStorage, tapi props ini tetap aman */}
       <Header showUserProfile={isLoggedIn} />
 
       {/* 1. LAYAR PENUH: HERO Section */}

@@ -21,6 +21,8 @@
 .event-page-root {
   min-height: 100vh;
   background: linear-gradient(180deg, #fef2f2 0%, #fef7f0 100%);
+  scroll-snap-type: y proximity;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Hero Section - Enhanced & Compact */

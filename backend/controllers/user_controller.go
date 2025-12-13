@@ -382,3 +382,48 @@ func DeleteUser(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "User berhasil dihapus"})
 }
+
+// PUT /users/:id/password
+func UpdatePassword(c *gin.Context) {
+	id := c.Param("id")
+
+	// Struct untuk menangkap input JSON dari React
+	var input struct {
+		OldPassword string `json:"oldPassword" binding:"required"`
+		NewPassword string `json:"newPassword" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Data tidak lengkap"})
+		return
+	}
+
+	// 1. Cari User di Database
+	var user models.User
+	if err := database.DB.First(&user, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User tidak ditemukan"})
+		return
+	}
+
+	// 2. Verifikasi Password Lama (Bandingkan Hash)
+	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.OldPassword))
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Password lama salah!"})
+		return
+	}
+
+	// 3. Hash Password Baru
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(input.NewPassword), bcrypt.DefaultCost)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mengenkripsi password"})
+		return
+	}
+
+	// 4. Simpan ke Database
+	if err := database.DB.Model(&user).Update("password", string(hashedPassword)).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal menyimpan password baru"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Password berhasil diperbarui"})
+}

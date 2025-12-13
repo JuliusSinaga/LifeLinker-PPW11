@@ -122,8 +122,9 @@ export default function ProfilePage() {
     }
   };
 
-  // --- HANDLER GANTI PASSWORD ---
+  // --- HANDLER SUBMIT KE DATABASE ---
   const handleChangePassword = async () => {
+    // 1. Validasi Input Kosong
     if (!passwordData.oldPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
       setModalType("error");
       setModalMessage("Mohon lengkapi semua kolom password.");
@@ -131,6 +132,7 @@ export default function ProfilePage() {
       return;
     }
 
+    // 2. Validasi Konfirmasi Password
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       setModalType("error");
       setModalMessage("Konfirmasi password tidak cocok.");
@@ -138,18 +140,40 @@ export default function ProfilePage() {
       return;
     }
 
+    // 3. Validasi Panjang Password (Optional)
+    if (passwordData.newPassword.length < 6) {
+        setModalType("error");
+        setModalMessage("Password minimal 6 karakter.");
+        setShowSaveModal(true);
+        return;
+    }
+
     try {
-      // Simulasi API Change Password
-      // await axiosClient.put(`/users/${formData.id}/password`, passwordData);
+      // 4. Panggil API Backend
+      // Payload harus sesuai dengan struct di Go (oldPassword, newPassword)
+      await axiosClient.put(`/users/${formData.id}/password`, {
+        oldPassword: passwordData.oldPassword,
+        newPassword: passwordData.newPassword
+      });
       
+      // 5. Sukses
       setModalType("success");
       setModalMessage("Password berhasil diubah!");
       setShowSaveModal(true);
-      setPasswordData({ oldPassword: "", newPassword: "", confirmPassword: "" }); // Reset form
+      
+      // Reset Form
+      setPasswordData({ oldPassword: "", newPassword: "", confirmPassword: "" }); 
+      
+      // Tutup modal otomatis
       setTimeout(() => setShowSaveModal(false), 2000);
+
     } catch (error) {
+      // 6. Error Handling (Misal password lama salah)
+      console.error("Gagal ganti password:", error);
+      
+      const errorMsg = error.response?.data?.error || "Gagal mengubah password.";
       setModalType("error");
-      setModalMessage("Gagal mengubah password. Password lama mungkin salah.");
+      setModalMessage(errorMsg);
       setShowSaveModal(true);
     }
   };
