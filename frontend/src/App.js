@@ -108,19 +108,16 @@ function AppContent() {
           {/* === Fallback Pages === */}
           <Route path="/home" element={<Navigate to="/beranda" replace />} />
           
-          {/* Fallback jika route salah */}
-          <Route path="*" element={<Navigate to="/beranda" replace />} />
-
-          {/* Route Khusus Error 403 / 500 (Jika ingin dipanggil manual) */}
-          <Route path="/error" element={<NotFoundPage type="500" />} />
-          <Route path="/forbidden" element={<NotFoundPage type="403" />} />
-
           {/* Route Catch-All untuk 404 (WAJIB PALING BAWAH) */}
           <Route path="*" element={<NotFoundPage type="404" />} />
           {/* === Lupa Password === */}
           <Route path="/lupa-password" element={<LupaPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
             
+          {/* Fallback jika route salah */}
+          <Route path="*" element={<NotFoundPage />} />
+          <Route path="/error" element={<NotFoundPage type="500" />} />
+          <Route path="/forbidden" element={<NotFoundPage type="403" />} />
         </Routes>
       </div>
       
