@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaExclamationTriangle, FaUserCircle, FaBars, FaTimes } from "react-icons/fa"; // Tambah Icon
-import "./Header.css";
+import "../styles/Header.css";
 
 export default function Header() {
   const location = useLocation();

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import "./SidebarAdmin.css";
+import "../styles/SidebarAdmin.css";
 
 export default function SidebarAdmin() {
   const location = useLocation();
