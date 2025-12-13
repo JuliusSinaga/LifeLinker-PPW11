@@ -55,7 +55,7 @@ function AppContent() {
     "/pilih-role", "/role-selection", 
     "/login-admin", "/login-user", "/login-dokter", "/login-pengguna", 
     "/dashboard-admin", "/manajemen-dokter", "/manajemen-user", "/dashboard-dokter", "/profile-dokter",
-    "/manajemen-event", "/manajemen-pendonor", "/laporan", "/profile-admin", 
+    "/manajemen-event", "/manajemen-pendonor", "/laporan", "/profile-admin", "/profile",
     "/logout", "/dashboard", "/manajemen-stok", "/konsultasi-edukasi", "/error", "/forbidden", "lupa-password", "manajemen-event-admin"
   ];
 

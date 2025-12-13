@@ -1,52 +1,66 @@
-/* Shared Header Component CSS */
 :root {
-  --primary-red: #d92b2b;
-  --text-dark: #333;
-  --text-light: #555;
-  --border-light: #e0e0e0;
+  --primary-red: #dc2626;
+  --primary-hover: #b91c1c;
+  --bg-light-pink: #fef2f2;
+  --text-red: #991b1b;
+  --text-dark: #1f2937;
+  --text-gray: #6b7280;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+  --nav-height: 70px;
 }
 
+/* --- HEADER CONTAINER --- */
 .app-header {
   background: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
   position: sticky;
   top: 0;
   z-index: 1000;
+  height: var(--nav-height);
 }
 
 .app-nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 5%;
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
+  padding: 0 20px;
+  height: 100%;
 }
 
+/* LOGO */
 .app-logo {
-  text-decoration: none;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  text-decoration: none;
 }
 
 .app-logo-image {
   width: 32px;
   height: 32px;
-  object-fit: contain;
 }
 
 .app-logo-text {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 800;
   color: var(--primary-red);
-  text-decoration: none;
+  letter-spacing: -0.5px;
+}
+
+/* --- NAVIGATION LINKS --- */
+.nav-menu-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 30px;
 }
 
 .app-nav-links {
   display: flex;
   list-style: none;
-  gap: 30px;
+  gap: 25px;
   margin: 0;
   padding: 0;
 }
@@ -55,363 +69,351 @@
   color: var(--text-dark);
   text-decoration: none;
   font-weight: 500;
-  font-size: 16px;
-  padding: 8px 0;
-  border-bottom: 2px solid transparent;
-  transition: all 0.3s ease;
+  font-size: 15px;
+  padding: 5px 0;
+  position: relative;
+  transition: color 0.3s;
 }
 
-.app-nav-link:hover {
-  color: var(--primary-red);
-  border-bottom-color: var(--primary-red);
-}
-
+.app-nav-link:hover,
 .app-nav-link.active {
   color: var(--primary-red);
-  border-bottom-color: var(--primary-red);
-  font-weight: 700;
+  font-weight: 600;
 }
 
-.app-nav-actions {
+.app-nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--primary-red);
+  border-radius: 2px;
+}
+
+/* --- ACTION BUTTONS (Login/Reg) --- */
+.auth-buttons {
   display: flex;
-  align-items: center;
-  gap: 15px;
+  gap: 12px;
 }
 
 .app-btn-login,
 .app-btn-register {
-  padding: 10px 24px;
-  border-radius: 25px;
-  font-weight: 700;
-  font-size: 15px;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 14px;
   text-decoration: none;
-  transition: all 0.3s ease;
-  white-space: nowrap;
+  transition: all 0.2s;
 }
 
 .app-btn-login {
-  background-color: white;
-  color: var(--text-dark);
-  border: 2px solid var(--border-light);
+  color: var(--primary-red);
+  border: 1px solid var(--primary-red);
+  background: transparent;
 }
 
 .app-btn-login:hover {
-  border-color: var(--primary-red);
-  color: var(--primary-red);
+  background-color: var(--bg-light-pink);
 }
 
 .app-btn-register {
   background-color: var(--primary-red);
   color: white;
-  border: 2px solid var(--primary-red);
+  border: 1px solid var(--primary-red);
 }
 
 .app-btn-register:hover {
-  background-color: #c02525;
-  border-color: #c02525;
-  transform: translateY(-2px);
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+  transform: translateY(-1px);
 }
 
+/* --- LOGGED IN USER --- */
 .app-user-info {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-weight: 600;
-  color: var(--text-dark);
+  position: relative;
 }
 
-.app-user-info .user-name {
-  font-size: 15px;
-  color: var(--text-dark);
+.user-name {
+  font-size: 14px;
   font-weight: 600;
+  color: var(--text-dark);
 }
 
 .app-user-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background-color: var(--primary-red);
+  color: white;
   display: flex;
   align-items: center;
-  transition: transform 0.3s ease;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  transition: transform 0.2s;
 }
 
 .app-user-avatar:hover {
-  transform: scale(1.05);
+  transform: scale(1.1);
 }
 
-.app-user-avatar img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid var(--primary-red);
+/* Container Dropdown */
+.user-dropdown {
+  position: absolute;
+  top: 60px; /* Sesuaikan jarak dari header */
+  right: 0;
+  width: 240px; /* Lebar fixed agar rapi */
+  background-color: white;
+  border-radius: 16px; /* Sudut lebih bulat modern */
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.05), 
+    0 10px 15px -3px rgba(0, 0, 0, 0.1); /* Shadow halus */
+  border: 1px solid #f3f4f6;
+  padding: 8px;
+  z-index: 1100;
+  transform-origin: top right;
+  animation: dropdownPop 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
-/* Responsive */
-@media (max-width: 1024px) {
-  .app-nav-links {
-    gap: 20px;
-  }
+/* Segitiga kecil di atas dropdown (opsional, pemanis visual) */
+.user-dropdown::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  right: 20px;
+  width: 12px;
+  height: 12px;
+  background-color: white;
+  transform: rotate(45deg);
+  border-left: 1px solid #f3f4f6;
+  border-top: 1px solid #f3f4f6;
 }
 
-@media (max-width: 768px) {
-  .app-nav {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 15px;
-    padding: 15px;
-  }
-
-  .app-nav .app-logo {
-    width: 100%;
-    text-align: center;
-    margin-bottom: 10px;
-  }
-
-  .app-nav-links {
-    width: 100%;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px 15px;
-    margin: 0;
-    font-size: 14px;
-  }
-
-  .app-nav-actions {
-    width: 100%;
-    justify-content: center;
-    margin-top: 10px;
-    margin-left: 0;
-  }
-}
-
-
-
-/* --- Styles untuk Modal Logout (Sama dengan SidebarAdmin) --- */
-
-.logout-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.5); /* Latar belakang gelap transparan */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999; /* Pastikan di atas semua elemen header */
-}
-
-.logout-modal {
-  background: white;
-  padding: 25px;
-  border-radius: 10px;
-  width: 350px;
-  text-align: center;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 0.3s ease;
-}
-
-.logout-modal h3 {
-  margin-top: 0;
-  margin-bottom: 10px;
-  color: #333;
-}
-
-.logout-modal p {
-  color: #666;
-  margin-bottom: 25px;
-}
-
-.logout-actions {
-  display: flex;
-  justify-content: space-around;
-  gap: 15px;
-}
-
-.cancel-logout,
-.confirm-logout {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: 600;
-  flex: 1;
-}
-
-.cancel-logout {
-  background-color: #e5e7eb;
-  color: #374151;
-}
-
-.cancel-logout:hover {
-  background-color: #d1d5db;
-}
-
-.confirm-logout {
-  background-color: #dc2626;
-  color: white;
-}
-
-.confirm-logout:hover {
-  background-color: #b91c1c;
-}
-
-/* --- User Info Wrapper --- */
-.app-user-info {
-  position: relative;
+/* Item Menu Dropdown */
+.dropdown-item {
   display: flex;
   align-items: center;
   gap: 10px;
-}
-
-/* --- Avatar User (Bulat dengan Inisial) --- */
-.app-user-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: #ef4444; /* Merah Brand */
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: transform 0.2s, background-color 0.2s;
-  border: 2px solid white;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.app-user-avatar:hover {
-  transform: scale(1.05);
-  background-color: #dc2626;
-}
-
-/* --- Dropdown Menu --- */
-.user-dropdown {
-  position: absolute;
-  top: 55px;
-  right: 0;
-  background-color: white;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  padding: 8px 0;
-  min-width: 180px;
-  z-index: 1000;
-  border: 1px solid #f3f4f6;
-  animation: slideDown 0.2s ease-out;
-}
-
-.dropdown-item {
-  display: block;
-  padding: 10px 16px;
-  color: #374151;
+  padding: 12px 16px;
+  color: var(--text-dark);
   text-decoration: none;
-  font-size: 0.95rem;
-  transition: background-color 0.2s, color 0.2s;
-  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 10px; /* Item juga rounded */
+  transition: all 0.2s ease;
+  margin-bottom: 2px;
 }
 
+/* Hover Effect: Merah Muda Pudar */
 .dropdown-item:hover {
-  background-color: #f3f4f6;
-  color: #ef4444;
+  background-color: var(--bg-light-pink); /* #fef2f2 */
+  color: var(--primary-red);
+  transform: translateX(3px); /* Efek geser dikit saat hover */
 }
 
-/* Item Khusus Logout di Dropdown */
+/* Garis Pemisah sebelum Logout */
 .dropdown-item.logout {
-  color: #dc2626;
-  border-top: 1px solid #e5e7eb;
-  margin-top: 5px;
+  margin-top: 8px;
   padding-top: 12px;
+  border-top: 1px solid #f3f4f6; /* Garis pemisah */
+  border-radius: 0 0 10px 10px; /* Round bawah saja */
+  color: var(--text-gray);
 }
 
+/* Hover khusus Logout: Merah lebih tegas */
 .dropdown-item.logout:hover {
   background-color: #fee2e2;
+  color: #b91c1c;
+  transform: none; /* Logout tidak perlu geser */
 }
 
-/* --- Modal Konfirmasi Logout --- */
+/* Animasi Muncul (Pop) */
+@keyframes dropdownPop {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* --- RESPONSIVE MOBILE --- */
+@media (max-width: 900px) {
+  .user-dropdown {
+    position: static; /* Tidak melayang di mobile */
+    width: 100%;
+    box-shadow: none;
+    border: 1px solid #e5e7eb;
+    background-color: #f9fafb; /* Background beda dikit biar kontras */
+    margin-top: 15px;
+    animation: slideDown 0.3s ease;
+  }
+  
+  .user-dropdown::before {
+    display: none; /* Hilangkan segitiga di mobile */
+  }
+
+  .dropdown-item {
+    justify-content: center; /* Teks di tengah saat mobile */
+  }
+}
+/* --- MOBILE MENU --- */
+.mobile-menu-icon {
+  display: none;
+  font-size: 24px;
+  color: var(--text-dark);
+  cursor: pointer;
+}
+
+/* --- MODAL LOGOUT (SESUAI REQUEST GAMBAR) --- */
 .header-modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
   background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(3px);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
-  backdrop-filter: blur(2px);
+  z-index: 2000;
+  animation: fadeIn 0.2s;
 }
 
 .header-modal {
-  background-color: white;
-  padding: 25px;
-  border-radius: 12px;
-  width: 350px;
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 400px;
   text-align: center;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  animation: fadeInModal 0.3s ease;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-icon-warning {
+  font-size: 48px;
+  color: #f59e0b; /* Kuning Peringatan */
+  margin-bottom: 15px;
 }
 
 .header-modal h3 {
   margin: 0 0 10px 0;
-  color: #1f2937;
-  font-size: 1.25rem;
+  color: var(--text-dark);
+  font-size: 20px;
+  font-weight: 700;
 }
 
 .header-modal p {
-  color: #6b7280;
+  color: var(--text-gray);
   margin-bottom: 25px;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .header-modal-actions {
   display: flex;
-  justify-content: space-between;
   gap: 15px;
+  justify-content: center;
 }
 
-.btn-header-cancel,
-.btn-header-confirm {
-  flex: 1;
-  padding: 10px;
+/* Tombol Batal (Pink Pudar) */
+.btn-header-cancel {
+  background-color: var(--bg-light-pink);
+  color: var(--text-red);
   border: none;
-  border-radius: 6px;
+  padding: 10px 24px;
+  border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.2s;
-}
-
-.btn-header-cancel {
-  background-color: #e5e7eb;
-  color: #374151;
+  transition: background 0.2s;
+  font-size: 14px;
 }
 
 .btn-header-cancel:hover {
-  background-color: #d1d5db;
+  background-color: #fee2e2;
 }
 
+/* Tombol Ya (Merah Solid) */
 .btn-header-confirm {
-  background-color: #dc2626;
+  background-color: var(--primary-red);
   color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 14px;
 }
 
 .btn-header-confirm:hover {
-  background-color: #b91c1c;
+  background-color: var(--primary-hover);
+  box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2);
 }
 
+/* Animasi */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes popIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
+/* --- RESPONSIVE CSS --- */
+@media (max-width: 900px) {
+  .mobile-menu-icon {
+    display: block;
+  }
 
-/* Animasi Dropdown & Modal */
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+  .nav-menu-wrapper {
+    position: absolute;
+    top: var(--nav-height);
+    left: 0;
+    width: 100%;
+    background-color: white;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    transform: translateY(-150%);
+    transition: transform 0.3s ease;
+    z-index: 999;
+  }
 
-@keyframes fadeInModal {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
-}
+  .nav-menu-wrapper.active {
+    transform: translateY(0);
+  }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
+  .app-nav-links {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .app-nav-actions {
+    margin-top: 20px;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+  }
+
+  .app-user-info {
+    flex-direction: column;
+  }
+
+  .user-dropdown {
+    position: static;
+    box-shadow: none;
+    border: 1px solid #e5e7eb;
+    margin-top: 10px;
+    width: 90%;
+    text-align: center;
+  }
 }
