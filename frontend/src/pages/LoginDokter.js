@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import "./LoginShared.css"; // Menggunakan CSS Shared
-import "./LoginDokter.css"; // Jika ada style khusus dokter
+import "../styles/LoginShared.css"; // Menggunakan CSS Shared
+import "../styles/LoginDokter.css"; // Jika ada style khusus dokter
 import { useNavigate, Link } from "react-router-dom";
 import axiosClient from "../service/axiosClient";
 import { useGoogleLogin } from "@react-oauth/google";

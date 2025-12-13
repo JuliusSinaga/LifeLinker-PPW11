@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./Laporan.css";
+import "../styles/Laporan.css";
 import SidebarAdmin from "../components/SidebarAdmin";
 import axiosClient from "../service/axiosClient";
 

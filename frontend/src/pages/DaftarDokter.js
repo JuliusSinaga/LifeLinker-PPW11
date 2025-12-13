@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "./DaftarDokter.css";
+import "../styles/DaftarDokter.css";
 import axiosClient from "../service/axiosClient"; 
 import { useGoogleLogin } from "@react-oauth/google"; 
 import { FaArrowLeft } from "react-icons/fa";

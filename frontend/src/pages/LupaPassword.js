@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "./LupaPassword.css";
+import "../styles/LupaPassword.css";
 import axiosClient from "../service/axiosClient";
 import { FaArrowLeft, FaEnvelope } from "react-icons/fa";
 

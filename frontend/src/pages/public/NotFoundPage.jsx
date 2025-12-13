@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "./NotFoundPage.css";
+import "../../styles/NotFoundPage.css";
 import { FaHeartBroken, FaExclamationTriangle, FaArrowLeft, FaHome } from "react-icons/fa";
 
 // Komponen ini bisa menerima props 'type' jika ingin digunakan untuk error lain (misal 500)

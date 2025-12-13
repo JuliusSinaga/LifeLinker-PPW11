@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import SidebarAdmin from "../components/SidebarAdmin";
-import "./ManajementEventAdmin.css";
+import "../styles/ManajementEventAdmin.css";
 import axiosClient from "../service/axiosClient";
 
 function MetricCard({ value, title, subtitle, icon, colorClass }) {

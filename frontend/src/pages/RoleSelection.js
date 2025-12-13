@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { User, Stethoscope } from "lucide-react";
 import Footer from "../components/Footer";
-import "./RoleSelection.css";
+import "../styles/RoleSelection.css";
 
 export default function RoleSelection() {
   const navigate = useNavigate(); // Hook untuk navigasi antar halaman

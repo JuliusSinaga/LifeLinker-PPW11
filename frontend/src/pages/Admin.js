@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // 1. Import useNavigate
-import "./Admin.css";
+import "../styles/Admin.css";
 import axiosClient from "../service/axiosClient"; // 2. Import API Client
 
 export default function Admin() {

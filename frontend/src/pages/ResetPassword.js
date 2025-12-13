@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import "./ResetPassword.css";
+import "../styles/ResetPassword.css";
 import axiosClient from "../service/axiosClient";
 import { FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 

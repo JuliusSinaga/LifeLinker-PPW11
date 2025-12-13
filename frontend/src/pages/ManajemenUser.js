@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import SidebarAdmin from "../components/SidebarAdmin"; 
 import axiosClient from "../service/axiosClient";
 import { FaSearch, FaTrash, FaExclamationTriangle } from "react-icons/fa"; // Tambah Icon Segitiga
-import "./ManajemenUser.css"; 
+import "../styles/ManajemenUser.css"; 
 
 export default function ManajemenUser() {
   const [users, setUsers] = useState([]); 

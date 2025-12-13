@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./LoginShared.css"; // Pastikan CSS diimport
+import "../styles/LoginShared.css"; // Pastikan CSS diimport
 import { useNavigate, Link } from "react-router-dom";
 import axiosClient from "../service/axiosClient";
 import { useGoogleLogin } from "@react-oauth/google";

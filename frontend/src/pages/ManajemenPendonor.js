@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./ManajemenPendonor.css";
+import "../styles/ManajemenPendonor.css";
 import SidebarAdmin from "../components/SidebarAdmin"; 
 import axiosClient from "../service/axiosClient";
 

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "./DaftarPengguna.css";
+import "../styles/DaftarPengguna.css";
 import axiosClient from "../service/axiosClient";
 import { useGoogleLogin } from "@react-oauth/google"; 
 import { FaArrowLeft } from "react-icons/fa"; 

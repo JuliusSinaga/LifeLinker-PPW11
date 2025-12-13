@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import SidebarAdmin from "../components/SidebarAdmin";
-import "./DashboardAdmin.css";
+import "../styles/DashboardAdmin.css";
 import axiosClient from "../service/axiosClient"; // 1. Import API Client
 
 // --- Sub-components (Tetap Sama) ---

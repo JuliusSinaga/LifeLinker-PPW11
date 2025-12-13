@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import "./BerandaPage.css";
+import "../../styles/BerandaPage.css";
 import Header from "../../components/Header";
 import axiosClient from "../../service/axiosClient"; // 1. Import API Client
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import "./StokDarahPage.css";
+import "../../styles/StokDarahPage.css";
 import {
   FaMapMarkerAlt,
   FaFilter,

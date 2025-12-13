@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import SidebarDokter from "../components/SidebarDokter";
-import "./ManajemenStok.css";
+import "../styles/ManajemenStok.css";
 import axiosClient from "../service/axiosClient";
 
 export default function ManajemenStok() {

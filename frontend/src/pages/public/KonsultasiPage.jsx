@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
-import "./KonsultasiPage.css"; 
+import "../../styles/KonsultasiPage.css"; 
 import {
   FaPaperPlane,
   FaVideo,

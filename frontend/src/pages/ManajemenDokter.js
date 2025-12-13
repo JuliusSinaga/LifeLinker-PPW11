@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import './ManajemenDokter.css';
+import '../styles/ManajemenDokter.css';
 import SidebarAdmin from "../components/SidebarAdmin";
 import axiosClient from "../service/axiosClient";
 
