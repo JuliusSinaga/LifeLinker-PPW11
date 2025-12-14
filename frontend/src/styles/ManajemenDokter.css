@@ -27,59 +27,39 @@
 /* --- Metrics Grid --- */
 .metrics-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 24px; /* Jarak antar kartu lebih renggang */
-  margin-bottom: 40px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin-bottom: 30px;
 }
 
 .metric-card {
-  background-color: white;
-  border-radius: 16px; /* Sudut lebih bulat */
-  padding: 24px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-  border: 1px solid #f3f4f6;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.metric-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
-}
-
-.metric-header {
+  background: #fff;
+  padding: 18px 20px;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .metric-value {
-  font-size: 28px;
+  color: #dc2626;
+  font-size: 22px;
   font-weight: 800;
-  color: #111827;
-  line-height: 1.2;
 }
 
 .metric-title {
   font-size: 14px;
-  color: #6b7280;
-  margin-top: 8px;
   font-weight: 600;
 }
 
 .metric-subtitle {
   font-size: 12px;
-  color: #9ca3af;
-  margin-top: 4px;
+  color: #6b7280;
 }
 
 .metric-icon {
-  font-size: 24px;
-  padding: 12px;
-  border-radius: 12px;
-  background-color: #eff6ff; /* Background default icon */
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font-size: 28px;
 }
 
 /* --- Table Container & Title --- */

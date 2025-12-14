@@ -169,7 +169,16 @@ export default function ManajemenDokter() {
 
         {/* Kartu Statistik */}
         <div className="metrics-grid">
-          {metrics.map((metric, i) => <MetricCard key={i} {...metric} />)}
+          {metrics.map((m, idx) => (
+            <div className="metric-card" key={idx}>
+              <div className="metric-content">
+                <div className="metric-value">{m.value}</div>
+                <div className="metric-title">{m.title}</div>
+                <div className="metric-subtitle">{m.subtitle}</div>
+              </div>
+              <div className="metric-icon">{m.icon}</div>
+            </div>
+          ))}
         </div>
 
         {/* Tabel Dokter */}
