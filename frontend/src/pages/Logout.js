@@ -68,8 +68,6 @@ export default function Logout() {
         </div>
       </main>
 
-      {/* Footer */}
-      <Footer />
     </div>
   );
 }
