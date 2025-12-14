@@ -81,9 +81,6 @@ export default function RoleSelection() {
           </div>
         </div>
       </main>
-
-      {/* Footer */}
-      <Footer />
     </div>
   );
 }
