@@ -60,11 +60,12 @@ func SeedLokasi(db *gorm.DB) {
 	}
 }
 
-// --- SEEDER USER ---
+// --- SEEDER USER (DISESUAIKAN DENGAN FORM PENDAFTARAN) ---
 func SeedUsers(db *gorm.DB) {
+	// Cek apakah user admin sudah ada (sebagai penanda)
 	var checkUser models.User
-	if err := db.Where("email = ?", "budi@gmail.com").First(&checkUser).Error; err == nil {
-		return 
+	if err := db.Where("email = ?", "admin@lifelinker.com").First(&checkUser).Error; err == nil {
+		return
 	}
 
 	hash := func(pwd string) string {
@@ -75,63 +76,74 @@ func SeedUsers(db *gorm.DB) {
 	users := []models.User{
 		// 1. ADMIN
 		{
-			Nama:     "Admin LifeLinker",
-			Email:    "admin@lifelinker.com",
-			Password: hash("admin123"),
-			Role:     "admin",
-			NoHp:     "081234567890",
-			Kota:     "Medan",
-            Status:   "active",
+			Nama:         "Admin LifeLinker",
+			Email:        "admin@lifelinker.com",
+			Password:     hash("admin123"),
+			Role:         "admin",
+			NoHp:         "081111111111",
+			Kota:         "Medan",
+			TanggalLahir: "1990-01-01",
+			JenisKelamin: "Laki-laki",
+			Status:       "active",
 		},
-		// 2. DOKTER
+		// 2. DOKTER 1
 		{
 			Nama:         "Dr. Anastasya",
 			Email:        "dokteranastasya@gmail.com",
 			Password:     hash("dokter123"),
 			Role:         "dokter",
 			NoHp:         "081298765432",
-			NomorSTR:     "1234567890STR",
-			Spesialisasi: "Patologi Klinik",
-			Instansi:     "RSUP H. Adam Malik",
 			Kota:         "Medan",
-            Status:       "active",
+			TanggalLahir: "1985-05-15",
+			JenisKelamin: "Perempuan",
+			NomorSTR:     "1234567890STR",     // Sesuai Form Dokter
+			Spesialisasi: "Patologi Klinik",   // Sesuai Form Dokter
+			Instansi:     "RSUP H. Adam Malik", // Sesuai Form Dokter
+			Status:       "active",            // Langsung aktif untuk testing
 		},
+		// 3. DOKTER 2
 		{
 			Nama:         "Dr. Tuti Astuni",
 			Email:        "doktertutiastuni@gmail.com",
 			Password:     hash("dokter123"),
 			Role:         "dokter",
 			NoHp:         "081212345678",
-			NomorSTR:     "1234567890STR",
-			Spesialisasi: "Patologi Klinik",
-			Instansi:     "RS HKBP Balige",
 			Kota:         "Toba Samosir",
-            Status:       "active",
+			TanggalLahir: "1988-10-20",
+			JenisKelamin: "Perempuan",
+			NomorSTR:     "9876543210STR",
+			Spesialisasi: "Hematologi",
+			Instansi:     "RS HKBP Balige",
+			Status:       "active",
 		},
-		// 3. USER BIASA
+		// 4. USER BIASA (PENDONOR) 1
 		{
-			Nama:       "Budi Setiawan",
-			Email:      "budi@gmail.com",
-			Password:   hash("user123"),
-			Role:       "user",
-			NoHp:       "085211112222",
-			GolDarah:   "O",
-			Rhesus:     "+",
-			BeratBadan: 70,
-			Kota:       "Medan",
-            Status:     "active",
+			Nama:         "Budi Setiawan",
+			Email:        "budi@gmail.com",
+			Password:     hash("user123"),
+			Role:         "user",
+			NoHp:         "085211112222",
+			Kota:         "Medan",
+			TanggalLahir: "1995-03-10",  
+			GolDarah:     "O",
+			Rhesus:       "+",
+			BeratBadan:   70,
+			Status:       "active",
 		},
+		// 5. USER BIASA (PENDONOR) 2
 		{
-			Nama:       "Aisha Feransiaka",
-			Email:      "aisha@gmail.com",
-			Password:   hash("user123"),
-			Role:       "user",
-			NoHp:       "085233334444",
-			GolDarah:   "A",
-			Rhesus:     "+",
-			BeratBadan: 65,
-			Kota:       "Toba Samosir",
-            Status:     "active",
+			Nama:         "Aisha Feransiaka",
+			Email:        "aisha@gmail.com",
+			Password:     hash("user123"),
+			Role:         "user",
+			NoHp:         "085233334444",
+			Kota:         "Toba Samosir",
+			TanggalLahir: "1998-07-25",
+			JenisKelamin: "Perempuan",
+			GolDarah:     "A",
+			Rhesus:       "+",
+			BeratBadan:   55,
+			Status:       "active",
 		},
 	}
 

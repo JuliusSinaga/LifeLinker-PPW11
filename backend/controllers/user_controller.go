@@ -278,10 +278,9 @@ func UpdateUser(c *gin.Context) {
 		return
 	}
 
-	// Cegah update field sensitif di endpoint ini
 	input.Password = ""
 	input.Role = ""
-	input.Email = "" // Email sebaiknya tidak diganti sembarangan
+	input.Email = ""
 	input.Status = ""
 
 	// Lakukan update (GORM Updates hanya mengupdate field yang tidak kosong/zero value)
