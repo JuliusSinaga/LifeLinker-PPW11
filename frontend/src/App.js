@@ -1,4 +1,10 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
 
 // === Public Pages ===
 import BerandaPage from "./pages/public/BerandaPage";
@@ -48,15 +54,35 @@ import NotFoundPage from "./pages/public/NotFoundPage";
 import LupaPassword from "./pages/LupaPassword";
 import ResetPassword from "./pages/ResetPassword";
 
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function AppContent() {
   const location = useLocation();
   const hideFooterPaths = [
-    "/pilih-role", "/role-selection", 
-    "/login-admin", "/login-user", "/login-dokter", "/login-pengguna", 
-    "/dashboard-admin", "/manajemen-dokter", "/manajemen-user", "/dashboard-dokter", "/profile-dokter",
-    "/manajemen-event", "/manajemen-pendonor", "/laporan", "/profile-admin", "/profile",
-    "/logout", "/dashboard", "/manajemen-stok", "/konsultasi-edukasi", "/error", "/forbidden", "lupa-password", "manajemen-event-admin"
+    "/pilih-role",
+    "/role-selection",
+    "/login-admin",
+    "/login-user",
+    "/login-dokter",
+    "/login-pengguna",
+    "/dashboard-admin",
+    "/manajemen-dokter",
+    "/manajemen-user",
+    "/dashboard-dokter",
+    "/profile-dokter",
+    "/manajemen-event",
+    "/manajemen-pendonor",
+    "/laporan",
+    "/profile-admin",
+    "/profile",
+    "/logout",
+    "/dashboard",
+    "/manajemen-stok",
+    "/konsultasi-edukasi",
+    "/error",
+    "/forbidden",
+    "lupa-password",
+    "manajemen-event-admin",
   ];
 
   return (
@@ -69,58 +95,68 @@ function AppContent() {
           {/* === Public Routes === */}
           <Route path="/beranda" element={<BerandaPage />} />
           <Route path="/lokasi-donor" element={<LokasiDonorPage />} />
-          <Route path="/stok-darah" element={<StokDarahPage />} />
-          <Route path="/event" element={<EventPage />} />
-          <Route path="/riwayat" element={<RiwayatPage />} />
-          <Route path="/konsultasi" element={<KonsultasiPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-
-          {/* Detail Routes */}
-          <Route path="/event/:id" element={<DetailEventPage />} />
           <Route path="/lokasi-donor/:id" element={<DetailLokasiPage />} />
+          <Route path="/stok-darah" element={<StokDarahPage />} />
           <Route path="/stok-darah/:id" element={<DetailStokDarahPage />} />
+          <Route path="/event" element={<EventPage />} />
+          <Route path="/event/:id" element={<DetailEventPage />} />
 
-          {/* === Login & Role === */}
+          {/* === User Routes === */}
+          <Route element={<ProtectedRoute allowedRoles={["user"]} />}>
+            <Route path="/riwayat" element={<RiwayatPage />} />
+            <Route path="/konsultasi" element={<KonsultasiPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+          </Route>
+
+          {/* === Dokter Route === */}
+          <Route element={<ProtectedRoute allowedRoles={["dokter"]} />}>
+            <Route path="/dashboard-dokter" element={<DashboardDokter />} />
+            <Route path="/manajemen-stok" element={<ManajemenStok />} />
+            <Route path="/manajemen-event" element={<ManajemenEvent />} />
+            <Route path="/konsultasi-edukasi" element={<KonsultasiEdukasi />} />
+            <Route path="/profile-dokter" element={<ProfilDokter />} />
+          </Route>
+
+          {/* === Admin Route === */}
+          <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+            <Route path="/dashboard-admin" element={<DashboardAdmin />} />
+            <Route path="/manajemen-dokter" element={<ManajemenDokter />} />
+            <Route path="/manajemen-user" element={<ManajemenUser />} />
+            <Route
+              path="/manajemen-event-admin"
+              element={<ManajemenEventAdmin />}
+            />
+            <Route path="/manajemen-pendonor" element={<ManajemenPendonor />} />
+            <Route path="/laporan" element={<Laporan />} />
+            <Route path="/profile-admin" element={<ProfilAdmin />} />
+            <Route path="/logout" element={<Logout />} />
+          </Route>
+
+          {/* === Auth Routes === */}
           <Route path="/pilih-role" element={<RoleSelection />} />
           <Route path="/role-selection" element={<RoleSelection />} />
-          <Route path="/login-user" element={<Navigate to="/login-pengguna" replace />} />
+          <Route
+            path="/login-user"
+            element={<Navigate to="/login-pengguna" replace />}
+          />
           <Route path="/login-dokter" element={<LoginDokter />} />
           <Route path="/login-pengguna" element={<LoginPengguna />} />
           <Route path="/daftar-pengguna" element={<DaftarPengguna />} />
           <Route path="/daftar-dokter" element={<DaftarDokter />} />
 
-          {/* === Admin Dashboard === */}
-          <Route path="/dashboard-admin" element={<DashboardAdmin />} />
-          <Route path="/manajemen-dokter" element={<ManajemenDokter />} />
-          <Route path="/manajemen-user" element={<ManajemenUser />} />
-          <Route path="/manajemen-event-admin" element={<ManajemenEventAdmin />} />
-          <Route path="/manajemen-pendonor" element={<ManajemenPendonor />} />
-          <Route path="/laporan" element={<Laporan />} />
-          <Route path="/profile-admin" element={<ProfilAdmin />} />
-          <Route path="/logout" element={<Logout />} />
-
-          {/* === Dokter Dashboard === */}
-          <Route path="/dashboard-dokter" element={<DashboardDokter />} />
-          <Route path="/manajemen-stok" element={<ManajemenStok />} />
-          <Route path="/manajemen-event" element={<ManajemenEvent />} />
-          <Route path="/konsultasi-edukasi" element={<KonsultasiEdukasi />} />
-          <Route path="/profile-dokter" element={<ProfilDokter />} />
           {/* === Fallback Pages === */}
           <Route path="/home" element={<Navigate to="/beranda" replace />} />
-          
-          {/* Route Catch-All untuk 404 (WAJIB PALING BAWAH) */}
-          <Route path="*" element={<NotFoundPage type="404" />} />
+
           {/* === Lupa Password === */}
           <Route path="/lupa-password" element={<LupaPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-            
-          {/* Fallback jika route salah */}
-          <Route path="*" element={<NotFoundPage />} />
+
+          <Route path="*" element={<NotFoundPage type="404" />} />
           <Route path="/error" element={<NotFoundPage type="500" />} />
           <Route path="/forbidden" element={<NotFoundPage type="403" />} />
         </Routes>
       </div>
-      
+
       {/* Conditional Footer */}
       {!hideFooterPaths.includes(location.pathname) && <Footer />}
     </div>
