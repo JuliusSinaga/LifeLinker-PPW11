@@ -13,7 +13,7 @@ export default function SidebarAdmin() {
   const handleLogout = () => {
     setShowLogoutModal(false);
     localStorage.clear();
-    navigate("/admin");
+    navigate("/");
   };
 
   return (
