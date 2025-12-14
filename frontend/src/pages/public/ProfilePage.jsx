@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "../../styles/ProfilePage.css"; 
-import { FaSignOutAlt, FaCheckCircle, FaExclamationTriangle } from "react-icons/fa";
+import "../../styles/ProfilePage.css"; // Pastikan path ini sesuai struktur folder Anda
+import { FaSignOutAlt, FaCheckCircle, FaExclamationTriangle, FaCamera } from "react-icons/fa";
 import Header from "../../components/Header";
 import axiosClient from "../../service/axiosClient";
 
@@ -9,12 +9,13 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("profil");
   const navigate = useNavigate();
   
-  // State Modal
+  // --- STATE MODAL & POPUP ---
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showSaveModal, setShowSaveModal] = useState(false);
-  const [modalType, setModalType] = useState("success"); // 'success' or 'error'
+  const [modalType, setModalType] = useState("success"); // 'success' atau 'error'
   const [modalMessage, setModalMessage] = useState("");
 
+  // --- STATE DATA USER ---
   const [formData, setFormData] = useState({
     id: "",
     name: "",
@@ -25,17 +26,19 @@ export default function ProfilePage() {
     rhesus: "+",
     weight: "",
     birth_date: "",
-    gender: "Laki-laki",
-    role: "pengguna"
+    gender: "",
+    role: "user",
+    photo_url: "" 
   });
 
-  // State Password
+  // --- STATE PASSWORD ---
   const [passwordData, setPasswordData] = useState({
     oldPassword: "",
     newPassword: "",
     confirmPassword: ""
   });
 
+  // --- STATE STATISTIK DONOR ---
   const [stats, setStats] = useState({
     totalDonations: 0,
     livesSaved: 0,
@@ -43,7 +46,7 @@ export default function ProfilePage() {
     history: []
   });
 
-  // 1. Load Data User
+  // 1. Load Data User saat Mount
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (!storedUser) {
@@ -53,27 +56,35 @@ export default function ProfilePage() {
     try {
       const user = JSON.parse(storedUser);
       setFormData(prev => ({ ...prev, ...user }));
+      
+      // Ambil riwayat jika ID user tersedia
       if (user.id) fetchDonationHistory(user.id);
     } catch (e) {
       console.error("Error parsing user data:", e);
     }
   }, [navigate]);
 
-  // 2. Fetch Riwayat
+  // 2. Fetch Riwayat & Statistik Donor
   const fetchDonationHistory = async (userId) => {
     try {
       const response = await axiosClient.get(`/donations?user_id=${userId}`);
       const data = response.data.data || [];
+      
+      // Filter & Sort
       const approvedDonations = data.filter(d => d.status === "Approved");
       const sortedHistory = data.sort((a, b) => new Date(b.donation_date) - new Date(a.donation_date));
 
+      // Hitung Jadwal Donor Berikutnya (3 Bulan setelah donor terakhir)
       let nextDateStr = "-";
       if (approvedDonations.length > 0) {
         const lastDonationDate = new Date(approvedDonations[0].donation_date);
         const nextDate = new Date(lastDonationDate);
         nextDate.setMonth(nextDate.getMonth() + 3);
+        
         const today = new Date();
-        const diffDays = Math.ceil((nextDate - today) / (1000 * 60 * 60 * 24));
+        const diffTime = nextDate - today;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
         nextDateStr = diffDays > 0 ? `${diffDays} Hari Lagi` : "Bisa Sekarang!";
       } else {
         nextDateStr = "Siap Donor";
@@ -81,7 +92,7 @@ export default function ProfilePage() {
 
       setStats({
         totalDonations: approvedDonations.length,
-        livesSaved: approvedDonations.length * 3,
+        livesSaved: approvedDonations.length * 3, // Asumsi 1 kantong menyelamatkan 3 nyawa
         nextDonor: nextDateStr,
         history: sortedHistory
       });
@@ -89,6 +100,8 @@ export default function ProfilePage() {
       console.error("Gagal mengambil riwayat donasi:", error);
     }
   };
+
+  // --- HANDLERS ---
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -100,20 +113,22 @@ export default function ProfilePage() {
     setPasswordData(prev => ({ ...prev, [name]: value }));
   };
 
-  // --- HANDLER SIMPAN PROFIL (DENGAN POPUP) ---
+  // Fungsi Update Profil
   const handleSave = async () => {
     try {
-      // Simulasi API update profil
-      // await axiosClient.put(`/users/${formData.id}`, formData);
+      await axiosClient.put(`/users/${formData.id}`, formData);
       
+      // Simpan ke LocalStorage agar perubahan persist di sesi ini
       localStorage.setItem("user", JSON.stringify(formData));
+      
+      // Trigger event agar Header update nama/foto otomatis
       window.dispatchEvent(new Event("user-login"));
       
       setModalType("success");
       setModalMessage("Profil berhasil diperbarui!");
       setShowSaveModal(true);
       
-      // Auto close modal setelah 2 detik
+      // Tutup modal otomatis setelah 2 detik
       setTimeout(() => setShowSaveModal(false), 2000);
     } catch (error) {
       setModalType("error");
@@ -122,25 +137,65 @@ export default function ProfilePage() {
     }
   };
 
-  // --- HANDLER SUBMIT KE DATABASE ---
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validasi tipe file (Opsional)
+    if (!file.type.startsWith('image/')) {
+        alert("Mohon unggah file gambar.");
+        return;
+    }
+
+    // Siapkan FormData untuk upload file
+    const uploadData = new FormData();
+    uploadData.append("avatar", file);
+
+    try {
+        // Panggil API Upload
+        const response = await axiosClient.post(`/users/${formData.id}/avatar`, uploadData, {
+            headers: { "Content-Type": "multipart/form-data" }
+        });
+
+        const newPhotoUrl = response.data.photo_url;
+
+        // 1. Update State Lokal
+        const updatedFormData = { ...formData, photo_url: newPhotoUrl };
+        setFormData(updatedFormData);
+
+        // 2. Update LocalStorage
+        localStorage.setItem("user", JSON.stringify(updatedFormData));
+
+        // 3. Trigger Event agar Header berubah
+        window.dispatchEvent(new Event("user-login"));
+
+        setModalType("success");
+        setModalMessage("Foto profil berhasil diperbarui!");
+        setShowSaveModal(true);
+        setTimeout(() => setShowSaveModal(false), 2000);
+
+    } catch (error) {
+        console.error("Gagal upload avatar:", error);
+        setModalType("error");
+        setModalMessage("Gagal mengunggah foto.");
+        setShowSaveModal(true);
+    }
+  };
+  // Fungsi Ganti Password
   const handleChangePassword = async () => {
-    // 1. Validasi Input Kosong
+    // Validasi
     if (!passwordData.oldPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
       setModalType("error");
       setModalMessage("Mohon lengkapi semua kolom password.");
       setShowSaveModal(true);
       return;
     }
-
-    // 2. Validasi Konfirmasi Password
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       setModalType("error");
       setModalMessage("Konfirmasi password tidak cocok.");
       setShowSaveModal(true);
       return;
     }
-
-    // 3. Validasi Panjang Password (Optional)
     if (passwordData.newPassword.length < 6) {
         setModalType("error");
         setModalMessage("Password minimal 6 karakter.");
@@ -149,28 +204,22 @@ export default function ProfilePage() {
     }
 
     try {
-      // 4. Panggil API Backend
-      // Payload harus sesuai dengan struct di Go (oldPassword, newPassword)
+      // Panggil API
       await axiosClient.put(`/users/${formData.id}/password`, {
         oldPassword: passwordData.oldPassword,
         newPassword: passwordData.newPassword
       });
       
-      // 5. Sukses
       setModalType("success");
       setModalMessage("Password berhasil diubah!");
       setShowSaveModal(true);
       
-      // Reset Form
+      // Reset form password
       setPasswordData({ oldPassword: "", newPassword: "", confirmPassword: "" }); 
-      
-      // Tutup modal otomatis
       setTimeout(() => setShowSaveModal(false), 2000);
 
     } catch (error) {
-      // 6. Error Handling (Misal password lama salah)
       console.error("Gagal ganti password:", error);
-      
       const errorMsg = error.response?.data?.error || "Gagal mengubah password.";
       setModalType("error");
       setModalMessage(errorMsg);
@@ -178,11 +227,9 @@ export default function ProfilePage() {
     }
   };
 
-  // LOGOUT LOGIC
-  const handleLogoutClick = () => {
-    setShowLogoutModal(true); 
-  };
-
+  // Fungsi Logout
+  const handleLogoutClick = () => setShowLogoutModal(true);
+  
   const confirmLogout = () => {
     setShowLogoutModal(false);
     localStorage.removeItem("token");
@@ -191,11 +238,17 @@ export default function ProfilePage() {
     navigate("/login-pengguna");
   };
 
+  // Helper Format Tanggal
   const formatDate = (dateString) => {
     if (!dateString) return "-";
     return new Date(dateString).toLocaleDateString("id-ID", {
       day: "numeric", month: "short", year: "numeric"
     });
+  };
+
+  // Helper Inisial Nama (Fallback Foto)
+  const getInitials = (name) => {
+    return name ? name.charAt(0).toUpperCase() : "U";
   };
 
   return (
@@ -205,42 +258,61 @@ export default function ProfilePage() {
       <main className="profile-main">
         <div className="profile-container">
           
-          {/* SIDEBAR */}
+          {/* --- SIDEBAR (KIRI) --- */}
           <div className="profile-sidebar">
+            {/* Kartu User */}
             <div className="profile-user-card">
               <div className="profile-user-avatar">
-                <img
-                  src={process.env.PUBLIC_URL + "/images/budi-avatar.png"}
-                  alt={formData.name}
-                  onError={(e) => {e.target.onerror = null; e.target.src="https://via.placeholder.com/150"}}
-                />
+                {formData.photo_url ? (
+                    <img 
+                            src={formData.photo_url} 
+                            alt={formData.name} 
+                            onError={(e) => { e.target.onerror = null; e.target.src=`https://ui-avatars.com/api/?name=${formData.name}`}}
+                        />
+                    ) : (
+                        <div className="avatar-initial-circle">{getInitials(formData.name)}</div>
+                    )}
               </div>
-              <h3>{formData.name || "Pengguna"}</h3>
+              <label htmlFor="avatar-upload" className="avatar-edit-btn">
+                    <FaCamera />
+                </label>
+                <input 
+                    id="avatar-upload" 
+                    type="file" 
+                    accept="image/*" 
+                    style={{ display: "none" }} 
+                    onChange={handleAvatarChange}
+                />
+              <h3>{formData.name || "User"}</h3>
               <p>{formData.city || "Kota belum diisi"}</p>
             </div>
 
+            {/* Kartu Donor Digital */}
             <div className="profile-donor-card">
               <div className="donor-card-header"><h4>KARTU DONOR DIGITAL</h4></div>
-              <div className="donor-card-blood-type">{formData.blood_type}{formData.rhesus}</div>
+              <div className="donor-card-blood-type">
+                {formData.blood_type}{formData.rhesus}
+              </div>
               <div className="donor-card-info">
                 <div className="donor-card-row"><span>Tanggal Lahir</span><span>Jenis Kelamin</span></div>
                 <div className="donor-card-row">
                   <span>{formData.birth_date ? formatDate(formData.birth_date) : "-"}</span>
-                  <span>{formData.gender}</span>
+                  <span>{formData.gender || "-"}</span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* KONTEN */}
+          {/* --- KONTEN UTAMA (KANAN) --- */}
           <div className="profile-content">
+            {/* Navigasi Tab */}
             <div className="profile-tabs">
               <button className={`profile-tab ${activeTab === "profil" ? "active" : ""}`} onClick={() => setActiveTab("profil")}>Profil Saya</button>
               <button className={`profile-tab ${activeTab === "statistik" ? "active" : ""}`} onClick={() => setActiveTab("statistik")}>Statistik & Riwayat</button>
               <button className={`profile-tab ${activeTab === "pengaturan" ? "active" : ""}`} onClick={() => setActiveTab("pengaturan")}>Pengaturan Akun</button>
             </div>
 
-            {/* TAB 1: FORM */}
+            {/* TAB 1: FORM EDIT PROFIL */}
             {activeTab === "profil" && (
               <div className="profile-form-section">
                 <h3>Informasi Pribadi & Medis</h3>
@@ -304,7 +376,7 @@ export default function ProfilePage() {
               </div>
             )}
 
-            {/* TAB 2: STATISTIK */}
+            {/* TAB 2: STATISTIK & RIWAYAT */}
             {activeTab === "statistik" && (
               <div className="profile-stats">
                 <div className="stats-summary">
@@ -348,7 +420,7 @@ export default function ProfilePage() {
               </div>
             )}
 
-            {/* TAB 3: PENGATURAN */}
+            {/* TAB 3: PENGATURAN AKUN */}
             {activeTab === "pengaturan" && (
               <div className="profile-settings">
                 <div className="settings-section">
@@ -399,8 +471,8 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="settings-logout-section">
-                      <h4 className="settings-logout-title">Keluar dari akun Anda di perangkat ini.</h4>
-                      <p className="logout-desc"></p>
+                      <h4 className="settings-logout-title">Zona Keluar</h4>
+                      <p className="logout-desc">Keluar dari akun Anda di perangkat ini.</p>
                       <button className="btn-logout-settings" onClick={handleLogoutClick}>
                       <FaSignOutAlt /> Keluar dari Aplikasi
                     </button>
@@ -413,7 +485,7 @@ export default function ProfilePage() {
         </div>
       </main>
 
-      {/* MODAL NOTIFIKASI SIMPAN */}
+      {/* --- POPUP MODAL (SUKSES/GAGAL) --- */}
       {showSaveModal && (
         <div className="popup-modal-overlay">
           <div className="popup-modal">
@@ -427,7 +499,7 @@ export default function ProfilePage() {
         </div>
       )}
 
-      {/* MODAL LOGOUT */}
+      {/* --- MODAL LOGOUT --- */}
       {showLogoutModal && (
         <div className="logout-modal-overlay">
           <div className="logout-modal">

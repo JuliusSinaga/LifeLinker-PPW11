@@ -193,3 +193,25 @@ func UpdateConsultationStatus(c *gin.Context) {
 		"data":    consultation,
 	})
 }
+
+// GET /consultations/:id
+func GetConsultationByID(c *gin.Context) {
+    id := c.Param("id") // Mengambil ID dari URL, misal: /consultations/12
+    var consultation models.Consultation
+
+    // Query ke database mencari ID tersebut
+    // Sekalian ambil data User, Doctor, dan Messages-nya
+    if err := database.DB.
+        Preload("User").
+        Preload("Doctor").
+        Preload("Messages", func(db *gorm.DB) *gorm.DB {
+            return db.Order("created_at asc") // Urutkan pesan chat
+        }).
+        First(&consultation, id).Error; err != nil {
+        
+        c.JSON(http.StatusNotFound, gin.H{"error": "Konsultasi tidak ditemukan"})
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{"data": consultation})
+}

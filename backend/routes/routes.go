@@ -21,6 +21,7 @@ func SetupRoutes(router *gin.Engine) {
 	router.PUT("/users/:id/password", controllers.UpdatePassword) // Ganti Password
 	router.DELETE("/users/:id", controllers.DeleteUser)    // Hapus User (Admin)
 	router.PUT("/users/:id/verify", controllers.VerifyDoctor) // Verifikasi Dokter (Admin)
+	router.POST("/users/:id/avatar", controllers.UploadUserAvatar) // Upload Foto Profil
 
 	// --- DASHBOARD ADMIN ---
 	router.GET("/dashboard/admin", controllers.DashboardAdmin)
@@ -37,8 +38,8 @@ func SetupRoutes(router *gin.Engine) {
 	// Stok Darah
 	router.GET("/stok-darah", controllers.GetStokDarah)
 	router.GET("/stok-darah/:id", controllers.GetStokDarahByID)
-	router.POST("/stok-darah", controllers.UpdateStokDarah) // Atau CreateStokDarah
-	router.DELETE("/stok-darah/:id", controllers.DeleteStokDarah) // [BARU] Hapus Stok
+	router.POST("/stok-darah", controllers.UpdateStokDarah)
+	router.DELETE("/stok-darah/:id", controllers.DeleteStokDarah) 
 
 	// Events
 	router.GET("/events", controllers.GetEvents)

@@ -1,10 +1,5 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-  useLocation,
-} from "react-router-dom";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 
 // === Public Pages ===
 import BerandaPage from "./pages/public/BerandaPage";
@@ -24,6 +19,8 @@ import LoginDokter from "./pages/LoginDokter";
 import LoginPengguna from "./pages/LoginPengguna";
 import DaftarPengguna from "./pages/DaftarPengguna";
 import DaftarDokter from "./pages/DaftarDokter";
+import LupaPassword from "./pages/LupaPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 // === Admin Dashboard Pages ===
 import DashboardAdmin from "./pages/DashboardAdmin";
@@ -42,54 +39,36 @@ import ManajemenEvent from "./pages/ManajemenEvent";
 import KonsultasiEdukasi from "./pages/KonsultasiEdukasi";
 import ProfilDokter from "./pages/ProfilDokter";
 
-// === Components ===
+// === Components & System ===
 import Footer from "./components/Footer";
-
-// === Fallback Pages ===
-// import Home from "./pages/Home";
-
-// === Not Found Page ===
-import NotFoundPage from "./pages/public/NotFoundPage";
-
-import LupaPassword from "./pages/LupaPassword";
-import ResetPassword from "./pages/ResetPassword";
-
+import Header from "./components/Header";
+import ScrollToTop from "./components/ScrollToTop";
 import ProtectedRoute from "./components/ProtectedRoute";
+import NotFoundPage from "./pages/public/NotFoundPage";
 
 function AppContent() {
   const location = useLocation();
+  
+  // Daftar path yang tidak menampilkan footer
   const hideFooterPaths = [
-    "/pilih-role",
-    "/role-selection",
-    "/login-admin",
-    "/login-user",
-    "/login-dokter",
-    "/login-pengguna",
-    "/dashboard-admin",
-    "/manajemen-dokter",
-    "/manajemen-user",
-    "/dashboard-dokter",
-    "/profile-dokter",
-    "/manajemen-event",
-    "/manajemen-pendonor",
-    "/laporan",
-    "/profile-admin",
-    "/profile",
-    "/logout",
-    "/dashboard",
-    "/manajemen-stok",
-    "/konsultasi-edukasi",
-    "/error",
-    "/forbidden",
-    "lupa-password",
-    "manajemen-event-admin",
+    "/pilih-role", "/role-selection", 
+    "/login-admin", "/login-user", "/login-dokter", "/login-pengguna", 
+    "/daftar-pengguna", "/daftar-dokter",
+    "/dashboard-admin", "/manajemen-dokter", "/manajemen-user", "/manajemen-event-admin", "/manajemen-pendonor", "/laporan", "/profile-admin",
+    "/dashboard-dokter", "/manajemen-stok", "/manajemen-event", "/konsultasi-edukasi", "/profile-dokter",
+    "/logout", "/error", "/forbidden", "/lupa-password", "/reset-password"
   ];
 
   return (
     <div className="min-h-screen flex flex-col">
       <div className="flex-grow">
+        
+        {/* ScrollToTop & Header ada di dalam Router context */}
+        <ScrollToTop />
+        {/* <Header /> */}
+        
         <Routes>
-          {/* Redirect default ke public beranda */}
+          {/* Redirect default */}
           <Route path="/" element={<Navigate to="/beranda" replace />} />
 
           {/* === Public Routes === */}
@@ -100,16 +79,16 @@ function AppContent() {
           <Route path="/stok-darah/:id" element={<DetailStokDarahPage />} />
           <Route path="/event" element={<EventPage />} />
           <Route path="/event/:id" element={<DetailEventPage />} />
-
-          {/* === User Routes === */}
-          <Route element={<ProtectedRoute allowedRoles={["user"]} />}>
+          
+          {/* === User Routes (Protected) === */}
+          <Route element={<ProtectedRoute allowedRoles={['user', 'pengguna']} />}>
             <Route path="/riwayat" element={<RiwayatPage />} />
             <Route path="/konsultasi" element={<KonsultasiPage />} />
             <Route path="/profile" element={<ProfilePage />} />
           </Route>
 
-          {/* === Dokter Route === */}
-          <Route element={<ProtectedRoute allowedRoles={["dokter"]} />}>
+          {/* === Dokter Route (Protected) === */}
+          <Route element={<ProtectedRoute allowedRoles={['dokter']} />}>
             <Route path="/dashboard-dokter" element={<DashboardDokter />} />
             <Route path="/manajemen-stok" element={<ManajemenStok />} />
             <Route path="/manajemen-event" element={<ManajemenEvent />} />
@@ -117,15 +96,12 @@ function AppContent() {
             <Route path="/profile-dokter" element={<ProfilDokter />} />
           </Route>
 
-          {/* === Admin Route === */}
-          <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+          {/* === Admin Route (Protected) === */}
+          <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
             <Route path="/dashboard-admin" element={<DashboardAdmin />} />
             <Route path="/manajemen-dokter" element={<ManajemenDokter />} />
             <Route path="/manajemen-user" element={<ManajemenUser />} />
-            <Route
-              path="/manajemen-event-admin"
-              element={<ManajemenEventAdmin />}
-            />
+            <Route path="/manajemen-event-admin" element={<ManajemenEventAdmin />} />
             <Route path="/manajemen-pendonor" element={<ManajemenPendonor />} />
             <Route path="/laporan" element={<Laporan />} />
             <Route path="/profile-admin" element={<ProfilAdmin />} />
@@ -135,28 +111,23 @@ function AppContent() {
           {/* === Auth Routes === */}
           <Route path="/pilih-role" element={<RoleSelection />} />
           <Route path="/role-selection" element={<RoleSelection />} />
-          <Route
-            path="/login-user"
-            element={<Navigate to="/login-pengguna" replace />}
-          />
+          <Route path="/login-user" element={<Navigate to="/login-pengguna" replace />} />
           <Route path="/login-dokter" element={<LoginDokter />} />
           <Route path="/login-pengguna" element={<LoginPengguna />} />
           <Route path="/daftar-pengguna" element={<DaftarPengguna />} />
           <Route path="/daftar-dokter" element={<DaftarDokter />} />
-
-          {/* === Fallback Pages === */}
-          <Route path="/home" element={<Navigate to="/beranda" replace />} />
-
-          {/* === Lupa Password === */}
+          
+          {/* === Utility Pages === */}
           <Route path="/lupa-password" element={<LupaPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-
-          <Route path="*" element={<NotFoundPage type="404" />} />
+            
+          {/* === Error Pages === */}
           <Route path="/error" element={<NotFoundPage type="500" />} />
           <Route path="/forbidden" element={<NotFoundPage type="403" />} />
+          <Route path="*" element={<NotFoundPage type="404" />} />
         </Routes>
       </div>
-
+      
       {/* Conditional Footer */}
       {!hideFooterPaths.includes(location.pathname) && <Footer />}
     </div>
@@ -165,6 +136,7 @@ function AppContent() {
 
 function App() {
   return (
+    // Router utama dideklarasikan di sini
     <Router>
       <AppContent />
     </Router>

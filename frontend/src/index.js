@@ -12,7 +12,7 @@ const googleClientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
 // Pengecekan agar tidak error jika env belum di-set
 if (!googleClientId) {
-  console.error("⚠️ Google Client ID tidak ditemukan. Pastikan Anda sudah membuat file .env dan mengisi REACT_APP_GOOGLE_CLIENT_ID");
+  console.warn("⚠️ Google Client ID tidak ditemukan. Pastikan Anda sudah membuat file .env dan mengisi REACT_APP_GOOGLE_CLIENT_ID");
 }
 
 root.render(

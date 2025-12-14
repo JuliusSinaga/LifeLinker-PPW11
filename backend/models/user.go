@@ -1,27 +1,26 @@
 package models
 
 import (
-	"gorm.io/gorm" 
+	"gorm.io/gorm"
 	"time"
 )
 
 type User struct {
 	gorm.Model
 	// --- Field Umum (User, Dokter, Admin) ---
-	Nama         string `json:"name"`
-	Email        string `gorm:"unique" json:"email"`
-	Password     string `json:"password"` // Note: Controller harus hati-hati agar tidak mengembalikan ini ke frontend
-	Role         string `json:"role"`     // "user", "dokter", "admin"
-	
-	// --- TAMBAHAN FIELD STATUS (PENTING) ---
-	// Values: "active", "pending", "rejected"
-	// Default: "active" (agar user biasa langsung bisa login)
-	Status       string `json:"status" gorm:"default:'active'"` 
+	Nama     string `json:"name"`
+	Email    string `gorm:"unique" json:"email"`
+	Password string `json:"password"`
+	Role     string `json:"role"` 
+	Status   string `json:"status" gorm:"default:'active'"`
 
 	NoHp         string `json:"phone"`
 	Kota         string `json:"city"`
-	TanggalLahir string `json:"birth_date"` // Format: YYYY-MM-DD
+	TanggalLahir string `json:"birth_date"`
 	JenisKelamin string `json:"gender"`
+	
+	// [PENTING] Tambahan untuk Foto Profil
+	PhotoURL     string `json:"photo_url"` 
 
 	// --- Field Khusus User (Pendonor) ---
 	GolDarah   string `json:"blood_type"`
@@ -33,26 +32,17 @@ type User struct {
 	Spesialisasi string `json:"specialization"`
 	Instansi     string `json:"hospital"`
 
-	// --- TAMBAHAN UNTUK RESET PASSWORD ---
+	// --- Reset Password ---
 	ResetToken       string    `json:"-"`
 	ResetTokenExpiry time.Time `json:"-"`
-	// ================= RELASI (UPDATED) =================
 
-	// 1. Relasi sebagai PENDONOR (Pasien)
-	// User melakukan donasi
-	Donations []DonationHistory `gorm:"foreignKey:UserID" json:"donations,omitempty"`
-	// User mengajukan konsultasi
-	ConsultationsAsPatient []Consultation `gorm:"foreignKey:UserID" json:"consultations_as_patient,omitempty"`
-	// User mengikuti event
-	EventsParticipated []Event `gorm:"many2many:event_participants;" json:"events_participated,omitempty"`
+	// ================= RELASI =================
+	Donations              []DonationHistory `gorm:"foreignKey:UserID" json:"donations,omitempty"`
+	ConsultationsAsPatient []Consultation    `gorm:"foreignKey:UserID" json:"consultations_as_patient,omitempty"`
+	EventsParticipated     []Event           `gorm:"many2many:event_participants;" json:"events_participated,omitempty"`
 
-	// 2. Relasi sebagai DOKTER / ADMIN
-	// Dokter menangani/memeriksa donasi
-	DonationsHandled []DonationHistory `gorm:"foreignKey:DoctorID" json:"donations_handled,omitempty"`
-	// Dokter menangani konsultasi
-	ConsultationsAsDoctor []Consultation `gorm:"foreignKey:DoctorID" json:"consultations_as_doctor,omitempty"`
-	// Admin/Organizer membuat event
-	EventsOrganized []Event `gorm:"foreignKey:OrganizerID" json:"events_organized,omitempty"`
-	// Admin mengupdate stok darah
-	StockUpdates []StokDarah `gorm:"foreignKey:AdminID" json:"stock_updates,omitempty"`
+	DonationsHandled      []DonationHistory `gorm:"foreignKey:DoctorID" json:"donations_handled,omitempty"`
+	ConsultationsAsDoctor []Consultation    `gorm:"foreignKey:DoctorID" json:"consultations_as_doctor,omitempty"`
+	EventsOrganized       []Event           `gorm:"foreignKey:OrganizerID" json:"events_organized,omitempty"`
+	StockUpdates          []StokDarah       `gorm:"foreignKey:AdminID" json:"stock_updates,omitempty"`
 }

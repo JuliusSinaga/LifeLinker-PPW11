@@ -1,19 +1,20 @@
 package controllers
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"crypto/rand"
-    "encoding/hex"
-    "time"
+	"time"
+	"path/filepath"
+    "os"
 
-	"github.com/gin-gonic/gin"
-	"golang.org/x/crypto/bcrypt"
-	
 	"github.com/JuliusSinaga/LifeLinker-PPW11/backend/database"
 	"github.com/JuliusSinaga/LifeLinker-PPW11/backend/models"
 	"github.com/JuliusSinaga/LifeLinker-PPW11/backend/utils"
+	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // Struct Input
@@ -63,8 +64,8 @@ func GoogleLogin(c *gin.Context) {
 		user = models.User{
 			Nama:     googleData.Name,
 			Email:    googleData.Email,
-			Password: "",     
-			Role:     "user", 
+			Password: "",
+			Role:     "user",
 			Status:   "active", // User biasa via Google langsung aktif
 		}
 		if err := database.DB.Create(&user).Error; err != nil {
@@ -124,10 +125,8 @@ func Login(c *gin.Context) {
 // ----------------------------------------------------
 func CreateUser(c *gin.Context) {
 	var user models.User
-	
-	// ERROR PADA GAMBAR ANDA TERJADI DI SINI:
-	// Jika Frontend kirim "weight": "55" (string), ShouldBindJSON akan gagal karena struct User minta int.
-	// Solusinya: Pastikan frontend kirim angka (int).
+
+	// Pastikan Frontend mengirim tipe data yang benar (int untuk berat badan/umur, dll)
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -142,7 +141,7 @@ func CreateUser(c *gin.Context) {
 	if user.Role == "dokter" {
 		user.Status = "pending" // Dokter harus diverifikasi
 	} else {
-		user.Status = "active"  // User biasa langsung aktif
+		user.Status = "active" // User biasa langsung aktif
 	}
 
 	// Hash Password
@@ -227,11 +226,6 @@ func VerifyDoctor(c *gin.Context) {
 				<p>Selamat! Data profesional dan Nomor STR Anda telah berhasil diverifikasi oleh Admin.</p>
 				<p>Status akun Anda sekarang: <b style="color: green;">AKTIF</b>.</p>
 				<p>Silakan login untuk mulai mengelola stok darah dan event.</p>
-				<br>
-				<a href="http://localhost:3000/login-dokter" 
-				   style="background-color: #dc2626; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
-				   Login Sekarang
-				</a>
 			</div>
 		`, user.Nama)
 
@@ -249,7 +243,7 @@ func VerifyDoctor(c *gin.Context) {
 // ----------------------------------------------------
 func GetUsers(c *gin.Context) {
 	var users []models.User
-	
+
 	// Ambil semua data user
 	if err := database.DB.Find(&users).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mengambil data user"})
@@ -265,116 +259,126 @@ func GetUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": formattedUsers})
 }
 
-// Di bagian paling bawah file user_controller.go
-func formatUserResponse(u models.User) map[string]interface{} {
-	return map[string]interface{}{
-		"id":             u.ID,
-		"name":           u.Nama,
-		"email":          u.Email,
-		"role":           u.Role,
-		"status":         u.Status,
-		"phone":          u.NoHp,
-		"city":           u.Kota,
-		// Tambahkan ini untuk Manajemen User:
-		"blood_type":     u.GolDarah,
-		"rhesus":         u.Rhesus,
-		// Field dokter (opsional jika user biasa)
-		"str_number":     u.NomorSTR,
-		"specialization": u.Spesialisasi,
-		"hospital":       u.Instansi,
-	}
-}
-
-// --- FITUR: LUPA PASSWORD (Minta Link) ---
-func ForgotPassword(c *gin.Context) {
-    var input struct {
-        Email string `json:"email" binding:"required"`
-    }
-    if err := c.ShouldBindJSON(&input); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Email wajib diisi"})
-        return
-    }
-
-    var user models.User
-    if err := database.DB.Where("email = ?", input.Email).First(&user).Error; err != nil {
-        // Demi keamanan, biasanya kita tetap bilang "Email terkirim jika terdaftar"
-        // Tapi untuk development, kita beri tahu errornya
-        c.JSON(http.StatusNotFound, gin.H{"error": "Email tidak ditemukan"})
-        return
-    }
-
-    // 1. Generate Token Random
-    bytes := make([]byte, 16)
-    rand.Read(bytes)
-    token := hex.EncodeToString(bytes)
-
-    // 2. Simpan Token & Expiry (misal 15 menit) ke DB
-    user.ResetToken = token
-    user.ResetTokenExpiry = time.Now().Add(15 * time.Minute)
-    database.DB.Save(&user)
-
-    // 3. Kirim Email
-    // Link mengarah ke Frontend Page Khusus (misal: /reset-password)
-    resetLink := fmt.Sprintf("http://localhost:3000/reset-password?token=%s", token)
-    
-    subject := "Reset Password - LifeLinker"
-    body := fmt.Sprintf(`
-        <h3>Halo %s,</h3>
-        <p>Anda meminta untuk mereset password akun LifeLinker Anda.</p>
-        <p>Silakan klik link di bawah ini untuk membuat password baru:</p>
-        <a href="%s" style="background-color: #dc2626; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset Password</a>
-        <p>Link ini hanya berlaku selama 15 menit.</p>
-        <p>Jika Anda tidak merasa meminta ini, abaikan saja email ini.</p>
-    `, user.Nama, resetLink)
-
-    go utils.SendEmail(user.Email, subject, body)
-
-    c.JSON(http.StatusOK, gin.H{"message": "Link reset password telah dikirim ke email Anda"})
-}
-
-// --- FITUR: RESET PASSWORD (Eksekusi Ganti Password) ---
-func ResetPassword(c *gin.Context) {
-    var input struct {
-        Token       string `json:"token" binding:"required"`
-        NewPassword string `json:"new_password" binding:"required"`
-    }
-    if err := c.ShouldBindJSON(&input); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Data tidak lengkap"})
-        return
-    }
-
-    var user models.User
-    // Cari user berdasarkan Token DAN pastikan Token belum kadaluarsa
-    if err := database.DB.Where("reset_token = ? AND reset_token_expiry > ?", input.Token, time.Now()).First(&user).Error; err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Token tidak valid atau sudah kadaluwarsa"})
-        return
-    }
-
-    // Hash Password Baru
-    hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(input.NewPassword), bcrypt.DefaultCost)
-    
-    // Update Data User
-    user.Password = string(hashedPassword)
-    user.ResetToken = "" // Hapus token agar tidak bisa dipakai lagi
-    // user.ResetTokenExpiry tidak perlu di-null-kan, cukup tokennya string kosong
-    
-    database.DB.Save(&user)
-
-    c.JSON(http.StatusOK, gin.H{"message": "Password berhasil diubah. Silakan login kembali."})
-}
-
-// Endpoint: DELETE /users/:id
-func DeleteUser(c *gin.Context) {
+// ----------------------------------------------------
+// FITUR 6: UPDATE PROFIL USER (PUT /users/:id)
+// ----------------------------------------------------
+func UpdateUser(c *gin.Context) {
 	id := c.Param("id")
 
-	// Cek apakah user ada
 	var user models.User
 	if err := database.DB.First(&user, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User tidak ditemukan"})
 		return
 	}
 
-	// Hapus User (Soft Delete karena menggunakan gorm.Model)
+	// Bind input ke struct User
+	var input models.User
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Cegah update field sensitif di endpoint ini
+	input.Password = ""
+	input.Role = ""
+	input.Email = "" // Email sebaiknya tidak diganti sembarangan
+	input.Status = ""
+
+	// Lakukan update (GORM Updates hanya mengupdate field yang tidak kosong/zero value)
+	if err := database.DB.Model(&user).Updates(input).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal memperbarui profil"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Profil berhasil diperbarui",
+		"data":    formatUserResponse(user),
+	})
+}
+
+// --- FITUR: LUPA PASSWORD (Minta Link) ---
+func ForgotPassword(c *gin.Context) {
+	var input struct {
+		Email string `json:"email" binding:"required"`
+	}
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Email wajib diisi"})
+		return
+	}
+
+	var user models.User
+	if err := database.DB.Where("email = ?", input.Email).First(&user).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Email tidak ditemukan"})
+		return
+	}
+
+	// 1. Generate Token Random
+	bytes := make([]byte, 16)
+	rand.Read(bytes)
+	token := hex.EncodeToString(bytes)
+
+	// 2. Simpan Token & Expiry (misal 15 menit) ke DB
+	user.ResetToken = token
+	user.ResetTokenExpiry = time.Now().Add(15 * time.Minute)
+	database.DB.Save(&user)
+
+	// 3. Kirim Email
+	resetLink := fmt.Sprintf("http://localhost:3000/reset-password?token=%s", token)
+
+	subject := "Reset Password - LifeLinker"
+	body := fmt.Sprintf(`
+        <h3>Halo %s,</h3>
+        <p>Anda meminta untuk mereset password akun LifeLinker Anda.</p>
+        <p>Silakan klik link di bawah ini untuk membuat password baru:</p>
+        <a href="%s" style="background-color: #dc2626; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset Password</a>
+        <p>Link ini hanya berlaku selama 15 menit.</p>
+    `, user.Nama, resetLink)
+
+	go utils.SendEmail(user.Email, subject, body)
+
+	c.JSON(http.StatusOK, gin.H{"message": "Link reset password telah dikirim ke email Anda"})
+}
+
+// --- FITUR: RESET PASSWORD (Eksekusi Ganti Password) ---
+func ResetPassword(c *gin.Context) {
+	var input struct {
+		Token       string `json:"token" binding:"required"`
+		NewPassword string `json:"new_password" binding:"required"`
+	}
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Data tidak lengkap"})
+		return
+	}
+
+	var user models.User
+	// Cari user berdasarkan Token DAN pastikan Token belum kadaluarsa
+	if err := database.DB.Where("reset_token = ? AND reset_token_expiry > ?", input.Token, time.Now()).First(&user).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Token tidak valid atau sudah kadaluwarsa"})
+		return
+	}
+
+	// Hash Password Baru
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(input.NewPassword), bcrypt.DefaultCost)
+
+	// Update Data User
+	user.Password = string(hashedPassword)
+	user.ResetToken = "" // Hapus token
+
+	database.DB.Save(&user)
+
+	c.JSON(http.StatusOK, gin.H{"message": "Password berhasil diubah. Silakan login kembali."})
+}
+
+// Endpoint: DELETE /users/:id
+func DeleteUser(c *gin.Context) {
+	id := c.Param("id")
+
+	var user models.User
+	if err := database.DB.First(&user, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User tidak ditemukan"})
+		return
+	}
+
 	if err := database.DB.Delete(&user).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal menghapus user"})
 		return
@@ -383,11 +387,10 @@ func DeleteUser(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "User berhasil dihapus"})
 }
 
-// PUT /users/:id/password
+// PUT /users/:id/password (Ganti Password Logged In)
 func UpdatePassword(c *gin.Context) {
 	id := c.Param("id")
 
-	// Struct untuk menangkap input JSON dari React
 	var input struct {
 		OldPassword string `json:"oldPassword" binding:"required"`
 		NewPassword string `json:"newPassword" binding:"required"`
@@ -398,32 +401,95 @@ func UpdatePassword(c *gin.Context) {
 		return
 	}
 
-	// 1. Cari User di Database
 	var user models.User
 	if err := database.DB.First(&user, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User tidak ditemukan"})
 		return
 	}
 
-	// 2. Verifikasi Password Lama (Bandingkan Hash)
+	// Verifikasi Password Lama
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.OldPassword))
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Password lama salah!"})
 		return
 	}
 
-	// 3. Hash Password Baru
+	// Hash Password Baru
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(input.NewPassword), bcrypt.DefaultCost)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mengenkripsi password"})
 		return
 	}
 
-	// 4. Simpan ke Database
 	if err := database.DB.Model(&user).Update("password", string(hashedPassword)).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal menyimpan password baru"})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Password berhasil diperbarui"})
+}
+
+// Helper: Format JSON Response
+func formatUserResponse(u models.User) map[string]interface{} {
+	return map[string]interface{}{
+		"id":             u.ID,
+		"name":           u.Nama,
+		"email":          u.Email,
+		"role":           u.Role,
+		"status":         u.Status,
+		"phone":          u.NoHp,
+		"city":           u.Kota,
+		"blood_type":     u.GolDarah,
+		"rhesus":         u.Rhesus,
+		"weight":         u.BeratBadan,
+		"birth_date":     u.TanggalLahir,
+		"gender":         u.JenisKelamin,
+		"str_number":     u.NomorSTR,
+		"specialization": u.Spesialisasi,
+		"hospital":       u.Instansi,
+		"photo_url":      u.PhotoURL, // <--- TAMBAHKAN INI
+	}
+}
+
+// POST /users/:id/avatar
+func UploadUserAvatar(c *gin.Context) {
+    id := c.Param("id")
+
+    // Ambil file
+    file, err := c.FormFile("avatar")
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "File gambar wajib diunggah"})
+        return
+    }
+
+    // Simpan file
+    uploadDir := "./public/uploads"
+    if _, err := os.Stat(uploadDir); os.IsNotExist(err) {
+        os.MkdirAll(uploadDir, os.ModePerm)
+    }
+
+    filename := fmt.Sprintf("user_%s_avatar%s", id, filepath.Ext(file.Filename))
+    savePath := fmt.Sprintf("%s/%s", uploadDir, filename)
+
+    if err := c.SaveUploadedFile(file, savePath); err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal menyimpan file"})
+        return
+    }
+
+    baseURL := os.Getenv("BASE_URL")
+    photoURL := fmt.Sprintf("%s/uploads/%s", baseURL, filename)
+
+    var user models.User
+    if err := database.DB.First(&user, id).Error; err != nil {
+        c.JSON(http.StatusNotFound, gin.H{"error": "User tidak ditemukan"})
+        return
+    }
+
+    user.PhotoURL = photoURL
+    database.DB.Save(&user)
+
+    c.JSON(http.StatusOK, gin.H{
+        "message":   "Foto profil berhasil diperbarui",
+        "photo_url": photoURL,
+    })
 }

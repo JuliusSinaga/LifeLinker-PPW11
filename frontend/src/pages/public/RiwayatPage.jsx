@@ -134,6 +134,10 @@ export default function RiwayatPage() {
     { icon: <FaChartLine />, value: stats.averageCycle, label: "Siklus Donor Rata-rata", color: "#dc2626" },
   ];
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   return (
     <div className="riwayat-page-root">
       <Header showUserProfile={true} />

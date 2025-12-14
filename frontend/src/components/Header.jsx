@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { FaExclamationTriangle, FaUserCircle, FaBars, FaTimes } from "react-icons/fa"; // Tambah Icon
+import { 
+  FaExclamationTriangle, 
+  FaUserCircle, 
+  FaBars, 
+  FaTimes, 
+  FaUser, 
+  FaTachometerAlt, 
+  FaSignOutAlt, 
+  FaChevronDown 
+} from "react-icons/fa"; 
 import "../styles/Header.css";
 
 export default function Header() {
@@ -11,8 +20,9 @@ export default function Header() {
   const [user, setUser] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // State untuk mobile menu
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // Fungsi untuk cek status login & ambil data user terbaru
   const checkLoginStatus = () => {
     const token = localStorage.getItem("token");
     const userData = localStorage.getItem("user");
@@ -27,8 +37,11 @@ export default function Header() {
   };
 
   useEffect(() => {
-    checkLoginStatus();
+    checkLoginStatus(); // Cek saat pertama kali load
+    
+    // Dengarkan event 'user-login' (yang di-trigger saat login atau update profil)
     window.addEventListener("user-login", checkLoginStatus);
+    
     return () => window.removeEventListener("user-login", checkLoginStatus);
   }, []);
 
@@ -42,6 +55,7 @@ export default function Header() {
     setShowLogoutModal(false);
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    
     setIsLoggedIn(false);
     setUser(null);
     navigate("/");
@@ -94,19 +108,56 @@ export default function Header() {
             {/* ACTION BUTTONS (Login/User) */}
             <div className="app-nav-actions">
               {isLoggedIn && user ? (
-                <div className="app-user-info">
-                  <span className="user-name">Halo, {user.nama || user.name}</span>
-                  
-                  <div className="app-user-avatar" onClick={() => setShowDropdown(!showDropdown)}>
-                    {getInitials(user.nama || user.name)}
+                <div 
+                    className="app-user-info" 
+                    onClick={() => setShowDropdown(!showDropdown)} 
+                    style={{cursor: 'pointer'}}
+                >
+                  <div className="user-name-wrapper">
+                      <span className="user-name">Halo, {user.nama || user.name}</span>
+                      <FaChevronDown style={{ fontSize: '10px', color: '#6b7280', marginLeft: '5px' }} />
                   </div>
+                  
+                  {/* --- AVATAR DINAMIS --- */}
+                  <div className="app-user-avatar">
+                    {user.photo_url ? (
+                        <img 
+                            src={user.photo_url} 
+                            alt="User" 
+                            style={{width:'100%', height:'100%', borderRadius:'50%', objectFit:'cover'}}
+                            onError={(e) => {
+                                e.target.style.display = 'none'; // Sembunyikan gambar rusak
+                                e.target.parentElement.innerText = getInitials(user.nama || user.name); // Tampilkan inisial
+                            }}
+                        />
+                    ) : (
+                        getInitials(user.nama || user.name)
+                    )}
+                  </div>
+                  {/* ---------------------- */}
 
+                  {/* Dropdown Menu */}
                   {showDropdown && (
                     <div className="user-dropdown">
-                        <Link to="/profile" className="dropdown-item" onClick={() => setShowDropdown(false)}>Profil Saya</Link>
-                        {user.role === 'admin' && <Link to="/dashboard-admin" className="dropdown-item" onClick={() => setShowDropdown(false)}>Dashboard Admin</Link>}
-                        {user.role === 'dokter' && <Link to="/dashboard-dokter" className="dropdown-item" onClick={() => setShowDropdown(false)}>Dashboard Dokter</Link>}
-                        <div onClick={handleLogoutClick} className="dropdown-item logout">Keluar</div>
+                        <Link to="/profile" className="dropdown-item" onClick={() => setShowDropdown(false)}>
+                            <FaUser style={{fontSize: '14px'}}/> Profil Saya
+                        </Link>
+                        
+                        {user.role === 'admin' && (
+                            <Link to="/dashboard-admin" className="dropdown-item" onClick={() => setShowDropdown(false)}>
+                                <FaTachometerAlt style={{fontSize: '14px'}}/> Dashboard Admin
+                            </Link>
+                        )}
+                        
+                        {user.role === 'dokter' && (
+                            <Link to="/dashboard-dokter" className="dropdown-item" onClick={() => setShowDropdown(false)}>
+                                <FaTachometerAlt style={{fontSize: '14px'}}/> Dashboard Dokter
+                            </Link>
+                        )}
+                        
+                        <div onClick={handleLogoutClick} className="dropdown-item logout">
+                            <FaSignOutAlt style={{fontSize: '14px'}}/> Keluar
+                        </div>
                     </div>
                   )}
                 </div>
@@ -121,7 +172,7 @@ export default function Header() {
         </nav>
       </header>
 
-      {/* ===================== LOGOUT MODAL (Sesuai Gambar) ===================== */}
+      {/* ===================== LOGOUT MODAL ===================== */}
       {showLogoutModal && (
         <div className="header-modal-overlay">
           <div className="header-modal">
