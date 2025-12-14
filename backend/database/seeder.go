@@ -83,7 +83,6 @@ func SeedUsers(db *gorm.DB) {
 			NoHp:         "081111111111",
 			Kota:         "Medan",
 			TanggalLahir: "1990-01-01",
-			JenisKelamin: "Laki-laki",
 			Status:       "active",
 		},
 		// 2. DOKTER 1
@@ -124,7 +123,8 @@ func SeedUsers(db *gorm.DB) {
 			Role:         "user",
 			NoHp:         "085211112222",
 			Kota:         "Medan",
-			TanggalLahir: "1995-03-10",  
+			TanggalLahir: "1995-03-10",
+			JenisKelamin: "Laki-laki", 
 			GolDarah:     "O",
 			Rhesus:       "+",
 			BeratBadan:   70,
