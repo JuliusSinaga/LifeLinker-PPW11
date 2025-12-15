@@ -1051,17 +1051,172 @@
 .hero-overlay {
   background: linear-gradient(
     90deg,
-    rgba(180, 0, 0, 0.60) 0%,      /* kiri tebal */
-    rgba(165, 0, 0, 0.55) 15%,     /* masih tebal */
-    rgba(150, 0, 0, 0.45) 35%,     /* tengah stabil tebal */
-    rgba(130, 0, 0, 0.35) 55%,     /* tengah kanan sedikit lebih tipis */
-    rgba(90, 0, 0, 0.22) 75%,      
-    rgba(40, 0, 0, 0.12) 100%      /* kanan paling ringan */
+    rgba(180, 0, 0, 0.6) 0%,
+    /* kiri tebal */ rgba(165, 0, 0, 0.55) 15%,
+    /* masih tebal */ rgba(150, 0, 0, 0.45) 35%,
+    /* tengah stabil tebal */ rgba(130, 0, 0, 0.35) 55%,
+    /* tengah kanan sedikit lebih tipis */ rgba(90, 0, 0, 0.22) 75%,
+    rgba(40, 0, 0, 0.12) 100% /* kanan paling ringan */
   ) !important;
 
   /* Shadow datar, tanpa efek bulat */
-  box-shadow:
-    inset 0 0 0 rgba(0, 0, 0, 0),
-    inset 0 0 90px rgba(150, 0, 0, 0.25),
-    inset 0 0 50px rgba(150, 0, 0, 0.20);
+  box-shadow: inset 0 0 0 rgba(0, 0, 0, 0), inset 0 0 90px rgba(150, 0, 0, 0.25),
+    inset 0 0 50px rgba(150, 0, 0, 0.2);
+}
+
+/* --- FLASH CARD & RESULT STYLES (NEW) --- */
+
+.flash-card-container {
+  min-height: 300px; /* Menjaga tinggi card stabil */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.question-header {
+  text-align: right;
+  margin-bottom: 10px;
+}
+
+.step-count {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  font-weight: 600;
+  background: #f0f0f0;
+  padding: 4px 12px;
+  border-radius: 12px;
+}
+
+/* Style untuk Pertanyaan Aktif (Besar di tengah) */
+.check-item-active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20px 0;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.check-question-large {
+  margin-bottom: 30px;
+}
+
+.icon-wrapper {
+  font-size: 3.5rem;
+  color: var(--primary-red);
+  margin-bottom: 20px;
+  background: #fff0f0;
+  width: 90px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.check-question-large p {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  max-width: 600px;
+  line-height: 1.4;
+}
+
+.answers-large {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Memperbesar tombol untuk mode Flash Card */
+.answers-large button {
+  padding: 12px 40px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  min-width: 120px;
+}
+
+/* --- RESULT CARD STYLES --- */
+.result-content {
+  text-align: center;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.result-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+}
+
+.result-icon.success {
+  color: #28a745; /* Hijau sukses */
+}
+
+.result-icon.fail {
+  color: #dc3545; /* Merah gagal */ /* Atau gunakan var(--primary-red) */
+}
+
+.result-content h4 {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+  color: var(--text-dark);
+}
+
+.result-content p {
+  font-size: 1.1rem;
+  color: var(--text-light);
+  max-width: 500px;
+  margin-bottom: 30px;
+  line-height: 1.5;
+}
+
+.result-actions {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  justify-content: center; /* <--- INI KUNCINYA AGAR DI TENGAH */
+  width: 100%; /* Memastikan container mengambil lebar penuh */
+  margin-top: 10px; /* Memberi sedikit jarak dari teks di atasnya */
+}
+
+/* Pastikan tombol reset juga rapi */
+.btn-reset {
+  background: transparent;
+  border: 2px solid #ddd;
+  padding: 10px 25px; /* Sedikit diperlebar padding-nya */
+  border-radius: 25px;
+  font-weight: 700;
+  color: var(--text-light);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Pastikan teks di dalam tombol juga tengah */
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-reset:hover {
+  border-color: var(--text-dark);
+  color: var(--text-dark);
+  background-color: #f9f9f9;
+}
+
+/* Responsive adjustment for flash card */
+@media (max-width: 768px) {
+  .check-question-large p {
+    font-size: 1.1rem;
+  }
+  .answers-large button {
+    padding: 10px 30px;
+    font-size: 1rem;
+  }
+  .result-actions {
+    flex-direction: column;
+  }
 }
