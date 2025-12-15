@@ -11,19 +11,23 @@ type Consultation struct {
 	ConsultationTime string `json:"consultation_time"` // Format: HH:MM
 	Status           string `json:"status" gorm:"default:'Scheduled'"` // Scheduled, Active, Completed, Cancelled
 	
-	// --- Data Tambahan (Opsional) ---
-	MeetingLink    string `json:"meeting_link"`    // Link Zoom/GMeet
+	// --- Integrasi Zoom ---
+	ZoomLink      string `json:"zoom_link"`       // URL untuk join meeting (Generate otomatis)
+	ZoomMeetingID string `json:"zoom_meeting_id"` // ID unik dari Zoom (untuk manajemen meeting)
+	
+	// --- Data Tambahan ---
 	Recommendation string `json:"recommendation"`  // Kesimpulan/Saran Dokter
 
 	// --- Relasi ke Pasien (User) ---
+	// Field ini terhubung dengan User.ConsultationsAsPatient
 	UserID uint `json:"user_id"`
 	User   User `gorm:"foreignKey:UserID" json:"user,omitempty"`
 
 	// --- Relasi ke Dokter (User) ---
+	// Field ini terhubung dengan User.ConsultationsAsDoctor
 	DoctorID uint `json:"doctor_id"`
 	Doctor   User `gorm:"foreignKey:DoctorID" json:"doctor,omitempty"`
 
 	// --- Relasi Chat (One-to-Many) ---
-	// Satu konsultasi memiliki banyak pesan chat
 	Messages []Message `gorm:"foreignKey:ConsultationID" json:"messages,omitempty"`
 }

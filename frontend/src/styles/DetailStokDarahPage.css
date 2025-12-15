@@ -533,6 +533,32 @@
   box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
 }
 
+/* --- STATS GRID --- */
+.stok-main { padding-top: 30px; }
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.stat-value { font-size: 2rem; font-weight: 800; line-height: 1.2; }
+.stat-label { font-size: 0.9rem; font-weight: 500; color: var(--text-gray); }
+
+.stat-card.critical .stat-value { color: var(--status-critical); }
+.stat-card.standard .stat-value { color: var(--status-standard); }
+.stat-card.safe .stat-value { color: var(--status-safe); }
+
 /* Status Badges - Enhanced */
 .status-badge {
   display: inline-block;
@@ -681,9 +707,13 @@
     width: 100%;
   }
 
-  .filter-dropdown {
-    width: 100%;
-  }
+  .filter-select {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-dark);
+  outline: none;
+}
 
   .blood-table th,
   .blood-table td {

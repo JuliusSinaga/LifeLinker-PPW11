@@ -201,19 +201,18 @@ export default function DetailStokDarahPage() {
         <div className="stok-container">
           
           {/* Statistics Summary */}
-          <div className="stats-summary-grid">
-            {/* ... Anda bisa menggunakan CSS Grid di sini atau style inline seperti sebelumnya ... */}
-            <div className="stat-box-stok critical">
-              <div className="stat-number-stok">{criticalCount}</div>
-              <div className="stat-label-stok">Golongan Kritis</div>
+          <div className="stats-grid">
+            <div className="stat-card critical">
+              <div className="stat-value">{criticalCount}</div>
+              <div className="stat-label">Golongan Kritis</div>
             </div>
-            <div className="stat-box-stok standard">
-              <div className="stat-number-stok">{standardCount}</div>
-              <div className="stat-label-stok">Golongan Standar</div>
+            <div className="stat-card standard">
+              <div className="stat-value">{standardCount}</div>
+              <div className="stat-label">Golongan Standar</div>
             </div>
-            <div className="stat-box-stok safe">
-              <div className="stat-number-stok">{safeCount}</div>
-              <div className="stat-label-stok">Golongan Aman</div>
+            <div className="stat-card safe">
+              <div className="stat-value">{safeCount}</div>
+              <div className="stat-label">Golongan Aman</div>
             </div>
           </div>
 
@@ -224,9 +223,10 @@ export default function DetailStokDarahPage() {
               <span>Filter Status Stok:</span>
             </div>
             <select
-              className="filter-dropdown"
+              className="filter-select"
               value={selectedFilter}
               onChange={(e) => setSelectedFilter(e.target.value)}
+              
             >
               {filterOptions.map((option) => (
                 <option key={option} value={option}>{option}</option>
