@@ -1,60 +1,90 @@
-package controllers
+package main
 
 import (
+	"fmt"
+	"log"
 	"net/http"
+	"os"
+
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 
 	"github.com/JuliusSinaga/LifeLinker-PPW11/backend/database"
 	"github.com/JuliusSinaga/LifeLinker-PPW11/backend/models"
-	"github.com/gin-gonic/gin"
+	"github.com/JuliusSinaga/LifeLinker-PPW11/backend/routes"
 )
 
-// POST /participation
-func RegisterParticipant(c *gin.Context) {
-	// 1. Tangkap Input JSON dari React
-	var input struct {
-		LokasiID             uint   `json:"lokasi_id"`
-		UserID               uint   `json:"user_id"`
-		NamaLengkap          string `json:"nama_lengkap"`
-		NomorHP              string `json:"nomor_hp"`
-		GolonganDarah        string `json:"golongan_darah"`
-		RiwayatDonorTerakhir string `json:"tanggal_donor"`
-		PilihTanggal         string `json:"pilih_tanggal"`
-		PilihJam             string `json:"pilih_jam"`
+func main() {
+	// Load Env
+	if err := godotenv.Load(); err != nil {
+		log.Println("Peringatan: Tidak dapat memuat file .env, menggunakan environment system jika ada.")
 	}
 
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Format data salah: " + err.Error()})
-		return
+	// Connect Database
+	database.ConnectDB()
+
+	// Auto Migration (Membuat Tabel Otomatis)
+	// Pastikan semua model yang Anda buat didaftarkan di sini
+	err := database.DB.AutoMigrate(
+		&models.User{},
+		&models.Lokasi{},
+		&models.StokDarah{},
+		&models.Event{},
+		&models.DonationHistory{},
+		&models.Consultation{},
+		&models.Message{},
+	)
+	if err != nil {
+		log.Fatal("Gagal melakukan migrasi database:", err)
+	}
+	fmt.Println("✅ Migrasi Database Berhasil")
+
+	// Jalankan Seeder (Mengisi Data Awal)
+	database.SeedAll(database.DB)
+
+	// --- SETUP FOLDER UPLOAD ---
+	uploadDir := "./public/uploads"
+	if _, err := os.Stat(uploadDir); os.IsNotExist(err) {
+		if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {
+			log.Fatal("Gagal membuat folder upload:", err)
+		}
+		fmt.Println("✅ Folder upload berhasil dibuat:", uploadDir)
 	}
 
-	// 2. Cari Event yang aktif di Lokasi tersebut
-	var event models.Event
-	// Kita cari event berdasarkan lokasi_id
-	if err := database.DB.Where("lokasi_id = ?", input.LokasiID).First(&event).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Belum ada event donor aktif di lokasi ini. Hubungi Admin."})
-		return
-	}
+	// Init Router
+	router := gin.Default()
 
-	// 3. Simpan Data Pendaftar
-	partisipan := models.EventParticipant{
-		EventID:              event.ID,      // ID Event yang ditemukan otomatis
-		UserID:               input.UserID,  // ID User yang login
-		NamaLengkap:          input.NamaLengkap,
-		NomorHP:              input.NomorHP,
-		GolonganDarah:        input.GolonganDarah,
-		RiwayatDonorTerakhir: input.RiwayatDonorTerakhir,
-		TanggalBooking:       input.PilihTanggal,
-		JamBooking:           input.PilihJam,
-		Status:               "Pending",
-	}
+	// Konfigurasi ini mengizinkan frontend (React) mengakses backend
+	router.Use(cors.New(cors.Config{
+		AllowAllOrigins:  true, // Saat development aman, saat production sebaiknya spesifik domain
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
 
-	if err := database.DB.Create(&partisipan).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal menyimpan data ke database"})
-		return
-	}
+	router.Static("/uploads", "./public/uploads")
 
-	c.JSON(http.StatusCreated, gin.H{
-		"message": "Pendaftaran Berhasil!",
-		"data":    partisipan,
+	// Setup Routes (Mendaftarkan semua endpoint controller)
+	routes.SetupRoutes(router)
+
+	// Test Route Sederhana (Health Check)
+	router.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Server LifeLinker Berjalan 🚀",
+			"status":  "active",
+		})
 	})
+
+	// 9. Run Server
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	fmt.Println("✅ Server berjalan di http://localhost:" + port)
+
+	if err := router.Run(":" + port); err != nil {
+		log.Fatal("Gagal menjalankan server:", err)
+	}
 }
