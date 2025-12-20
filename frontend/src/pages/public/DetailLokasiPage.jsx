@@ -25,6 +25,9 @@ export default function DetailLokasiPage() {
   const [hospital, setHospital] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // [BARU] State User Login
+  const [currentUser, setCurrentUser] = useState(null);
 
   // State Form Pendaftaran
   const [formData, setFormData] = useState({
@@ -39,8 +42,23 @@ export default function DetailLokasiPage() {
   // State Form Review
   const [reviewForm, setReviewForm] = useState({ rating: 0, text: "" });
 
-  // 1. Fetch Data
+  // 1. Fetch Data & Cek Login
   useEffect(() => {
+    // Cek User Login
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      const userObj = JSON.parse(userStr);
+      setCurrentUser(userObj);
+      
+      // Auto-fill form jika user login
+      setFormData(prev => ({
+        ...prev,
+        namaLengkap: userObj.name || userObj.Nama || "",
+        nomorHP: userObj.phone || userObj.NoHp || "",
+        golonganDarah: userObj.blood_type || userObj.GolDarah || ""
+      }));
+    }
+
     const fetchDetailLokasi = async () => {
       try {
         const response = await axiosClient.get(`/lokasi/${id}`);
@@ -118,27 +136,57 @@ export default function DetailLokasiPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // [UPDATED] Handler Submit Pendaftaran ke Backend
   const handleSubmitRegistration = async (e) => {
     e.preventDefault();
+
+    // 1. Validasi Login
+    if (!currentUser) {
+      alert("Silakan Login terlebih dahulu untuk mendaftar donor.");
+      navigate("/login-pengguna");
+      return;
+    }
+
+    // 2. Validasi Kuota
     if (hospital.quotaUsed >= hospital.quotaTotal) {
       alert("Maaf, Kuota pendaftaran di lokasi ini sudah penuh.");
       return;
     }
+
     setIsSubmitting(true);
+
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulasi API
+      // 3. Format Tanggal & Jam (ISO 8601)
+      const combinedDateTime = new Date(`${formData.pilihTanggal}T${formData.pilihJam}:00`);
+      
+      // 4. Siapkan Payload
+      const payload = {
+        user_id: currentUser.id || currentUser.ID, 
+        lokasi_id: parseInt(id),
+        blood_type: formData.golonganDarah,
+        donation_date: combinedDateTime.toISOString(),
+        status: "Pending",
+        notes: `No HP: ${formData.nomorHP}` // Simpan info kontak tambahan
+      };
+
+      // 5. Kirim Request
+      await axiosClient.post("/donations", payload);
+
+      // 6. Update UI Lokal (Optimistic Update)
       setHospital((prev) => ({ ...prev, quotaUsed: prev.quotaUsed + 1 }));
-      setFormData({
-        namaLengkap: "",
-        nomorHP: "",
-        golonganDarah: "",
-        tanggalDonor: "",
+      alert("Pendaftaran Berhasil! Data Anda telah tersimpan.");
+      
+      // Reset sebagian form
+      setFormData(prev => ({
+        ...prev,
         pilihTanggal: "",
         pilihJam: "",
-      });
-      alert("Pendaftaran Berhasil! Kuota telah diperbarui.");
+      }));
+
     } catch (error) {
-      alert("Terjadi kesalahan saat mendaftar.");
+      console.error("Gagal mendaftar:", error);
+      const msg = error.response?.data?.error || "Terjadi kesalahan saat mendaftar.";
+      alert(msg);
     } finally {
       setIsSubmitting(false);
     }
@@ -155,7 +203,7 @@ export default function DetailLokasiPage() {
       return;
     }
     const newReview = {
-      name: "Anda (Baru)",
+      name: currentUser ? (currentUser.name || currentUser.Nama) : "Anda (Guest)",
       rating: reviewForm.rating,
       text: reviewForm.text,
     };
@@ -188,24 +236,13 @@ export default function DetailLokasiPage() {
 
   if (loading)
     return (
-      <div
-        className="detail-root"
-        style={{
-          minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
+      <div className="detail-root" style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <p>Memuat data lokasi...</p>
       </div>
     );
   if (!hospital)
     return (
-      <div
-        className="detail-root"
-        style={{ textAlign: "center", padding: "50px" }}
-      >
+      <div className="detail-root" style={{ textAlign: "center", padding: "50px" }}>
         <h2>Lokasi tidak ditemukan</h2>
         <button onClick={() => navigate("/lokasi-donor")}>Kembali</button>
       </div>
@@ -265,7 +302,7 @@ export default function DetailLokasiPage() {
               <button className="event-info-btn">Informasi</button>
             </div>
 
-            {/* --- BAGIAN INFORMASI STOK DARAH (WARNA DIPERBAIKI) --- */}
+            {/* --- BAGIAN INFORMASI STOK DARAH --- */}
             <div className="info-stok-section">
               <h3>Informasi & Stok Darah</h3>
               <div className="operational-info">
@@ -290,14 +327,13 @@ export default function DetailLokasiPage() {
                   <div
                     key={type}
                     className="blood-type-card"
-                    // Inline style untuk memaksa warna teks menjadi hitam/gelap
                     style={{
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "center",
                       justifyContent: "center",
                       padding: "15px",
-                      backgroundColor: "#f9f9f9", // Background abu-abu sangat muda agar kontras
+                      backgroundColor: "#f9f9f9",
                       borderRadius: "10px",
                       border: "1px solid #eee",
                       boxShadow: "0 2px 5px rgba(0,0,0,0.05)",
@@ -449,6 +485,8 @@ export default function DetailLokasiPage() {
                     value={formData.namaLengkap}
                     onChange={handleInputChange}
                     required
+                    readOnly={!!currentUser} // Readonly jika auto-fill dari user
+                    style={currentUser ? { backgroundColor: "#f0f0f0", color: "#666" } : {}}
                   />
                 </div>
                 <div className="form-group">
@@ -474,6 +512,10 @@ export default function DetailLokasiPage() {
                     <option value="B+">B+</option>
                     <option value="O+">O+</option>
                     <option value="AB+">AB+</option>
+                    <option value="A-">A-</option>
+                    <option value="B-">B-</option>
+                    <option value="O-">O-</option>
+                    <option value="AB-">AB-</option>
                   </select>
                 </div>
                 <div className="form-group">
@@ -526,7 +568,7 @@ export default function DetailLokasiPage() {
             <div className="question-card">
               <h3>Punya Pertanyaan?</h3>
               <p>Tanyakan langsung pada petugas medis di lokasi ini.</p>
-              <button className="chat-btn">
+              <button className="chat-btn" onClick={() => navigate('/konsultasi')}>
                 <FaComments /> Chat dengan Petugas Medis
               </button>
             </div>

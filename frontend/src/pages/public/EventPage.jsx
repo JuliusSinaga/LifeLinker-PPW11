@@ -215,7 +215,7 @@ export default function EventPage() {
                           </div>
                         </div>
                         <Link
-                          to={`/event/${event.id}`}
+                          to={`/events/${event.id}`}
                           className="upcoming-event-button"
                         >
                           Lihat Detail <FaChevronRight />

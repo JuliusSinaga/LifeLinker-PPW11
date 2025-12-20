@@ -2,30 +2,34 @@ package controllers
 
 import (
 	"net/http"
+	"gorm.io/gorm"
 
-	"github.com/gin-gonic/gin"
 	"github.com/JuliusSinaga/LifeLinker-PPW11/backend/database"
 	"github.com/JuliusSinaga/LifeLinker-PPW11/backend/models"
+	"github.com/gin-gonic/gin"
 )
 
 // GET /donations
-// Bisa ambil semua, atau filter by user: /donations?user_id=1
+// Mengambil daftar donasi (Bisa filter by user_id)
 func GetDonations(c *gin.Context) {
 	// 1. Ambil parameter user_id dari URL (jika ada)
 	userID := c.Query("user_id")
 	
 	var donations []models.DonationHistory
 
-	// 2. Siapkan query dasar dengan Preload
-	query := database.DB.Preload("User").Preload("Doctor")
+	// 2. Siapkan query dengan Preload lengkap
+	// Preload "Lokasi" penting agar user tahu dia donor di mana
+	query := database.DB.
+		Preload("User").
+		Preload("Doctor").
+		Preload("Lokasi")
 
-	// 3. Jika ada user_id, tambahkan filter WHERE
+	// 3. Filter berdasarkan User ID (untuk halaman 'Riwayat Saya')
 	if userID != "" {
 		query = query.Where("user_id = ?", userID)
 	}
 
-	// 4. Eksekusi Query
-	// Order by id desc agar yang terbaru muncul di atas
+	// 4. Eksekusi (Urutkan dari yang terbaru)
 	if err := query.Order("donation_date desc").Find(&donations).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -34,12 +38,17 @@ func GetDonations(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": donations})
 }
 
-// GET /donations/:id - Ambil detail satu donasi
+// GET /donations/:id
 func GetDonationByID(c *gin.Context) {
 	id := c.Param("id")
 	var donation models.DonationHistory
 
-	if err := database.DB.Preload("User").Preload("Doctor").First(&donation, id).Error; err != nil {
+	if err := database.DB.
+		Preload("User").
+		Preload("Doctor").
+		Preload("Lokasi").
+		First(&donation, id).Error; err != nil {
+		
 		c.JSON(http.StatusNotFound, gin.H{"error": "Data donasi tidak ditemukan"})
 		return
 	}
@@ -47,28 +56,58 @@ func GetDonationByID(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": donation})
 }
 
-// POST /donations - Buat catatan donor baru (Oleh Dokter)
+// POST /donations - Pendaftaran Donor Baru (User Mandiri / Dokter)
+// POST /donations - Pendaftaran Donor Baru
 func CreateDonation(c *gin.Context) {
 	var input models.DonationHistory
+	
+	// Bind JSON
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Set default status jika kosong
+	// 1. Set Default Status
 	if input.Status == "" {
 		input.Status = "Pending"
 	}
 
-	if err := database.DB.Create(&input).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mencatat donasi"})
+	// 2. Validasi Wajib (User & Lokasi harus ada)
+	if input.UserID == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User ID wajib diisi"})
+		return
+	}
+	if input.LokasiID == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Lokasi ID wajib diisi"})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "Riwayat donor berhasil disimpan", "data": input})
+	// 3. Simpan Pendaftaran ke Database
+	if err := database.DB.Create(&input).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal menyimpan pendaftaran donor"})
+		return
+	}
+
+	// 4. [PENTING] Update Counter Pendaftar di Tabel Lokasi
+	// Ini membuat progress bar "Status Pendaftaran" di Frontend jadi real-time & persisten
+	if err := database.DB.Model(&models.Lokasi{}).
+		Where("id = ?", input.LokasiID).
+		UpdateColumn("jumlah_pendaftar", gorm.Expr("jumlah_pendaftar + ?", 1)).
+		Error; err != nil {
+		
+		// Kita log errornya saja, jangan batalkan response sukses ke user
+		// karena pendaftaran utamanya sudah berhasil tersimpan.
+		// log.Printf("Gagal update counter lokasi: %v", err)
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "Pendaftaran berhasil! Silakan datang ke lokasi sesuai jadwal.",
+		"data":    input,
+	})
 }
 
-// PUT /donations/:id - Update Status/Data Donasi (Oleh Dokter/Admin)
+// PUT /donations/:id - Update Status/Data (Oleh Dokter/Admin)
+// Contoh: Mengubah status 'Pending' -> 'Approved' dan mengisi DoctorID & QuantityDonated
 func UpdateDonation(c *gin.Context) {
 	id := c.Param("id")
 	var donation models.DonationHistory
@@ -86,11 +125,15 @@ func UpdateDonation(c *gin.Context) {
 		return
 	}
 
-	// 3. Update field yang diizinkan
+	// 3. Update field
+	// GORM Updates akan mengupdate field yang dikirim (non-zero value)
 	if err := database.DB.Model(&donation).Updates(input).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal update donasi"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal update data donasi"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Data donasi berhasil diperbarui", "data": donation})
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Data donasi berhasil diperbarui",
+		"data":    donation,
+	})
 }

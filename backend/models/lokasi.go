@@ -12,14 +12,17 @@ type Lokasi struct {
 	JamOperasionalLokasi string `json:"jam_operasional_lokasi"`
 	GambarLokasi         string `json:"gambar_lokasi"`
 
+	// --- [BARU] FIELD KUOTA & PENDAFTAR ---
+	// Field ini penting agar "Status Pendaftaran" di Frontend terhubung ke Database
+	JumlahPendaftar int `json:"jumlah_pendaftar" gorm:"default:0"` // Menyimpan jumlah orang yang sudah daftar
+	BatasKuota      int `json:"batas_kuota" gorm:"default:100"`    // Batas maksimal kuota per hari
+
 	// ================= RELASI (UPDATED) =================
 	
 	// 1. Relasi ke EVENT (One-to-Many)
 	// Satu Lokasi bisa menyelenggarakan banyak Event
-	// Ini memungkinkan kita query: "Tampilkan semua event di RS Adam Malik"
 	Events []Event `gorm:"foreignKey:LokasiID" json:"events,omitempty"`
 
 	// 2. (Opsional Masa Depan) Relasi ke STOK DARAH
-	// Jika nanti stok darah dibuat spesifik per RS, aktifkan ini:
 	// StokDarah []StokDarah `gorm:"foreignKey:LokasiID" json:"stok_darah,omitempty"`
 }
